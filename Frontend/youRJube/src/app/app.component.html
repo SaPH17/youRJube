@@ -1,35 +1,104 @@
-<div class="header-container">
+<div class="container">
+  <div class="header-container">
 
-  <div class="image-container">
-      <a href="#" class="menuLineWrapper">
-          <img src="../assets/menuLine.png" alt="" class="menuLineImage">
-      </a>
-      <a href="" class="logoWrapper">
-          <img src="../assets/logo.jpg" alt="" class="logoImage">
-      </a>
-  </div>
+    <div class="image-container">
+        <a href="#" class="menuLineWrapper" (click)="sideBarCollapse()">
+            <img src="../assets/menuLine.png" alt="" class="menuLineImage">
+        </a>
+        <a href="" class="logoWrapper">
+            <img src="../assets/logo.jpg" alt="" class="logoImage">
+        </a>
+    </div>
+    
   
-
-  <form id="search-form">
-      <div class="searchbox-container">
-          <input type="text" name="" id="searchbox" placeholder="Search">
-          <button type="submit" id="search-submit"><i class="fa fa-search"></i></button>
-      </div>
-  </form>
-
-  <div class="usercontrol-container">
-    <a href=""><i class="fa fa-cog" aria-hidden="true"></i></a>
-
-    <div class="signin-button-container">
-      
-      <a href="">
-        <i class="fa fa-user" aria-hidden="true"></i>
-        <div>
-          SIGN IN
+    <form id="search-form">
+        <div class="searchbox-container">
+            <input type="text" name="" id="searchbox" placeholder="Search">
+            <button type="submit" id="search-submit"><i class="fa fa-search"></i></button>
         </div>
-      </a>
+    </form>
+  
+    <div class="usercontrol-container">
+
+      <div class="upload-video">
+        <a href="#"  >
+          <i class="fa fa-video-camera" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div class="notifications-dropdown">
+        <a href="#" (click)="notifClick()">
+          <i class="fa fa-bell" aria-hidden="true"></i>
+        </a>
+
+        <div class="dropdown-content" id="notif-dropdown">
+          <a href="#">Notif 1</a>
+          <a href="#">Notif 2</a>
+          <a href="#">Notif 3</a>
+        </div>
+      </div>
+  
+      <div class="settings-dropdown" (click)="settingsClick()">
+        <a href="#"  >
+          <i class="fa fa-cog" aria-hidden="true"></i>
+        </a>
+  
+        <div class="dropdown-content" id="settings-dropdown">
+            <a href="#"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Restricted Mode</a>
+            <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i>Change Location</a>
+            <a href="#"><i class="fa fa-keyboard-o" aria-hidden="true"></i>Keyboard Shortcut</a>
+        </div>
+      </div>
+     
+      <div class="signin-button-container">
+  
+        <a href="">
+          <i class="fa fa-user-circle" aria-hidden="true"></i>
+          <div>
+            SIGN IN
+          </div>
+        </a>
+  
+      </div>
     </div>
   </div>
-
   
+  <div class="sidebar-container" id="sidebar-container">
+    <ul>
+      <li>
+        <a href="#" class="active">
+          <span class="icon"><i class="fa fa-home" aria-hidden="true"></i></span>
+          <span class="title">Home</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="icon"><i class="fa fa-fire" aria-hidden="true"></i></span>
+          <span class="title">Trending</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="icon"><i class="fa fa-youtube-play" aria-hidden="true"></i></span>
+          <span class="title">Subscriptions</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="icon"><i class="fa fa-folder" aria-hidden="true"></i></span>
+          <span class="title">Category</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="icon"><i class="fa fa-tag" aria-hidden="true"></i></span>
+          <span class="title">Membership</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="content-container" id="content-container">
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, cupiditate pariatur molestias error, quia dicta explicabo provident ratione eveniet neque nihil iure nam odio voluptatum, maiores quaerat repellendus nostrum aspernatur.
+  </div>
 </div>
