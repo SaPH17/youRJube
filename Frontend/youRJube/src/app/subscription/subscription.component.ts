@@ -1,3 +1,5 @@
+import { DataService } from './../data.service';
+import { SocialUser } from 'angularx-social-login';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SubscriptionComponent implements OnInit {
 
-  constructor() { }
+  user: SocialUser
+
+  constructor(private data: DataService) { }
 
   ngOnInit(): void {
+    this.data.currentUserObject.subscribe(userObject => this.user = userObject)
   }
 
+  isUserSignedIn():boolean {
+    if(this.user == null){
+      return false;
+    }
+
+    return true
+  }
 }

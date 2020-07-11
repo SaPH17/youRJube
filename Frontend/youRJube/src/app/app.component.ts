@@ -1,7 +1,10 @@
+import { DataService } from './data.service';
 import { Component, OnInit } from '@angular/core';
 import { SocialAuthService } from "angularx-social-login";
 import { GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
+import {Router} from '@angular/router';
+
 
 @Component({
   selector: 'app-root',
@@ -13,14 +16,17 @@ export class AppComponent implements OnInit{
   user : SocialUser
   loggedIn: boolean = false;
 
-  constructor(private authService: SocialAuthService) { }
+  constructor(private authService: SocialAuthService, private router: Router, private data: DataService) { }
 
   ngOnInit(): void {
+
     this.authService.authState.subscribe((user) => {
       this.user = user;
       this.loggedIn = (user != null);
     });
     
+    this.data.currentUserObject.subscribe(userObject => this.user = userObject)
+
   }
 
   settingsClick(): void {
@@ -48,6 +54,7 @@ export class AppComponent implements OnInit{
     else{
       document.getElementById('user-dropdown').style.display = 'block'
     }
+
   }
 
   sideBarCollapse():void{
@@ -97,11 +104,22 @@ export class AppComponent implements OnInit{
   signInWithGoogle():void {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
     this.loggedIn = true;
+    
+    setTimeout(()=>{
+      this.data.changeUser(this.user)
+    }, 3000);
   }
 
   signOut():void{
     this.authService.signOut(true);
     sessionStorage.clear();
+
+    this.data.changeUser(null)
+
+    this.router.navigate(['./home']);
+    this.deactivateAllButton();
+    document.getElementById('homeButton').className = "active"
+
     this.loggedIn = false;
   }
 

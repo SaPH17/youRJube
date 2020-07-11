@@ -6,7 +6,7 @@ import (
 	"os"
 	"youRJube/graph"
 	"youRJube/graph/generated"
-	_"youRJube/postgres"
+	"youRJube/postgres"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -41,9 +41,9 @@ func main() {
 
 	pgDB := pg.Connect(opt)
 
-	// pgDB.AddQueryHook(postgres.DBLogger{})
+	pgDB.AddQueryHook(postgres.DBLogger{})
 
-	// defer pgDB.Close()
+	defer pgDB.Close()
 
 	port := os.Getenv("PORT")
 	if port == "" {

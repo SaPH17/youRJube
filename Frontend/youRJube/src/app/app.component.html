@@ -27,14 +27,14 @@
       </div>
 
       <div *ngIf="isUserSignedIn()" class="notifications-dropdown">
-        <a href="#" (click)="notifClick()">
+        <a (click)="notifClick()">
           <i class="fa fa-bell" aria-hidden="true"></i>
         </a>
 
         <div class="dropdown-content" id="notif-dropdown">
-          <a href="#">Notif 1</a>
-          <a href="#">Notif 2</a>
-          <a href="#">Notif 3</a>
+          <a>Notif 1</a>
+          <a>Notif 2</a>
+          <a>Notif 3</a>
         </div>
       </div>
   
@@ -44,8 +44,8 @@
         </a>
   
         <div class="dropdown-content" id="settings-dropdown">
-            <a href="#"><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode</a>
-            <a href="#"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
+            <a><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode</a>
+            <a><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
             <a (click)="showKeyboardShortcut()"><i class="fa fa-keyboard-o fa-fw" aria-hidden="true"></i>Keyboard Shortcut</a>
         </div>
       </div>

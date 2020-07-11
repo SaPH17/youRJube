@@ -1,3 +1,4 @@
+import { DataService } from './data.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -47,7 +48,8 @@ import {
           }
         ],
       } as SocialAuthServiceConfig,
-    }
+    },
+    DataService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { DataService } from './../data.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { SocialUser } from 'angularx-social-login';
 
 @Component({
   selector: 'app-premium-membership',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PremiumMembershipComponent implements OnInit {
 
-  constructor() { }
+  user: SocialUser
+
+  constructor(private data: DataService) { }
 
   ngOnInit(): void {
+    this.data.currentUserObject.subscribe(userObject => this.user = userObject)
   }
 
 }
