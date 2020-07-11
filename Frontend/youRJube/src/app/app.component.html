@@ -2,7 +2,7 @@
   <div class="header-container">
 
     <div class="image-container">
-        <a href="#" class="menuLineWrapper" (click)="sideBarCollapse()">
+        <a class="menuLineWrapper" (click)="sideBarCollapse()">
             <img src="../assets/menuLine.png" alt="" class="menuLineImage">
         </a>
         <a href="" class="logoWrapper">
@@ -20,13 +20,13 @@
   
     <div class="usercontrol-container">
 
-      <div class="upload-video">
+      <div *ngIf="isUserSignedIn()" class="upload-video">
         <a href="#"  >
           <i class="fa fa-video-camera" aria-hidden="true"></i>
         </a>
       </div>
 
-      <div class="notifications-dropdown">
+      <div *ngIf="isUserSignedIn()" class="notifications-dropdown">
         <a href="#" (click)="notifClick()">
           <i class="fa fa-bell" aria-hidden="true"></i>
         </a>
@@ -38,67 +38,164 @@
         </div>
       </div>
   
-      <div class="settings-dropdown" (click)="settingsClick()">
-        <a href="#"  >
+      <div *ngIf="!isUserSignedIn()" class="settings-dropdown" (click)="settingsClick()">
+        <a>
           <i class="fa fa-cog" aria-hidden="true"></i>
         </a>
   
         <div class="dropdown-content" id="settings-dropdown">
-            <a href="#"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Restricted Mode</a>
-            <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i>Change Location</a>
-            <a href="#"><i class="fa fa-keyboard-o" aria-hidden="true"></i>Keyboard Shortcut</a>
+            <a href="#"><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode</a>
+            <a href="#"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
+            <a (click)="showKeyboardShortcut()"><i class="fa fa-keyboard-o fa-fw" aria-hidden="true"></i>Keyboard Shortcut</a>
         </div>
       </div>
      
-      <div class="signin-button-container">
+      <div *ngIf="!isUserSignedIn()" class="signin-button-container" (click)="signInWithGoogle()">
   
-        <a href="">
+        <a>
           <i class="fa fa-user-circle" aria-hidden="true"></i>
           <div>
             SIGN IN
           </div>
         </a>
-  
+      </div>
+
+      <div *ngIf="isUserSignedIn()" class="user-profile" >
+        <img src="{{ user.photoUrl }}" width="50px" class="user-profile-picture" (click)="userProfileClick()">
+
+        <div class="dropdown-content" id="user-dropdown">
+          <div class="user-information">
+            <img src="{{ user.photoUrl }}" width="100px">
+            <h4>{{ user.name }}</h4>
+          </div>
+          
+          <a (click)="switchAccount()"><i class="fa fa-users fa-fw" aria-hidden="true"></i>Switch Account</a>
+          <a routerLink="/premium-membership"><i class="fa fa-tag fa-fw" aria-hidden="true"></i>Premium Membership</a>
+          <a><i class="fa fa-user fa-fw" aria-hidden="true"></i>Your Channel</a>
+          <a><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode</a>
+          <a><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
+          <a (click)="showKeyboardShortcut()"><i class="fa fa-keyboard-o fa-fw" aria-hidden="true"></i>Keyboard Shortcut</a>
+        </div>
       </div>
     </div>
   </div>
   
   <div class="sidebar-container" id="sidebar-container">
-    <ul>
+    <ul class="buttons">
       <li>
-        <a href="#" class="active">
-          <span class="icon"><i class="fa fa-home" aria-hidden="true"></i></span>
+        <a routerLink="home" class="active" id="homeButton" (click)="changeActive($event)">
+          <span class="icon"><i class="fa fa-home fa-fw" aria-hidden="true"></i></span>
           <span class="title">Home</span>
         </a>
       </li>
       <li>
-        <a href="#">
-          <span class="icon"><i class="fa fa-fire" aria-hidden="true"></i></span>
+        <a routerLink="trending" class="" id="trendingButton" (click)="changeActive($event)">
+          <span class="icon"><i class="fa fa-fire fa-fw" aria-hidden="true"></i></span>
           <span class="title">Trending</span>
         </a>
       </li>
       <li>
-        <a href="#">
-          <span class="icon"><i class="fa fa-youtube-play" aria-hidden="true"></i></span>
+        <a routerLink="subscription" class="" id="subscriptionButton" (click)="changeActive($event)">
+          <span class="icon"><i class="fa fa-youtube-play fa-fw" aria-hidden="true"></i></span>
           <span class="title">Subscriptions</span>
         </a>
       </li>
       <li>
-        <a href="#">
-          <span class="icon"><i class="fa fa-folder" aria-hidden="true"></i></span>
+        <a routerLink="category" class="" id="categoryButton" (click)="changeActive($event)">
+          <span class="icon"><i class="fa fa-folder fa-fw" aria-hidden="true"></i></span>
           <span class="title">Category</span>
         </a>
       </li>
       <li>
-        <a href="#">
-          <span class="icon"><i class="fa fa-tag" aria-hidden="true"></i></span>
+        <a routerLink="premium-membership" class="" id="membershipButton" (click)="changeActive($event)">
+          <span class="icon"><i class="fa fa-tag fa-fw" aria-hidden="true"></i></span>
           <span class="title">Membership</span>
         </a>
       </li>
+      <li>
+        <a *ngIf="isUserSignedIn()" routerLink="playlist" class="" id="playlistButton" (click)="changeActive($event)">
+          <span class="icon"><i class="fa fa-random fa-fw" aria-hidden="true"></i></span>
+          <span class="title">Playlist</span>
+        </a>
+      </li>
     </ul>
+
+    <hr>
+
+    <div class="externalLinks">
+      <ul class="links">
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Copyright</a></li>
+        <li><a href="#">Privacy</a></li>
+      </ul>
+    </div>
+
   </div>
 
   <div class="content-container" id="content-container">
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, cupiditate pariatur molestias error, quia dicta explicabo provident ratione eveniet neque nihil iure nam odio voluptatum, maiores quaerat repellendus nostrum aspernatur.
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<div id="keyboard-shortcut" class="keyboard-shortcut">
+  <div class="modal-content">
+    <span class="close" (click)="hideKeyboardShortcut()">&times;</span>
+    <div class="title">
+      Keyboard Shortcut
+    </div>
+
+    <div class="content">
+      <ul>
+        <li>
+          <div class="explanation">
+            Backwards 10 seconds
+          </div>
+          <div class="shortcut">
+            j
+          </div>
+        </li>
+        <li>
+          <div class="explanation">
+            Play or pause the video
+          </div>
+          <div class="shortcut">
+            k
+          </div>
+        </li>
+        <li>
+          <div class="explanation">
+            Forwards 10 seconds
+          </div>
+          <div class="shortcut">
+            l
+          </div>
+        </li>
+        <li>
+          <div class="explanation">
+            Fullscreen mode
+          </div>
+          <div class="shortcut">
+            f
+          </div>
+        </li>
+        <li>
+          <div class="explanation">
+            Increase the video volume
+          </div>
+          <div class="shortcut">
+            ↑
+          </div>
+        </li>
+        <li>
+          <div class="explanation">
+            Decrease the video volume
+          </div>
+          <div class="shortcut">
+            ↓
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
