@@ -1,0 +1,99 @@
+$container-width: 288px;
+
+.container{
+    display: flex;
+    margin: 2vh 0.4vw;
+    flex-direction: column;
+
+    .video-description-container{
+        margin-top: 1vh;
+        display: flex;
+        max-width: $container-width;
+
+        .profile-pic{
+            border-radius: 50%;    
+            max-height: 50px;
+        }
+
+        .content-container{
+            margin-left: 1vw;
+
+            .title{
+                font-weight: bold;
+                margin-bottom: 0.1vh;
+            }
+
+            .channel-name{
+                font-size: smaller;
+            }
+
+            .views-count{
+                font-size: smaller;
+                display: inline;
+            }
+
+            .date-uploaded{
+                font-size: smaller;
+                display: inline;
+
+
+            }
+        }
+
+        .settings-button{
+            position: relative;
+
+            .settings-button-icon{
+                opacity: 0;
+                font-size: 20px;
+                color: gray;
+                transition-duration: 0.3s;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                left: -10vw;
+                background-color: white;
+                width: 10vw;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+    
+                a {
+                    color: gray;
+                    padding: 15px 16px;
+                    text-decoration: none;
+                    display: block;
+                    border-bottom: 1px lightgray solid;
+                    text-align: left;
+
+                    i{
+                        margin-right: 1vw;
+                    }
+                }
+            }
+
+            .dropdown-content a:hover{
+                background-color: rgb(240, 238, 238);
+            }
+        }
+    }
+}
+
+.container:hover{
+    .video-description-container{
+        .settings-button{
+            .settings-button-icon{
+                opacity: 1;
+                transition-duration: 0.3s;
+            }
+
+
+        }
+    }
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}

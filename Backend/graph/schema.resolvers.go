@@ -5,9 +5,9 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"youRJube/graph/generated"
 	"youRJube/graph/model"
-	"errors"
 )
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
@@ -15,7 +15,7 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 
 	err := r.DB.Model(&users).Select()
 
-	if(err != nil){
+	if err != nil {
 		return nil, errors.New("Failed to query user")
 	}
 

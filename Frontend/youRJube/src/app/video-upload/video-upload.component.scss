@@ -1,0 +1,339 @@
+.container{
+    #first-container{
+        .dropzone { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; 
+            min-width: 80vw;
+            font-weight: 200;
+            height: 300px;
+            border: 2px dashed blueviolet;
+            border-radius: 5px;
+            background: white;
+            margin: 10px 0;
+    
+            h3{
+                font-size: 30px;
+            }
+    
+            .click-upload{
+                background-color: blueviolet;
+                color: white;
+                padding: 10px;
+                border-radius: 4px;
+                margin-top: 5vh;
+                cursor: pointer;
+            }
+    
+            #video-upload{
+                visibility: hidden;
+                font-size: 20px;
+            }
+          
+            &.hovering {
+                border: 2px solid blueviolet;
+                color: #dadada !important;
+            }
+          
+            .file-label {
+                font-size: 1.2em;
+            }
+        }
+    
+        .uploaded-file-name{
+            text-align: center;
+            font-size: 20px;
+        }
+    
+        .upload-button-container{
+            display: flex;
+            justify-content: center;
+    
+            .upload-button{
+                text-align: center;
+                font-size: 20px;
+                margin-top: 3vh;
+                background-color: blueviolet;
+                border:1px solid #057fd0;
+                cursor:pointer;
+                color:#ffffff;
+                padding:6px 24px;
+                text-decoration:none;
+                border-radius: 5px;
+            }
+        }
+
+        #upload-error{
+            text-align: center;
+            color: red;
+            font-size: 20px;
+            visibility: hidden;
+        }
+    }
+
+    #second-container{
+        display: none;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        .video-details{
+            display: flex;
+            flex-direction: row;
+            padding-right: 2vw;
+            border-right: 2px lightgray solid;
+
+            .left{
+                display: flex;
+                flex-direction: column;
+                margin-right: 2vw;
+
+                .title-input{
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0.5vw 0vw;
+                    width: 25vw;
+    
+                    label{
+                        font-size: 14px;
+                    }
+    
+                    #title{
+                        padding: 5px;
+                        font-size: 14px;
+                    }
+                }
+    
+                .description-input{
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0.5vw 0vw;
+
+    
+                    label{
+                        font-size: 14px;
+                    }
+    
+                    #description{
+                        padding: 5px;
+                        font-size: 14px;
+                    }
+                }
+
+                .category-input{
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0.5vw 0vw;
+    
+                    label{
+                        font-size: 14px;
+                    }
+    
+                    #category{
+                        padding: 5px;
+                        font-size: 14px;
+                    }
+                }
+
+                .playlist-input{
+                    margin-top: 1vh;
+
+                    .playlist-title{
+                        font-size: 14px;
+                    }
+
+                    #playlist-list{
+                        padding: 5px;
+                        margin-top: 1vh;
+                        font-size: 14px;
+                    }
+
+                    .playlist-title2{
+                        font-size: 14px;
+                        margin-top: 2vh;
+
+                        label{
+                            margin-left: 2vw;
+                        }
+
+                        #playlist-input{
+                            opacity: 0;
+                            margin-top: 2vh;
+                            transition-duration: 0.3s;
+
+                            label{
+                                margin-left: 2vw;
+                            }
+                            input{
+                                margin-left: 2vw;
+                                padding: 5px;
+                                font-size: 14px;
+                            }
+                            
+                                
+                            .new-playlist-privacy-title{
+                                font-size: 14px;
+                                margin-bottom: 1vh;
+                                margin-top: 2vh;
+                                margin-left: 2vw;
+                            }
+
+                            label{
+                                font-size: 14px;
+                            }
+
+                            input{
+                                margin-left: 2vw;
+                                margin-bottom: 1vh;
+                            }
+
+                            .create-playlist-button{
+                                margin-top: 3vh;
+                                margin-left: 3vw;
+                                background-color: blueviolet;
+                                border:1px solid #057fd0;
+                                display:inline-block;
+                                cursor:pointer;
+                                color:#ffffff;
+                                font-size:14px;
+                                padding:6px 10px;
+                                text-decoration:none;
+                                border-radius: 2px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .right{
+                display: flex;
+                flex-direction: column;
+                margin-right: 2vw;
+
+
+
+                .thumbnail-input{
+                    cursor: pointer;
+                    padding: 5px;
+    
+                    .thumbnail-title{
+                        display: flex;
+                        flex-direction: column;
+                        cursor: pointer;
+    
+                        p{
+                            font-size: 15px;
+                        }
+    
+                        img{
+                            cursor: pointer;
+                        }
+    
+                    }
+    
+                    #thumbnail-upload{
+                        visibility: hidden;
+                    }
+                }
+
+                .restricted-input{
+                    .restricted-title{
+                        font-size: 14px;
+                        margin-bottom: 1vh;
+                    }   
+
+                    label{
+                        font-size: 14px;
+                    }
+
+                    input{
+                        margin-right: 2vw;
+                        margin-bottom: 1vh;
+                    }
+                }
+
+                .privacy-input{
+                    .privacy-title{
+                        font-size: 14px;
+                        margin-bottom: 1vh;
+                        margin-top: 2vh;
+                    }
+
+                    label{
+                        font-size: 14px;
+                    }
+
+                    input{
+                        margin-right: 2vw;
+                        margin-bottom: 1vh;
+                    }
+                }
+
+                .schedule-input{
+
+                    input{
+                        margin-right: 2vw;
+                        margin-top: 3vh;
+                    }
+
+                    label{
+                        font-size: 14px;
+                    }
+
+                    #date-input{
+                        // visibility: hidden;
+                        opacity: 0;
+                        margin-left: 2vw;
+                        margin-top: 2vh;
+                        transition-duration: 0.3s;
+
+                    }
+                }
+
+                #details-error{
+                    // visibility: hidden;
+                    color: red;
+                    text-align: center;
+                    font-size: 14px;
+                }
+            }
+
+        }
+
+        .previews{
+            display: flex;
+            flex-direction: column;
+            max-width: 320px;
+
+            #uploading{
+                display: inline-block;
+                background-color: lightgray;
+                color: gray;
+                width: 320px;
+                height: 180px;
+                text-align: center;
+                line-height: 180px;
+            }
+    
+            .title-preview{
+                margin: 3vh 0.5vw 1vh 0.5vw;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .description-preview{
+                margin: 1vh 0.5vw 1vh 0.5vw;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .duration-preview{
+                margin: 1vh 0.5vw 1vh 0.5vw;
+            }
+        }
+    }
+      
+    progress::-webkit-progress-value {
+        transition: width 0.1s ease;
+    }
+}

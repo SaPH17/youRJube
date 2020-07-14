@@ -1,0 +1,197 @@
+<div class="container">
+
+    <!-- <div id="first-container">
+        <div class="dropzone" appDropZone (hovered)="toggleHover($event)" 
+        (dropped)="handleFileInput($event)" [class.hovering]="isHovering">
+    
+            <h3>Drop video here</h3>
+    
+            <label for="video-upload" class="click-upload">Or choose a video</label>
+            <input type="file" (change)="handleFileInput($event.target.files)" name="video-upload" id="video-upload">
+    
+        </div>
+    
+        <div *ngIf="isFileHasBeenUploaded()" class="uploaded-file-name">
+            Uploaded File Name : {{file.name}}
+        </div>
+
+        <div id="upload-error">
+            Please input a video!
+        </div>
+        
+        <div class="upload-button-container">
+            <button (click)="startUploadVideo()" class="upload-button">Upload</button>
+        </div>
+    </div> -->
+
+    <div id="second-container">
+        <div class="video-details">
+
+            <div class="left">
+                <div class="title-input">
+                    <label for="title">Title (Required) : </label>
+                    <input type="text" name="title" id="title" (input)="title = $event.target.value">
+                </div>
+    
+                <br>
+    
+                <div class="description-input">
+                    <label for="description">Description : </label>
+                    <textarea name="description" id="description" cols="30" rows="10" (input)="description = $event.target.value"></textarea>
+                </div>
+
+                <div class="category-input">
+                    <label for="category">Category : </label>
+                    <select name="category" id="category">
+                        <option value="Music">Music</option>
+                        <option value="Sport">Sport</option>
+                        <option value="Gaming">Gaming</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="News">News</option>
+                        <option value="Travel">Travel</option>
+                    </select>
+                </div>
+
+                <div class="playlist-input">
+
+                    <div class="playlist-title">
+                        Add video to playlist :
+                    </div>
+
+                    <select name="" id="playlist-list">
+                        <option value="">Select a playlist</option>
+                        <option value="">Playlist 1</option>
+                        <option value="">Playlist 2</option>
+                        <option value="">Playlist 3</option>
+                    </select>
+
+                    <div class="playlist-title2">
+                        <input type="checkbox" name="" id="new-playlist-checkbox" (click)="toggleNewPlaylistInput()">
+                        <label for="new-playlist-checkbox">Make a new playlist?</label>
+    
+                        <div id="playlist-input">
+                            <label for="new-playlist-title">Title : </label>
+                            <br>
+                            <input type="text" name="" id="new-playlist-title">
+
+                            <div class="new-playlist-privacy-title">
+                                Privacy :
+                            </div>
+        
+                            <input type="radio" name="playlist-privacy" id="playlist-private" value="Private">
+                            <label for="private">Private (only you can see the playlist)</label>
+        
+                            <br>
+        
+                            <input type="radio" name="playlist-privacy" id="public-private" value="Public">
+                            <label for="public">Public (anyone can see the playlist)</label>
+
+                            <br>
+
+                            <button type="submit" class="create-playlist-button">Create Playlist</button>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+
+            <div class="right">
+    
+                <div class="thumbnail-input">
+                    <label for="thumbnail-upload" class="thumbnail-title">
+                        <p><i class="fa fa-picture-o" aria-hidden="true"></i>
+                            Add thumbnail</p>
+                        <img src="{{thumbnailSrc}}" alt="" width="300px">
+                    </label>
+                    <input type="file" (change)="handleThumbnailInput($event.target.files)" name="thumbnail-upload" id="thumbnail-upload">
+                </div>
+
+                <div class="restricted-input">
+                    <div class="restricted-title">
+                        Is your video restricted?
+                    </div>
+
+                    <input type="radio" name="restricted" id="yes" value="true">
+                    <label for="yes">Yes, my video is restricted</label>
+
+                    <br>
+
+                    <input type="radio" name="restricted" id="no" value="false">
+                    <label for="no">No, my video is not restricted</label>
+
+                </div>
+
+                <div class="privacy-input">
+                    <div class="privacy-title">
+                        Privacy :
+                    </div>
+
+                    <input type="radio" name="privacy" id="private" value="Private">
+                    <label for="private">Private (only you can see the video)</label>
+
+                    <br>
+
+                    <input type="radio" name="privacy" id="public" value="Public">
+                    <label for="public">Public (anyone can see the video)</label>
+
+                </div>
+
+                <div class="schedule-input">
+                    <input type="checkbox" name="" id="schedule-checkbox" (click)="toggleDateTimeInput()">
+                    <label for="schedule-checkbox">Schedule video publishing?</label>
+
+                    <div id="date-input">
+                        <label for="schedule-date">Select a date to publish your video</label>
+                        <br>
+                        <input type="datetime-local" name="schedule-date" id="schedule-date">
+                    </div>
+                </div>
+
+                <div id="details-error">
+                    
+                </div>
+            </div>
+            
+
+        </div>
+
+        <div class="previews">
+            <div class="video-progress" *ngIf="doneUploading">
+                <video
+                id="my-video"
+                class="video-js"
+                controls
+                preload="auto"
+                width="320"
+                height="180"
+                data-setup="{}"
+                (loadedmetadata)="getDuration($event)"
+                >
+                <source src="{{downloadURL}}" type="video/mp4" />
+
+                </video>
+            </div>
+    
+            <div class="video-progress" *ngIf="!doneUploading" id="uploading">
+                Uploading video...
+            </div>
+    
+            <div class="title-preview">
+                Title : {{title}}
+            </div>
+    
+            <div class="description-preview">
+                Description : {{description}}
+            </div>
+
+            <div *ngIf="doneUploading" class="duration-preview">
+                Duration : {{duration}}
+            </div>
+            <div *ngIf="!doneUploading" class="duration-preview">
+                Duration : Waiting for upload...
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

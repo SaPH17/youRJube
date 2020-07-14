@@ -1,1 +1,8 @@
-<p>trending works!</p>
+<div class="container">
+    <h3 class="trending-title">Trending Video</h3>
+
+    <div class="trending-video-container">
+        <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+    </div>
+
+</div>

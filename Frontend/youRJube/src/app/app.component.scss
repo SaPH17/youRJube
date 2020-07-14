@@ -464,7 +464,10 @@
 }
 
 .content-container{
+    width: 80vw;
     position: absolute;
+    left: 16vw;
+    top: 10vh;
     display: block;
     z-index: -2;
 	transition-duration: 0.3s;

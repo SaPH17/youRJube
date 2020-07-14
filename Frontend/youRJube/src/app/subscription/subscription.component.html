@@ -14,5 +14,33 @@
 </div>
 
 <div *ngIf="isUserSignedIn()" class="user-signedin-container">
-    subscription {{user.name}}
+    <div class="video-list-container">
+        <div class="video-container">
+            <div class="title">
+                Today
+            </div>
+
+            <div class="video-list">
+                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <div class="title">
+                This Week
+            </div>
+            <div class="video-list">
+                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <div class="title">
+                This Month
+            </div>
+            <div class="video-list">
+                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+            </div>
+        </div>
+    </div>
 </div>

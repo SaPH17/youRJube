@@ -1,3 +1,4 @@
+import { environment } from './../environments/environment.prod';
 import { DataService } from './data.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -16,6 +17,14 @@ import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-logi
 import {
   GoogleLoginProvider,
 } from 'angularx-social-login';
+import { VideoDisplayComponent } from './video-display/video-display.component';
+import { VideoWatchComponent } from './video-watch/video-watch.component';
+import { VideoUploadComponent } from './video-upload/video-upload.component';
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore'
+import { AngularFireStorageModule } from 'angularfire2/storage';
+import { DropZoneDirective } from './drop-zone.directive'
+
 
 @NgModule({
   declarations: [
@@ -26,10 +35,17 @@ import {
     TrendingComponent,
     CategoryComponent,
     PlaylistComponent,
+    VideoDisplayComponent,
+    VideoWatchComponent,
+    VideoUploadComponent,
+    DropZoneDirective,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireStorageModule,
     GraphQLModule,
     HttpClientModule,
     SocialLoginModule

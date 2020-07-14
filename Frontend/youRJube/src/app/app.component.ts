@@ -102,12 +102,11 @@ export class AppComponent implements OnInit{
   }
 
   signInWithGoogle():void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-    this.loggedIn = true;
-    
-    setTimeout(()=>{
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(()=>{
       this.data.changeUser(this.user)
-    }, 3000);
+      this.loggedIn = true;
+    })
+
   }
 
   signOut():void{
