@@ -4,10 +4,268 @@
 
 type User {
   id: ID!
+  email: String!
+  restrict_mode: String!
+  location: String!
+}
+
+input newUser{
+  email: String!
+  restrict_mode: String!
+  location: String!
+}
+
+type Channel{
+  id: ID!
+  user_id: ID!
   name: String!
+  background_image: String!
+  icon: String!
+  description: String!
+  join_day: Int!
+  join_month: Int!
+  join_year: Int!
+}
+
+input newChannel{
+  user_id: ID!
+  name: String!
+  background_image: String!
+  icon: String!
+  description: String!
+}
+
+type ChannelSocialMedia{
+  id: ID!
+  channel_id: ID!
+  social_media: String!
+  link: String!
+}
+
+input newChannelSocialMedia{
+  channel_id: ID!
+  social_media: String!
+  link: String!
+}
+
+type UserSubscription{
+  id: ID!
+  user_id: ID!
+  channel_id: ID!
+  subscribe_day: Int!
+  subscribe_month: Int!
+  subscribe_year: Int!
+}
+
+input newUserSubscription{
+  user_id: ID!
+  channel_id: ID!
+  subscribe_day: Int!
+  subscribe_month: Int!
+  subscribe_year: Int!
+}
+
+type CommunityPost{
+  id: ID!
+  channel_id: ID!
+  title: String!
+  content: String!
+  image: String
+  like: Int!
+  dislike: Int!
+}
+
+input newCommunityPost{
+  channel_id: ID!
+  title: String!
+  content: String!
+  image: String
+  like: Int!
+  dislike: Int!
+}
+
+type PremiumSubscription{
+  id: ID!
+  user_id: ID!
+  start_day: Int!
+  start_month: Int!
+  start_year: Int!
+  end_day: Int!
+  end_month: Int!
+  end_year: Int!
+  plan: String!
+}
+
+input newPremiumSubscription{
+  user_id: ID!
+  start_day: Int!
+  start_month: Int!
+  start_year: Int!
+  end_day: Int!
+  end_month: Int!
+  end_year: Int!
+  plan: String!
+}
+
+type Video{
+  id: ID!
+  channel_id: ID!
+  title: String!
+  description: String!
+  video_url: String!
+  thumbnail: String!
+  upload_day: Int!
+  upload_month: Int!
+  upload_year: Int!
+  category: String!
+  location: String!
+  view: Int!
+  privacy: String!
+  is_premium: String!
+  age_restricted: String!
+}
+
+input newVideo{
+  channel_id: ID!
+  title: String!
+  description: String!
+  video_url: String!
+  thumbnail: String!
+  category: String!
+  location: String!
+  view: Int!
+  privacy: String!
+  is_premium: String!
+  age_restricted: String!
+}
+
+type VideoTag{
+  id: ID!
+  video_id: ID!
+  tag: String!
+}
+
+input newVideoTag{
+  video_id: ID!
+  tag: String!
+}
+
+type Playlist{
+  id: ID!
+  channel_id: ID!
+  title: String!
+  description: String!
+  privacy: String!
+  thumbnail: String!
+  last_updated_day: Int!
+  last_updated_month: Int!
+  last_updated_year: Int!
+  view: Int!
+}
+
+input newPlaylist{
+  channel_id: ID!
+  title: String!
+  description: String!
+  privacy: String!
+  thumbnail: String!
+  view: Int!
+}
+
+type PlaylistDetail{
+  playlist_id: ID!
+  video_id: ID!
+  day_added: Int!
+  month_added: Int!
+  year_added: Int!
+}
+
+input newPlaylistDetail{
+  playlist_id: ID!
+  video_id: ID!
+  day_added: Int!
+  month_added: Int!
+  year_added: Int!
+}
+
+type Comment{
+  id: ID!
+  video_id: ID!
+  user_id: ID!
+  like: Int!
+  dislike: Int!
+  content: String!
+  day: Int!
+  month: Int!
+  year: Int!
+}
+
+input newComment{
+  video_id: ID!
+  user_id: ID!
+  like: Int!
+  dislike: Int!
+  content: String!
+  day: Int!
+  month: Int!
+  year: Int!
+}
+
+type Reply{
+  id: ID!
+  comment_id: ID!
+  user_id: ID!
+  content: String!
+}
+
+input newReply{
+  comment_id: ID!
+  user_id: ID!
+  content: String!
+}
+
+type Notification{
+  id: ID!
+  user_id: ID!
+  channel_id: ID!
+  content: String!
+  is_read: String!
+}
+
+input newNotification{
+  user_id: ID!
+  channel_id: ID!
+  content: String!
+  is_read: String!
 }
 
 type Query{
-  users: [User!]!
+  getUserByUserId(id: ID!): [User!]!
+  getUserByEmail(email: String): [User!]!
+
+  getVideoById(id: ID!): [User!]!
+  getVideo: [Video!]!
+
+  getChannelById(id: ID!): [Channel!]!
+  getChannelByUserID(user_id: ID!): [Channel!]!
+
+  getPlaylistByChannelId(channel_id: ID!): [Playlist!]!
 }
- 
+
+type Mutation{
+  createUser(input: newUser): User!
+  createPremiumSubscription(input: newPremiumSubscription): PremiumSubscription!
+  createChannel(input: newChannel): Channel!
+  createChannelSocialMedia(input: newChannelSocialMedia): ChannelSocialMedia!
+  createSubscription(input: newUserSubscription): UserSubscription!
+  createCommunityPost(input: newCommunityPost): CommunityPost!
+  createVideo(input: newVideo): Video!
+  createVideoTag(input: newVideoTag): VideoTag!
+  createPlaylist(input: newPlaylist): Playlist!
+  createPlaylistDetail(input: newPlaylistDetail): PlaylistDetail!
+  createComment(input: newComment): Comment!
+  createReply(input: newReply): Reply!
+  createNotification(input: newNotification): Notification!
+
+  updateUser(id: ID!, input: newUser): User!
+}

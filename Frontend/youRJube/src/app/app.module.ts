@@ -24,6 +24,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore'
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { DropZoneDirective } from './drop-zone.directive'
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { DropZoneDirective } from './drop-zone.directive'
     AngularFireStorageModule,
     GraphQLModule,
     HttpClientModule,
-    SocialLoginModule
+    SocialLoginModule,
+    FormsModule      
   ],
   providers: [
     {

@@ -9,6 +9,7 @@ $container-width: 288px;
         margin-top: 1vh;
         display: flex;
         max-width: $container-width;
+        position: relative;
 
         .profile-pic{
             border-radius: 50%;    
@@ -41,7 +42,8 @@ $container-width: 288px;
         }
 
         .settings-button{
-            position: relative;
+            position: absolute;
+            right: 0px;
 
             .settings-button-icon{
                 opacity: 0;

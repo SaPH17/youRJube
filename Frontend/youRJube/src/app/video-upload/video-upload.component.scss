@@ -270,6 +270,24 @@
                     }
                 }
 
+                .premium-input{
+                    
+                    .premium-title{
+                        font-size: 14px;
+                        margin-bottom: 1vh;
+                        margin-top: 2vh;
+                    }
+
+                    label{
+                        font-size: 14px;
+                    }
+
+                    input{
+                        margin-right: 2vw;
+                        margin-bottom: 1vh;
+                    }
+                }
+
                 .schedule-input{
 
                     input{
@@ -291,12 +309,6 @@
                     }
                 }
 
-                #details-error{
-                    // visibility: hidden;
-                    color: red;
-                    text-align: center;
-                    font-size: 14px;
-                }
             }
 
         }
@@ -329,6 +341,33 @@
 
             .duration-preview{
                 margin: 1vh 0.5vw 1vh 0.5vw;
+            }
+
+            .publish-button-container{
+                display: flex;
+                justify-content: center;
+                
+        
+                .publish-button{
+                    text-align: center;
+                    font-size: 16px;
+                    margin-top: 3vh;
+                    background-color: blueviolet;
+                    border:1px solid #057fd0;
+                    cursor:pointer;
+                    color:#ffffff;
+                    padding:6px 10px;
+                    text-decoration:none;
+                    border-radius: 5px;
+                }
+            }
+            
+            #details-error{
+                margin-top: 4vh;
+                visibility: hidden;
+                color: red;
+                text-align: center;
+                font-size: 18px;
             }
         }
     }

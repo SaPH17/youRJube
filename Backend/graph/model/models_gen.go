@@ -2,7 +2,239 @@
 
 package model
 
+type Channel struct {
+	ID              string `json:"id"`
+	UserID          string `json:"user_id"`
+	Name            string `json:"name"`
+	BackgroundImage string `json:"background_image"`
+	Icon            string `json:"icon"`
+	Description     string `json:"description"`
+	JoinDay         int    `json:"join_day"`
+	JoinMonth       int    `json:"join_month"`
+	JoinYear        int    `json:"join_year"`
+}
+
+type ChannelSocialMedia struct {
+	ID          string `json:"id"`
+	ChannelID   string `json:"channel_id"`
+	SocialMedia string `json:"social_media"`
+	Link        string `json:"link"`
+}
+
+type Comment struct {
+	ID      string `json:"id"`
+	VideoID string `json:"video_id"`
+	UserID  string `json:"user_id"`
+	Like    int    `json:"like"`
+	Dislike int    `json:"dislike"`
+	Content string `json:"content"`
+	Day     int    `json:"day"`
+	Month   int    `json:"month"`
+	Year    int    `json:"year"`
+}
+
+type CommunityPost struct {
+	ID        string  `json:"id"`
+	ChannelID string  `json:"channel_id"`
+	Title     string  `json:"title"`
+	Content   string  `json:"content"`
+	Image     *string `json:"image"`
+	Like      int     `json:"like"`
+	Dislike   int     `json:"dislike"`
+}
+
+type Notification struct {
+	ID        string `json:"id"`
+	UserID    string `json:"user_id"`
+	ChannelID string `json:"channel_id"`
+	Content   string `json:"content"`
+	IsRead    string `json:"is_read"`
+}
+
+type Playlist struct {
+	ID               string `json:"id"`
+	ChannelID        string `json:"channel_id"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	Privacy          string `json:"privacy"`
+	Thumbnail        string `json:"thumbnail"`
+	LastUpdatedDay   int    `json:"last_updated_day"`
+	LastUpdatedMonth int    `json:"last_updated_month"`
+	LastUpdatedYear  int    `json:"last_updated_year"`
+	View             int    `json:"view"`
+}
+
+type PlaylistDetail struct {
+	PlaylistID string `json:"playlist_id"`
+	VideoID    string `json:"video_id"`
+	DayAdded   int    `json:"day_added"`
+	MonthAdded int    `json:"month_added"`
+	YearAdded  int    `json:"year_added"`
+}
+
+type PremiumSubscription struct {
+	ID         string `json:"id"`
+	UserID     string `json:"user_id"`
+	StartDay   int    `json:"start_day"`
+	StartMonth int    `json:"start_month"`
+	StartYear  int    `json:"start_year"`
+	EndDay     int    `json:"end_day"`
+	EndMonth   int    `json:"end_month"`
+	EndYear    int    `json:"end_year"`
+	Plan       string `json:"plan"`
+}
+
+type Reply struct {
+	ID        string `json:"id"`
+	CommentID string `json:"comment_id"`
+	UserID    string `json:"user_id"`
+	Content   string `json:"content"`
+}
+
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID           string `json:"id"`
+	Email        string `json:"email"`
+	RestrictMode string `json:"restrict_mode"`
+	Location     string `json:"location"`
+}
+
+type UserSubscription struct {
+	ID             string `json:"id"`
+	UserID         string `json:"user_id"`
+	ChannelID      string `json:"channel_id"`
+	SubscribeDay   int    `json:"subscribe_day"`
+	SubscribeMonth int    `json:"subscribe_month"`
+	SubscribeYear  int    `json:"subscribe_year"`
+}
+
+type Video struct {
+	ID            string `json:"id"`
+	ChannelID     string `json:"channel_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	VideoURL      string `json:"video_url"`
+	Thumbnail     string `json:"thumbnail"`
+	UploadDay     int    `json:"upload_day"`
+	UploadMonth   int    `json:"upload_month"`
+	UploadYear    int    `json:"upload_year"`
+	Category      string `json:"category"`
+	Location      string `json:"location"`
+	View          int    `json:"view"`
+	Privacy       string `json:"privacy"`
+	IsPremium     string `json:"is_premium"`
+	AgeRestricted string `json:"age_restricted"`
+}
+
+type VideoTag struct {
+	ID      string `json:"id"`
+	VideoID string `json:"video_id"`
+	Tag     string `json:"tag"`
+}
+
+type NewChannel struct {
+	UserID          string `json:"user_id"`
+	Name            string `json:"name"`
+	BackgroundImage string `json:"background_image"`
+	Icon            string `json:"icon"`
+	Description     string `json:"description"`
+}
+
+type NewChannelSocialMedia struct {
+	ChannelID   string `json:"channel_id"`
+	SocialMedia string `json:"social_media"`
+	Link        string `json:"link"`
+}
+
+type NewComment struct {
+	VideoID string `json:"video_id"`
+	UserID  string `json:"user_id"`
+	Like    int    `json:"like"`
+	Dislike int    `json:"dislike"`
+	Content string `json:"content"`
+	Day     int    `json:"day"`
+	Month   int    `json:"month"`
+	Year    int    `json:"year"`
+}
+
+type NewCommunityPost struct {
+	ChannelID string  `json:"channel_id"`
+	Title     string  `json:"title"`
+	Content   string  `json:"content"`
+	Image     *string `json:"image"`
+	Like      int     `json:"like"`
+	Dislike   int     `json:"dislike"`
+}
+
+type NewNotification struct {
+	UserID    string `json:"user_id"`
+	ChannelID string `json:"channel_id"`
+	Content   string `json:"content"`
+	IsRead    string `json:"is_read"`
+}
+
+type NewPlaylist struct {
+	ChannelID   string `json:"channel_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Privacy     string `json:"privacy"`
+	Thumbnail   string `json:"thumbnail"`
+	View        int    `json:"view"`
+}
+
+type NewPlaylistDetail struct {
+	PlaylistID string `json:"playlist_id"`
+	VideoID    string `json:"video_id"`
+	DayAdded   int    `json:"day_added"`
+	MonthAdded int    `json:"month_added"`
+	YearAdded  int    `json:"year_added"`
+}
+
+type NewPremiumSubscription struct {
+	UserID     string `json:"user_id"`
+	StartDay   int    `json:"start_day"`
+	StartMonth int    `json:"start_month"`
+	StartYear  int    `json:"start_year"`
+	EndDay     int    `json:"end_day"`
+	EndMonth   int    `json:"end_month"`
+	EndYear    int    `json:"end_year"`
+	Plan       string `json:"plan"`
+}
+
+type NewReply struct {
+	CommentID string `json:"comment_id"`
+	UserID    string `json:"user_id"`
+	Content   string `json:"content"`
+}
+
+type NewUser struct {
+	Email        string `json:"email"`
+	RestrictMode string `json:"restrict_mode"`
+	Location     string `json:"location"`
+}
+
+type NewUserSubscription struct {
+	UserID         string `json:"user_id"`
+	ChannelID      string `json:"channel_id"`
+	SubscribeDay   int    `json:"subscribe_day"`
+	SubscribeMonth int    `json:"subscribe_month"`
+	SubscribeYear  int    `json:"subscribe_year"`
+}
+
+type NewVideo struct {
+	ChannelID     string `json:"channel_id"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	VideoURL      string `json:"video_url"`
+	Thumbnail     string `json:"thumbnail"`
+	Category      string `json:"category"`
+	Location      string `json:"location"`
+	View          int    `json:"view"`
+	Privacy       string `json:"privacy"`
+	IsPremium     string `json:"is_premium"`
+	AgeRestricted string `json:"age_restricted"`
+}
+
+type NewVideoTag struct {
+	VideoID string `json:"video_id"`
+	Tag     string `json:"tag"`
 }

@@ -12,6 +12,20 @@ export class DataService {
         this.userObjectSource.next(newUser)
     }
 
+    private userDBObjectSource = new BehaviorSubject<any>(null);
+    currentUserDBObject = this.userDBObjectSource.asObservable();
+
+    changeUserDB(newUserDB: any){
+        this.userDBObjectSource.next(newUserDB)
+    }
+
+    private channelObjectSource = new BehaviorSubject<any>(null);
+    currentChannelObject = this.channelObjectSource.asObservable();
+
+    changeChannel(newChannel: any){
+        this.channelObjectSource.next(newChannel)
+    }
+
     constructor() {
         
     }

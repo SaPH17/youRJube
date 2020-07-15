@@ -1,9 +1,11 @@
+import { Apollo } from 'apollo-angular';
 import { DataService } from './data.service';
 import { Component, OnInit } from '@angular/core';
 import { SocialAuthService } from "angularx-social-login";
 import { GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
 import {Router} from '@angular/router';
+import gql from 'graphql-tag';
 
 
 @Component({
@@ -12,11 +14,15 @@ import {Router} from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
+
   title = 'youRJube';
   user : SocialUser
   loggedIn: boolean = false;
+  userDB: any
 
-  constructor(private authService: SocialAuthService, private router: Router, private data: DataService) { }
+  restrictMode: boolean = false
+
+  constructor(private authService: SocialAuthService, private router: Router, private data: DataService, private apollo: Apollo) { }
 
   ngOnInit(): void {
 
@@ -105,9 +111,114 @@ export class AppComponent implements OnInit{
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(()=>{
       this.data.changeUser(this.user)
       this.loggedIn = true;
+      this.validateUserExistance()
+    })
+  }
+
+  validateUserExistance():void{
+
+    this.apollo.query<any>({
+      query: gql `
+        query getUserByEmail($email: String!){
+          getUserByEmail(email: $email){
+            id,
+            email
+          }
+        }
+      `,
+      variables:{
+        email: this.user.email
+      }
+    }).subscribe(result => {
+      this.userDB = result.data.getUserByEmail
+
+      if(this.userDB === undefined || this.userDB.length == 0){
+        this.apollo.mutate<any>({
+          mutation: gql`
+            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!){
+              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location}){
+                id,
+                email,
+                restrict_mode,
+                location
+              }
+            }
+          `,
+          variables:{
+            email: this.user.email,
+            restrict_mode: this.restrictMode.toString(),
+            location: "Indonesia",
+          }
+        }).subscribe(result =>{
+          this.userDB = result.data.createUser
+          this.insertNewChannel()
+          this.data.changeUserDB(this.userDB)
+        })
+      }
+      else{
+        this.data.changeUserDB(this.userDB)
+
+        console.log(this.userDB[0].id)
+        console.log("DB ==");
+        
+        this.apollo.query<any>({
+          query: gql `
+            query getChannelByUserID($user_id: ID!){
+              getChannelByUserID(user_id: $user_id){
+                id,
+                user_id,
+                background_image,
+                icon,
+                description,
+                join_day,
+                join_month,
+                join_year,
+                name
+              }
+            }
+          `,
+          variables:{
+            user_id: this.userDB[0].id
+          }
+        }).subscribe(result => {
+          console.log(result.data.getChannelByUserID)
+          this.data.changeChannel(result.data.getChannelByUserID[0])
+        })
+      }
     })
 
   }
+
+  insertNewChannel():void{
+
+    var currentDate = new Date()
+
+    this.apollo.mutate<any>({
+      mutation: gql`
+        mutation insertChannel($user_id: ID!, $name: String!){
+          createChannel(input: {
+            user_id: $user_id, 
+            background_image: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/channel-background-image%2Fdefault_bgimage.jpg?alt=media&token=35ea0c55-14ab-422d-9b39-643a1d332bb4",
+            icon: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/channel-icon%2Fdefault_channelicon.png?alt=media&token=099b695d-0f8b-4056-910b-12bbf31585e9",
+            description: "No description given",
+            name: $name,
+          }){
+            id,
+            user_id,
+          }
+        }
+      `,
+      variables:{
+        user_id: this.userDB.id,
+        name: this.user.name,
+      }
+    }).subscribe(result => {
+      console.log(result)
+      this.data.changeChannel(result)
+    })
+
+  }
+
 
   signOut():void{
     this.authService.signOut(true);
@@ -130,4 +241,8 @@ export class AppComponent implements OnInit{
   isUserSignedIn():boolean{
     return this.loggedIn
   }
+
+  
+
+
 }

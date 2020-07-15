@@ -30,7 +30,7 @@
             <div class="left">
                 <div class="title-input">
                     <label for="title">Title (Required) : </label>
-                    <input type="text" name="title" id="title" (input)="title = $event.target.value">
+                    <input type="text" name="title" id="title" (input)="title = $event.target.value" [value]="title">
                 </div>
     
                 <br>
@@ -42,13 +42,14 @@
 
                 <div class="category-input">
                     <label for="category">Category : </label>
-                    <select name="category" id="category">
-                        <option value="Music">Music</option>
+                    <select name="category" id="category" (change)="changeCategoryValue($event)">
+                        <!-- <option value="Music">Music</option>
                         <option value="Sport">Sport</option>
                         <option value="Gaming">Gaming</option>
                         <option value="Entertainment">Entertainment</option>
                         <option value="News">News</option>
-                        <option value="Travel">Travel</option>
+                        <option value="Travel">Travel</option> -->
+                        <option *ngFor="let c of categoryList" value="{{c.value}}">{{c.name}}</option>
                     </select>
                 </div>
 
@@ -58,37 +59,35 @@
                         Add video to playlist :
                     </div>
 
-                    <select name="" id="playlist-list">
-                        <option value="">Select a playlist</option>
-                        <option value="">Playlist 1</option>
-                        <option value="">Playlist 2</option>
-                        <option value="">Playlist 3</option>
+                    <select name="" id="playlist-list" (change)="changePlaylistValue($event)">
+                        <option value="None">None</option>
+                        <option *ngFor="let p of channelPlaylist" value="{{p.title}}">{{p.title}}</option>
                     </select>
 
                     <div class="playlist-title2">
-                        <input type="checkbox" name="" id="new-playlist-checkbox" (click)="toggleNewPlaylistInput()">
+                        <input type="checkbox" name="" id="new-playlist-checkbox" (click)="toggleNewPlaylistInput()" ng-checked="v">
                         <label for="new-playlist-checkbox">Make a new playlist?</label>
     
-                        <div id="playlist-input">
+                        <div *ngIf="playlistLoaded" id="playlist-input">
                             <label for="new-playlist-title">Title : </label>
                             <br>
-                            <input type="text" name="" id="new-playlist-title">
+                            <input type="text" name="" id="new-playlist-title" (input)="playlist_title = $event.target.value">
 
                             <div class="new-playlist-privacy-title">
                                 Privacy :
                             </div>
         
-                            <input type="radio" name="playlist-privacy" id="playlist-private" value="Private">
-                            <label for="private">Private (only you can see the playlist)</label>
+                            <input type="radio" name="playlist-privacy" id="playlist-private" value="Private" (change)="playlist_privacy = $event.target.value">
+                            <label for="playlist-private">Private (only you can see the playlist)</label>
         
                             <br>
         
-                            <input type="radio" name="playlist-privacy" id="public-private" value="Public">
-                            <label for="public">Public (anyone can see the playlist)</label>
+                            <input type="radio" name="playlist-privacy" id="playlist-public" value="Public" (change)="playlist_privacy = $event.target.value">
+                            <label for="playlist-public">Public (anyone can see the playlist)</label>
 
                             <br>
 
-                            <button type="submit" class="create-playlist-button">Create Playlist</button>
+                            <button type="submit" class="create-playlist-button" (click)="createNewPlaylist()">Create Playlist</button>
                         </div>                    
                     </div>
                 </div>
@@ -100,7 +99,7 @@
                     <label for="thumbnail-upload" class="thumbnail-title">
                         <p><i class="fa fa-picture-o" aria-hidden="true"></i>
                             Add thumbnail</p>
-                        <img src="{{thumbnailSrc}}" alt="" width="300px">
+                        <img src="{{thumbnailSrc}}" alt="" width="200px">
                     </label>
                     <input type="file" (change)="handleThumbnailInput($event.target.files)" name="thumbnail-upload" id="thumbnail-upload">
                 </div>
@@ -110,12 +109,12 @@
                         Is your video restricted?
                     </div>
 
-                    <input type="radio" name="restricted" id="yes" value="true">
+                    <input type="radio" name="restricted" id="yes" value="true" (change)="changeRestrictedValue($event.target.value)">
                     <label for="yes">Yes, my video is restricted</label>
 
                     <br>
 
-                    <input type="radio" name="restricted" id="no" value="false">
+                    <input type="radio" name="restricted" id="no" value="false" (change)="changeRestrictedValue($event.target.value)">
                     <label for="no">No, my video is not restricted</label>
 
                 </div>
@@ -125,13 +124,28 @@
                         Privacy :
                     </div>
 
-                    <input type="radio" name="privacy" id="private" value="Private">
+                    <input type="radio" name="privacy" id="private" value="Private" (change)="changePrivacyValue($event.target.value)">
                     <label for="private">Private (only you can see the video)</label>
 
                     <br>
 
-                    <input type="radio" name="privacy" id="public" value="Public">
+                    <input type="radio" name="privacy" id="public" value="Public" (change)="changePrivacyValue($event.target.value)">
                     <label for="public">Public (anyone can see the video)</label>
+
+                </div>
+
+                <div class="premium-input">
+                    <div class="premium-title">
+                        Is your video premium only?
+                    </div>
+
+                    <input type="radio" name="premium" id="premium" value="true" (change)="changePremiumValue($event.target.value)">
+                    <label for="premium">Yes</label>
+
+                    <br>
+
+                    <input type="radio" name="premium" id="nonpremium" value="false" (change)="changePremiumValue($event.target.value)">
+                    <label for="nonpremium">No</label>
 
                 </div>
 
@@ -142,12 +156,8 @@
                     <div id="date-input">
                         <label for="schedule-date">Select a date to publish your video</label>
                         <br>
-                        <input type="datetime-local" name="schedule-date" id="schedule-date">
+                        <input type="datetime-local" name="schedule-date" id="schedule-date" (change)="changeDatePublishValue($event.target.value)">
                     </div>
-                </div>
-
-                <div id="details-error">
-                    
                 </div>
             </div>
             
@@ -166,7 +176,7 @@
                 data-setup="{}"
                 (loadedmetadata)="getDuration($event)"
                 >
-                <source src="{{downloadURL}}" type="video/mp4" />
+                <source src="{{videoURL}}" type="video/mp4" />
 
                 </video>
             </div>
@@ -188,6 +198,14 @@
             </div>
             <div *ngIf="!doneUploading" class="duration-preview">
                 Duration : Waiting for upload...
+            </div>
+
+            <div class="publish-button-container">
+                <button (click)="startPublishVideo()" class="publish-button">Publish</button>
+            </div>
+
+            <div id="details-error">
+                    Input value is wrong!
             </div>
         </div>
 

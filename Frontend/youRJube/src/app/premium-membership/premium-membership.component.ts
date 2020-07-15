@@ -10,11 +10,31 @@ import { SocialUser } from 'angularx-social-login';
 export class PremiumMembershipComponent implements OnInit {
 
   user: SocialUser
+  choosenPlan: String = ""
 
   constructor(private data: DataService) { }
 
   ngOnInit(): void {
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
+  }
+
+  registerPlan():void{
+    if(this.choosenPlan == ""){
+      document.getElementById('error').innerHTML = "Please choose a plan!"
+      document.getElementById('error').style.visibility = "visible"
+    }
+    else if(this.user == null){
+      document.getElementById('error').innerHTML = "Please sign in first!"
+      document.getElementById('error').style.visibility = "visible"
+    }
+    else{
+      document.getElementById('error').style.visibility = "hidden"
+      console.log("SUCCESS")
+    }
+  }
+
+  changePlan(e):void{
+    this.choosenPlan = e.target.value
   }
 
 }

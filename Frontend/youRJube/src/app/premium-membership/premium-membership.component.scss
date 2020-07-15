@@ -50,4 +50,14 @@
             border-radius: 2px;
         }
     }
+
+    #error{
+        margin-top: 4vh;
+        color: red;
+        font-size: 20px;
+        visibility: hidden;
+        padding: 15px;
+        border: 1px red solid;
+        border-radius: 5px;
+    }
 }
