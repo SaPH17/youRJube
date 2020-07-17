@@ -37,7 +37,6 @@ $container-width: 288px;
                 font-size: smaller;
                 display: inline;
 
-
             }
         }
 
@@ -57,17 +56,18 @@ $container-width: 288px;
                 position: absolute;
                 left: -10vw;
                 background-color: white;
-                width: 10vw;
+                width: 12vw;
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
                 z-index: 1;
     
                 a {
                     color: gray;
-                    padding: 15px 16px;
+                    padding: 12px 8px;
                     text-decoration: none;
                     display: block;
                     border-bottom: 1px lightgray solid;
                     text-align: left;
+                    font-size: 14px;
 
                     i{
                         margin-right: 1vw;

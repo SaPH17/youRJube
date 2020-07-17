@@ -1,24 +1,156 @@
-<div class="container">
+<div class="container" *ngIf="doneLoading">
     <div class="video-section">
-        <!-- <video controls>
-            <source src="https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/video.mp4?alt=media&token=a7584627-adb2-4037-8d75-368f70272b2d" type="video/mp4">
-        </video> -->
 
-        <video
-        id="my-video"
-        class="video-js"
-        controls
-        preload="auto"
-        width="640"
-        height="264"
-        data-setup="{}"
-        >
-        <source src="https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/video.mp4?alt=media&token=a7584627-adb2-4037-8d75-368f70272b2d" type="video/mp4" />
+        <div class="video-player">
+            <mat-video 
+            id="video-player"
+            src="{{video.video_url}}">
+        
+            </mat-video>
+        </div>
 
-        </video>
+        <div class="video-title">
+            {{video.title}}
+        </div>
+
+        <div class="video-additional">
+
+            <div class="view-and-date">
+                {{viewOutput}} • {{dateOutput}}
+            </div>
+
+            <div class="video-button">
+                <div class="like-and-dislike">
+                    <div class="the-buttons">
+                        <a>
+                            <div class="like-button">
+                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                {{likeOutput}}
+                            </div>
+                        </a>
+                        <a>
+                            <div class="dislike-button">
+                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                {{dislikeOutput}}
+                            </div>
+                        </a>
+
+                        <div id="numbers">
+                            {{likeCount}}/{{dislikeCount}}
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <progress class="like-dislike-ratio" [value]="likeCount" [max]="totalLikeAndDislike"></progress>
+                    </div>
+                </div>
+                <a>
+                    <div class="share-button">
+                    <i class="fa fa-share" aria-hidden="true" style="margin-right: 0.5vw;"></i>
+                    SHARE
+                    </div>
+                </a>
+                <a>
+                    <div class="add-to-playlist">
+                    <i class="fa fa-list-ol" aria-hidden="true" style="margin-right: 0.5vw;"></i>
+                    SAVE
+                    </div>
+                </a>
+                
+            </div>
+
+        </div>
+
+        <div class="video-description"  *ngIf="descriptionLoaded">
+            <div class="top">
+                <div class="channel-info">
+                    <div class="channel-left">
+                        <img src="{{channel.icon}}" alt="">
+                    </div>
+                    <div class="channel-right">
+                        <div class="channel-name">
+                            {{channel.name}}
+                        </div>
+                        <div class="subs-count">
+                            {{subscriberCountOutput}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subscribe-container">
+                    <a>
+                        <div class="subscribe-button">
+                            SUBSCRIBE
+                        </div>
+                    </a>
+
+                    <!-- <div class="bell-button">
+                        <i class="fa fa-bell" aria-hidden="true"></i>
+                    </div>
+
+                    <div class="bell-button2">
+                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                    </div> -->
+
+                </div>
+            </div>
+
+            <div class="center">
+                {{video.description}}
+            </div>
+
+            <div class="bottom">
+                Category : {{video.category}}
+            </div>
+        </div>
+
+        <div class="video-comment" *ngIf="commentsLoaded">
+            <div class="comment-statistic">
+                <div class="comment-count">
+                    {{commentCountOutput}}
+                </div>
+                <a>
+                    <div class="sort-options">
+                        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+                        SORT BY
+                    </div>
+                </a>
+            </div>
+        
+            <div class="input-comment">
+
+                <div class="profile-picture" *ngIf="userChannel">
+                    <img src="{{userChannel.icon}}" alt="profilePic" width="50px">
+                </div>
+
+                <div class="profile-picture" *ngIf="!userChannel">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/channel-icon%2Fdefault_channelicon.png?alt=media&token=099b695d-0f8b-4056-910b-12bbf31585e9" 
+                    alt="" width="30px">
+                </div>
+
+                <div class="signin-alert" *ngIf="!userChannel">
+                    SIGN IN TO ADD A COMMENT
+                </div>
+
+                <div class="input-text" *ngIf="userChannel">
+                    <input type="text" name="" id="comment-input-text" placeholder="Add a public comment..." (input)="detectReplyInput($event.target.value)">
+                </div>
+
+                <a *ngIf="userChannel">
+                    <div class="comment-button" id="comment-button" (click)="insertComment()">
+                        COMMENT
+                    </div>
+                </a>
+                
+            </div>
+
+            <div class="all-comment">
+                <app-video-comment *ngFor="let c of comments" [comm]="c"></app-video-comment>
+            </div>
+        </div>  
+
     </div>
-
+    
     <div class="related-video">
-
     </div>
 </div>

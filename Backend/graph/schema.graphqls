@@ -25,6 +25,7 @@ type Channel{
   join_day: Int!
   join_month: Int!
   join_year: Int!
+  subscriber_count: Int!
 }
 
 input newChannel{
@@ -55,6 +56,7 @@ type UserSubscription{
   subscribe_day: Int!
   subscribe_month: Int!
   subscribe_year: Int!
+  should_notify: String!
 }
 
 input newUserSubscription{
@@ -63,6 +65,7 @@ input newUserSubscription{
   subscribe_day: Int!
   subscribe_month: Int!
   subscribe_year: Int!
+  should_notify: String!
 }
 
 type CommunityPost{
@@ -98,12 +101,6 @@ type PremiumSubscription{
 
 input newPremiumSubscription{
   user_id: ID!
-  start_day: Int!
-  start_month: Int!
-  start_year: Int!
-  end_day: Int!
-  end_month: Int!
-  end_year: Int!
   plan: String!
 }
 
@@ -123,6 +120,8 @@ type Video{
   privacy: String!
   is_premium: String!
   age_restricted: String!
+  like: Int!
+  dislike: Int!
 }
 
 input newVideo{
@@ -133,7 +132,6 @@ input newVideo{
   thumbnail: String!
   category: String!
   location: String!
-  view: Int!
   privacy: String!
   is_premium: String!
   age_restricted: String!
@@ -191,7 +189,7 @@ input newPlaylistDetail{
 type Comment{
   id: ID!
   video_id: ID!
-  user_id: ID!
+  channel_id: ID!
   like: Int!
   dislike: Int!
   content: String!
@@ -202,25 +200,23 @@ type Comment{
 
 input newComment{
   video_id: ID!
-  user_id: ID!
-  like: Int!
-  dislike: Int!
+  channel_id: ID!
+  content: String!
+}
+
+type Reply{
+  id: ID!
+  comment_id: ID!
+  channel_id: ID!
   content: String!
   day: Int!
   month: Int!
   year: Int!
 }
 
-type Reply{
-  id: ID!
-  comment_id: ID!
-  user_id: ID!
-  content: String!
-}
-
 input newReply{
   comment_id: ID!
-  user_id: ID!
+  channel_id: ID!
   content: String!
 }
 
@@ -243,29 +239,80 @@ type Query{
   getUserByUserId(id: ID!): [User!]!
   getUserByEmail(email: String): [User!]!
 
-  getVideoById(id: ID!): [User!]!
-  getVideo: [Video!]!
+  getPremiumSubscriptionByUserId(user_id: ID!): [PremiumSubscription!]!
 
   getChannelById(id: ID!): [Channel!]!
   getChannelByUserID(user_id: ID!): [Channel!]!
+  getchannelByName(name: String!): [Channel!]!
+
+  getChannelSocialMediaByChannelId(channel_id: ID!) : [ChannelSocialMedia!]!
+
+  getUserSubscriptionByUserId(user_id: ID!): [UserSubscription!]!
+
+  getCommunityPostByChannelId(channel_id: ID!): [CommunityPost!]!
+
+  getVideoById(id: ID!): [Video!]!
+  getVideoByTitle(title: String!): [Video!]!
+  getVideoByChannelId(channel_id: ID!): [Video!]!
+
+  getTrendingVideo(location: String!, is_restrict: String!): [Video!]!
+  getCategoryVideo(range: String!, is_restrict: String!): [Video!]!
+  getHomeVideo(location: String!, is_restrict: String!): [Video!]!
+  getRelatedVideo(category: String!, location: String!, is_restrict: String!): [Video!]!
+  getVideo: [Video!]!
+
+  getVideoTagByVideoId(video_id: ID!): [VideoTag!]!
 
   getPlaylistByChannelId(channel_id: ID!): [Playlist!]!
+  getPlaylistByUserId(user_id: ID!): [Playlist!]!
+  getPlaylistDetailByPlaylistId(playlist_id: ID!): [PlaylistDetail!]!
+
+  getCommentByVideoId(video_id: ID!): [Comment!]!
+
+  getReplyByCommentId(comment_id: ID!): [Reply!]!
+
+  getNotificationByUserId(user_id: ID!): [Notification!]!
 }
 
 type Mutation{
   createUser(input: newUser): User!
-  createPremiumSubscription(input: newPremiumSubscription): PremiumSubscription!
-  createChannel(input: newChannel): Channel!
-  createChannelSocialMedia(input: newChannelSocialMedia): ChannelSocialMedia!
-  createSubscription(input: newUserSubscription): UserSubscription!
-  createCommunityPost(input: newCommunityPost): CommunityPost!
-  createVideo(input: newVideo): Video!
-  createVideoTag(input: newVideoTag): VideoTag!
-  createPlaylist(input: newPlaylist): Playlist!
-  createPlaylistDetail(input: newPlaylistDetail): PlaylistDetail!
-  createComment(input: newComment): Comment!
-  createReply(input: newReply): Reply!
-  createNotification(input: newNotification): Notification!
-
   updateUser(id: ID!, input: newUser): User!
+
+  createPremiumSubscription(input: newPremiumSubscription): PremiumSubscription!
+
+  createChannel(input: newChannel): Channel!
+  updateChannel(id: ID!, input: newChannel): Channel!
+
+  createChannelSocialMedia(input: newChannelSocialMedia): ChannelSocialMedia!
+  updateChannelSocialMedia(id: ID!, input: newChannelSocialMedia): ChannelSocialMedia!
+  deleteChannelSocialMedia(id: ID!): Boolean!
+
+  createUserSubscription(input: newUserSubscription): UserSubscription!
+  deleteUserSubscription(id: ID!): Boolean!
+  updateUserSubscription(id: ID!, input: newUserSubscription): UserSubscription!
+
+  createCommunityPost(input: newCommunityPost): CommunityPost!
+  deleteCommunityPost(id: ID!): Boolean!
+  updateCommunityPost(id: ID!, input: newCommunityPost): CommunityPost!
+
+  createVideo(input: newVideo): Video!
+  updateVideo(id: ID!, input: newVideo): Video!
+  deleteVideo(id: ID!): Boolean!
+
+  createVideoTag(input: newVideoTag): VideoTag!
+  deleteVideoTag(id: ID!): Boolean!
+
+  createPlaylist(input: newPlaylist): Playlist!
+  deletePlaylist(id: ID!): Boolean!
+  updatePlaylist(id: ID!, input: newPlaylist): Playlist!
+  createPlaylistDetail(input: newPlaylistDetail): PlaylistDetail!
+  deletePlaylistDetail(id: ID!): Boolean!
+
+  createComment(input: newComment): Comment!
+
+  createReply(input: newReply): Reply!
+
+  createNotification(input: newNotification): Notification!
+  updateNotification(id: ID!, input: newNotification): Notification!
+
 }

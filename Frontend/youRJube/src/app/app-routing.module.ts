@@ -1,3 +1,7 @@
+import { PrivacyComponent } from './privacy/privacy.component';
+import { CopyrightComponent } from './copyright/copyright.component';
+import { TermsComponent } from './terms/terms.component';
+import { AboutUsComponent } from './about-us/about-us.component';
 import { PlaylistComponent } from './playlist/playlist.component';
 import { CategoryComponent } from './category/category.component';
 import { SubscriptionComponent } from './subscription/subscription.component';
@@ -18,8 +22,13 @@ const routes: Routes = [
   {path:"category", component: CategoryComponent},
   {path:"playlist", component: PlaylistComponent},
   {path:"premium-membership", component: PremiumMembershipComponent},
-  {path:"watch", component: VideoWatchComponent},
+  {path:"watch/:id", component: VideoWatchComponent},
   {path:"upload", component: VideoUploadComponent},
+  {path:"about-us", component: AboutUsComponent},
+  {path:"terms", component: TermsComponent},
+  {path:"copyright", component: CopyrightComponent},
+  {path:"privacy", component: PrivacyComponent},
+
 ];
 
 @NgModule({

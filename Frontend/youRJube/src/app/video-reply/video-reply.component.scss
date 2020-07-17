@@ -1,0 +1,25 @@
+.container{
+    display: flex;
+    flex-direction: row;
+    margin: 1vh 0vw 1vh 3vw;
+    align-items: center;
+
+    .left{
+        margin-right: 1vw;
+    }
+
+    .right{
+        .top2{
+            .name{
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            
+        }
+
+        .content{
+            font-size: 13px;
+        }
+    }
+}

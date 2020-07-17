@@ -1,0 +1,138 @@
+.container{
+    margin: 2vh 0;
+
+    .top{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .left{
+            margin-right: 1vw;
+        }
+
+        .right{
+
+            .top2{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .name{
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+
+                .date{
+                    font-size: 12px;
+                    color: gray;
+                    margin-left: 0.5vw;
+                }
+            }
+
+            .content{
+                margin-top: 0.5vh;
+                font-size: 14px;
+            }
+
+        }
+    }
+
+    .center{
+        display: flex;
+        flex-direction: column;
+        margin-left: 4vw;
+        margin-top: 0.5vh;
+
+        .reply-top{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            
+            a{
+                margin-right: 2vw;
+    
+                .like{
+                    color: gray;
+                    font-size: 14px;
+    
+                    i{
+                        font-size: 20px;
+                        margin-right: 0.5vw;
+                    }
+                }
+        
+                .dislike{
+                    color: gray;
+                    font-size: 14px;
+    
+                    i{
+                        font-size: 20px;
+                        margin-right: 0.5vw;
+                    }
+                }
+        
+                .reply-button{
+                    color: gray;
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .reply-bottom{
+            display: none;
+            // display: flex;
+            flex-direction: row;
+            margin-top: 1vh;
+            align-items: center;
+
+            .input-text{
+                margin-left: 1vw;
+                margin-right: 2vw;
+
+                input{
+                    padding: 8px 16px;
+                    font-size: 16px;
+                    width: 30vw;
+                    outline: 0;
+                    border: none;
+                    border-bottom: 2px lightgray solid;
+                    transition-duration: 0.3s;
+                }
+
+                input:focus{
+                    border-color: black;
+                    transition-duration: 0.3s;
+                }
+            }
+
+            .cancel-button{
+                color: gray;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: bolder;
+            }
+
+            .reply-button{
+                color: white;
+                background-color: pink;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: bolder;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .bottom{
+        .show-button{
+            color: blueviolet;
+            margin-left: 4vw;
+            margin-top: 1.5vh;
+        }
+
+        .replies{
+            display: none;
+            flex-direction: column;
+        }
+    }
+}

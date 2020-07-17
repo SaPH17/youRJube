@@ -1,5 +1,5 @@
 <div class="container" *ngIf="doneLoading">
-    <a href="watch">
+    <a href="watch/{{video.id}}">
         <div class="thumbnail">
             <img src="{{video.thumbnail}}" alt="" width="288px" height="162px">
         </div>
@@ -15,9 +15,9 @@
                     {{channel[0].name}}
                 </div>
                 <div class="views-count">
-                    {{video.view}} views
+                    {{viewOutput}} views
                 </div>
-                    |  
+                •
                 <div class="date-uploaded">
                    {{dateOutput}}
                 </div>

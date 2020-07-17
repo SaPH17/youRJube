@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { DataService } from './../data.service';
 import { Apollo } from 'apollo-angular';
 import { AngularFirestore } from 'angularfire2/firestore';
@@ -66,7 +67,8 @@ export class VideoUploadComponent implements OnInit {
 
   userChannel: any
 
-  constructor(private storage: AngularFireStorage, private db: AngularFirestore, private apollo: Apollo, private data: DataService) { }
+  constructor(private storage: AngularFireStorage, private db: AngularFirestore, private apollo: Apollo, private data: DataService
+    , private router:Router) { }
  
   ngOnInit(): void {
 
@@ -306,7 +308,6 @@ export class VideoUploadComponent implements OnInit {
             thumbnail: $thumbnail,
             category: $category,
             location: $location,
-            view: 1,
             privacy: $privacy,
             is_premium: $is_premium,
             age_restricted: $age_restricted
@@ -332,6 +333,7 @@ export class VideoUploadComponent implements OnInit {
       console.log(result)
       if(result){
         alert("Video succesfuly uploaded")
+        this.router.navigate(['home']);
       }
     })
   }
@@ -339,8 +341,7 @@ export class VideoUploadComponent implements OnInit {
   startPublishVideo(){
     if(this.validateInput()){
       document.getElementById('details-error').style.visibility = "hidden"
-      this.uploadThumbnailImage()
-      
+      this.uploadThumbnailImage()  
     }
     else{
       document.getElementById('details-error').style.visibility = "visible"
@@ -368,6 +369,9 @@ export class VideoUploadComponent implements OnInit {
       return false
     }
     else if(this.scheduledPublish == true && this.publishDate == null){
+      return false
+    }
+    else if(!this.doneUploading){
       return false
     }
 

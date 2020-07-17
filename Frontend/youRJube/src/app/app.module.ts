@@ -25,6 +25,14 @@ import { AngularFirestoreModule } from 'angularfire2/firestore'
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { DropZoneDirective } from './drop-zone.directive'
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatVideoModule } from 'mat-video';
+import { VideoCommentComponent } from './video-comment/video-comment.component';
+import { VideoReplyComponent } from './video-reply/video-reply.component';
+import { AboutUsComponent } from './about-us/about-us.component';
+import { TermsComponent } from './terms/terms.component';
+import { CopyrightComponent } from './copyright/copyright.component';
+import { PrivacyComponent } from './privacy/privacy.component';
 
 
 @NgModule({
@@ -40,6 +48,12 @@ import { FormsModule } from '@angular/forms';
     VideoWatchComponent,
     VideoUploadComponent,
     DropZoneDirective,
+    VideoCommentComponent,
+    VideoReplyComponent,
+    AboutUsComponent,
+    TermsComponent,
+    CopyrightComponent,
+    PrivacyComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +64,9 @@ import { FormsModule } from '@angular/forms';
     GraphQLModule,
     HttpClientModule,
     SocialLoginModule,
-    FormsModule      
+    FormsModule,
+    BrowserAnimationsModule,
+    MatVideoModule
   ],
   providers: [
     {

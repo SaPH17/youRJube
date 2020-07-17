@@ -1,27 +1,21 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
-import { Subscription } from 'rxjs';
-
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
 
   videos: any
-  private querySubs: Subscription
 
   constructor(private apollo: Apollo) { }
 
-  ngOnDestroy(): void{
-    this.querySubs.unsubscribe()
-  }
 
   ngOnInit(): void {
-    this.querySubs = this.apollo.watchQuery<any>({
+    this.apollo.watchQuery<any>({
       query: gql `
         query getVideo{
           getVideo{
@@ -42,9 +36,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             age_restricted
           }
         }
-      `,
-    }).valueChanges.subscribe(({data, loading}) => {
-      this.videos = data.getVideo
+      `
+    }).valueChanges.subscribe(result => {
+      this.videos = result.data.getVideo
     })
   }
 }

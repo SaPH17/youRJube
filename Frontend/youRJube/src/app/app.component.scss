@@ -7,7 +7,7 @@
     flex-direction: row;
     position: fixed;
     width: 100vw;
-    z-index: 1;
+    z-index: 2;
     background-color: white;
 }
 
@@ -111,7 +111,7 @@
             background-color: white;
             width: 10vw;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            z-index: 2;
 
             a {
                 color: gray;
@@ -149,7 +149,7 @@
             background-color: white;
             width: 15vw;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            z-index: 2;
 
             a {
                 color: gray;
@@ -217,7 +217,7 @@
             background-color: white;
             width: 18vw;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            z-index: 2;
 
             .user-information{
                 text-align: center;
@@ -390,7 +390,7 @@
 }
 
 .sidebar-container{
-    z-index: 1;
+    z-index: 2;
     overflow-y: auto;
     position: fixed;
     top: 50px;
@@ -398,6 +398,7 @@
     transition: all 0.3s ease;
     border-right: 1px lightgray solid;
     background-color: white;
+    padding-top: 1vh;
 
     hr{
         border: 1px solid rgb(235, 229, 229);
@@ -416,6 +417,7 @@
                 color: rgb(82, 81, 81);
                 white-space: nowrap;
                 position: relative;
+                font-size: 14px;
             }
 
             a.active{
@@ -452,7 +454,7 @@
             a{
                 color: rgb(59, 58, 58);
                 text-decoration: none;
-                font-size: 15px;
+                font-size: 12px;
                 font-weight: bold;
             }
 
@@ -469,7 +471,7 @@
     left: 16vw;
     top: 10vh;
     display: block;
-    z-index: -2;
+    z-index: 1;
 	transition-duration: 0.3s;
 }
 

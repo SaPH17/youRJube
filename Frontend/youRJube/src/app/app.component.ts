@@ -117,6 +117,8 @@ export class AppComponent implements OnInit{
 
   validateUserExistance():void{
 
+    console.log(this.user);
+    
     this.apollo.query<any>({
       query: gql `
         query getUserByEmail($email: String!){
@@ -130,7 +132,7 @@ export class AppComponent implements OnInit{
         email: this.user.email
       }
     }).subscribe(result => {
-      this.userDB = result.data.getUserByEmail
+      this.userDB = result.data.getUserByEmail[0]
 
       if(this.userDB === undefined || this.userDB.length == 0){
         this.apollo.mutate<any>({
@@ -195,11 +197,11 @@ export class AppComponent implements OnInit{
 
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation insertChannel($user_id: ID!, $name: String!){
+        mutation insertChannel($user_id: ID!, $name: String! ,$icon: String!){
           createChannel(input: {
             user_id: $user_id, 
             background_image: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/channel-background-image%2Fdefault_bgimage.jpg?alt=media&token=35ea0c55-14ab-422d-9b39-643a1d332bb4",
-            icon: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/channel-icon%2Fdefault_channelicon.png?alt=media&token=099b695d-0f8b-4056-910b-12bbf31585e9",
+            icon: $icon,
             description: "No description given",
             name: $name,
           }){
@@ -211,6 +213,7 @@ export class AppComponent implements OnInit{
       variables:{
         user_id: this.userDB.id,
         name: this.user.name,
+        icon: this.user.photoUrl
       }
     }).subscribe(result => {
       console.log(result)

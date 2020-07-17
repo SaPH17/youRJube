@@ -1,0 +1,20 @@
+<div class="container" *ngIf="doneLoading">
+    <div class="left">
+        <img src="{{userChannel.icon}}" alt="" width="40px">
+    </div>
+
+    <div class="right">
+
+        <div class="top2">
+            <div class="name">
+                {{userChannel.name}}
+            </div>
+
+        </div>
+
+        <div class="content">
+            {{reply.content}}
+        </div>
+
+    </div>
+</div>

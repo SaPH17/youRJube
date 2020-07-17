@@ -1,0 +1,89 @@
+<div class="container" *ngIf="doneLoading">
+    <div class="top">
+
+        <div class="left">
+            <img src="{{commentChannel.icon}}" alt="" width="50px">
+        </div>
+
+        <div class="right">
+
+            <div class="top2">
+                <div class="name">
+                    {{commentChannel.name}}
+                </div>
+
+                <div class="date">
+                    {{dateOutput}}
+                </div>
+            </div>
+
+            <div class="content">
+                {{comment.content}}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="center">
+        <div class="reply-top">
+            <a>
+                <div class="like">
+                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                    {{likeOutput}}
+                </div>
+            </a>
+    
+            <a>
+                <div class="dislike">
+                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                    {{dislikeOutput}}
+                </div>
+            </a>
+    
+            <a>
+                <div class="reply-button" (click)="enableReplyInput()" *ngIf="userChannel">
+                    REPLY
+                </div>
+            </a>
+        </div>
+
+        <div class="reply-bottom" id="reply-bottom-{{comment.id}}" *ngIf="userChannel">
+
+            <div class="profile-picture">
+                <img src="{{userChannel.icon}}" alt="profilePic" width="30px">
+            </div>
+
+            <div class="input-text">
+                <input type="text" id="input-reply-{{comment.id}}" placeholder="Add a public reply..." (input)="detectReplyInput($event.target.value)">
+            </div>
+
+            <br>
+
+            <a>
+                <div class="cancel-button" (click)="disableReplyInput()">
+                    CANCEL
+                </div>
+            </a>
+
+            <a>
+                <div class="reply-button" id="reply-button-{{comment.id}}" (click)="createReply()">
+                    REPLY
+                </div>
+            </a>
+
+        </div>
+        
+    </div>
+
+    <div class="bottom" *ngIf="doesCommentHaveReplies() && replyLoaded">
+        <a (click)="showReplies()" >
+            <div class="show-button unselectable" id="show-reply-button-{{comment.id}}">
+                View {{replyCountOutput}}
+            </div>
+        </a>
+
+        <div class="replies" id="replies-{{comment.id}}">
+            <app-video-reply *ngFor="let r of replies" [rep]="r"></app-video-reply>
+        </div>
+    </div>
+</div>

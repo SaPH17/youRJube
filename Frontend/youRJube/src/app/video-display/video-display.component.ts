@@ -32,6 +32,7 @@ export class VideoDisplayComponent implements OnInit{
     age_restricted: boolean
   }
 
+  viewOutput:any
   channel: any
   doneLoading: boolean = false
   user: SocialUser
@@ -41,7 +42,8 @@ export class VideoDisplayComponent implements OnInit{
 
   ngOnInit() {
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
-    
+    this.viewOutput = this.video.view - 1
+
 
     this.apollo.query<any>({
       query: gql `

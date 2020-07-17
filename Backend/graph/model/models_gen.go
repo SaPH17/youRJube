@@ -12,6 +12,7 @@ type Channel struct {
 	JoinDay         int    `json:"join_day"`
 	JoinMonth       int    `json:"join_month"`
 	JoinYear        int    `json:"join_year"`
+	SubscriberCount int    `json:"subscriber_count"`
 }
 
 type ChannelSocialMedia struct {
@@ -22,15 +23,15 @@ type ChannelSocialMedia struct {
 }
 
 type Comment struct {
-	ID      string `json:"id"`
-	VideoID string `json:"video_id"`
-	UserID  string `json:"user_id"`
-	Like    int    `json:"like"`
-	Dislike int    `json:"dislike"`
-	Content string `json:"content"`
-	Day     int    `json:"day"`
-	Month   int    `json:"month"`
-	Year    int    `json:"year"`
+	ID        string `json:"id"`
+	VideoID   string `json:"video_id"`
+	ChannelID string `json:"channel_id"`
+	Like      int    `json:"like"`
+	Dislike   int    `json:"dislike"`
+	Content   string `json:"content"`
+	Day       int    `json:"day"`
+	Month     int    `json:"month"`
+	Year      int    `json:"year"`
 }
 
 type CommunityPost struct {
@@ -87,8 +88,11 @@ type PremiumSubscription struct {
 type Reply struct {
 	ID        string `json:"id"`
 	CommentID string `json:"comment_id"`
-	UserID    string `json:"user_id"`
+	ChannelID string `json:"channel_id"`
 	Content   string `json:"content"`
+	Day       int    `json:"day"`
+	Month     int    `json:"month"`
+	Year      int    `json:"year"`
 }
 
 type User struct {
@@ -105,6 +109,7 @@ type UserSubscription struct {
 	SubscribeDay   int    `json:"subscribe_day"`
 	SubscribeMonth int    `json:"subscribe_month"`
 	SubscribeYear  int    `json:"subscribe_year"`
+	ShouldNotify   string `json:"should_notify"`
 }
 
 type Video struct {
@@ -123,6 +128,8 @@ type Video struct {
 	Privacy       string `json:"privacy"`
 	IsPremium     string `json:"is_premium"`
 	AgeRestricted string `json:"age_restricted"`
+	Like          int    `json:"like"`
+	Dislike       int    `json:"dislike"`
 }
 
 type VideoTag struct {
@@ -146,14 +153,9 @@ type NewChannelSocialMedia struct {
 }
 
 type NewComment struct {
-	VideoID string `json:"video_id"`
-	UserID  string `json:"user_id"`
-	Like    int    `json:"like"`
-	Dislike int    `json:"dislike"`
-	Content string `json:"content"`
-	Day     int    `json:"day"`
-	Month   int    `json:"month"`
-	Year    int    `json:"year"`
+	VideoID   string `json:"video_id"`
+	ChannelID string `json:"channel_id"`
+	Content   string `json:"content"`
 }
 
 type NewCommunityPost struct {
@@ -190,19 +192,13 @@ type NewPlaylistDetail struct {
 }
 
 type NewPremiumSubscription struct {
-	UserID     string `json:"user_id"`
-	StartDay   int    `json:"start_day"`
-	StartMonth int    `json:"start_month"`
-	StartYear  int    `json:"start_year"`
-	EndDay     int    `json:"end_day"`
-	EndMonth   int    `json:"end_month"`
-	EndYear    int    `json:"end_year"`
-	Plan       string `json:"plan"`
+	UserID string `json:"user_id"`
+	Plan   string `json:"plan"`
 }
 
 type NewReply struct {
 	CommentID string `json:"comment_id"`
-	UserID    string `json:"user_id"`
+	ChannelID string `json:"channel_id"`
 	Content   string `json:"content"`
 }
 
@@ -218,6 +214,7 @@ type NewUserSubscription struct {
 	SubscribeDay   int    `json:"subscribe_day"`
 	SubscribeMonth int    `json:"subscribe_month"`
 	SubscribeYear  int    `json:"subscribe_year"`
+	ShouldNotify   string `json:"should_notify"`
 }
 
 type NewVideo struct {
@@ -228,7 +225,6 @@ type NewVideo struct {
 	Thumbnail     string `json:"thumbnail"`
 	Category      string `json:"category"`
 	Location      string `json:"location"`
-	View          int    `json:"view"`
 	Privacy       string `json:"privacy"`
 	IsPremium     string `json:"is_premium"`
 	AgeRestricted string `json:"age_restricted"`

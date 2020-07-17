@@ -51,6 +51,30 @@
         }
     }
 
+    .billing-history{
+        text-align: center;
+        margin-top: 4vh;
+
+        .title{
+            font-size: 20px;
+            margin-bottom: 3vh;
+        }
+        
+        ul{
+            li{
+                text-align: center;
+                font-size: 16px;
+                margin: 1vh 0;
+            }
+        }
+
+        .next{
+            margin-top: 2vh;
+            font-size: 20px;
+            text-align: center;
+        }
+    }
+
     #error{
         margin-top: 4vh;
         color: red;

@@ -12,7 +12,7 @@
         <p>View Not Yet Published or Schedule Videos</p>
     </div>
 
-    <div class="billing-plans">
+    <div class="billing-plans" *ngIf="!userHasPremium()">
         <p>Billing Plans</p>
 
         <input type="radio" name="billing-plan" id="monthly" value="Monthly" (change)="changePlan($event)">
@@ -23,6 +23,24 @@
         <br>
         <button class="register-button" (click)="registerPlan()">Register Plan</button>
         
+    </div>
+
+    <div class="billing-history" *ngIf="userHasPremium() && doneLoading">
+        <div class="title">
+            Your billing history
+        </div>
+
+        <div class="billing-list">
+            <ul>
+                <li *ngFor="let b of billingHistory">
+                    {{b.start_day}} - {{b.start_month}} - {{b.start_year}} [{{b.plan}}]
+                </li>
+            </ul>
+        </div>
+
+        <div class="next">
+            Current membership expiration date : {{currentPlan.end_day}} - {{currentPlan.end_month}} - {{currentPlan.end_year}}
+        </div>
     </div>
 
     <div id="error">
