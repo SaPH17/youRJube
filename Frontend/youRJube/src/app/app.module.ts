@@ -33,6 +33,9 @@ import { AboutUsComponent } from './about-us/about-us.component';
 import { TermsComponent } from './terms/terms.component';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { PrivacyComponent } from './privacy/privacy.component';
+import { VideoRelatedComponent } from './video-related/video-related.component';
+import { SecondVideoDisplayComponent } from './second-video-display/second-video-display.component';
+import { ChannelComponent } from './channel/channel.component';
 
 
 @NgModule({
@@ -54,6 +57,9 @@ import { PrivacyComponent } from './privacy/privacy.component';
     TermsComponent,
     CopyrightComponent,
     PrivacyComponent,
+    VideoRelatedComponent,
+    SecondVideoDisplayComponent,
+    ChannelComponent,
   ],
   imports: [
     BrowserModule,

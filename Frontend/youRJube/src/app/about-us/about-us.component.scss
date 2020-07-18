@@ -1,0 +1,19 @@
+.container{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .about-us{
+        font-size: 30px;
+        border-bottom: 2px gray solid;
+        padding-bottom: 5vh;
+        margin-left: 10vw;
+        margin-right: 10vw;
+    }
+
+    .about-us2{
+        margin-top: 10vh;
+        font-size: 30px;
+    }
+}

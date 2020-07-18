@@ -1,3 +1,4 @@
+import { ChannelComponent } from './channel/channel.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { TermsComponent } from './terms/terms.component';
@@ -28,7 +29,7 @@ const routes: Routes = [
   {path:"terms", component: TermsComponent},
   {path:"copyright", component: CopyrightComponent},
   {path:"privacy", component: PrivacyComponent},
-
+  {path:"channel/:id", component: ChannelComponent},
 ];
 
 @NgModule({

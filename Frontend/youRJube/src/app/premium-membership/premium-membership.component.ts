@@ -19,15 +19,12 @@ export class PremiumMembershipComponent implements OnInit {
   currentPlan: any
 
   doneLoading: boolean = false;
+  userHavePremium: boolean = false
 
   constructor(private data: DataService, private apollo: Apollo) { }
 
   ngOnInit(): void {
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
-    
-    console.log(this.userDB);
-    console.log(this.userDB.id);
-    
 
     this.apollo.watchQuery<any>({
       query: gql`
@@ -51,10 +48,15 @@ export class PremiumMembershipComponent implements OnInit {
     }).valueChanges.subscribe(result => {
       
       this.billingHistory = result.data.getPremiumSubscriptionByUserId
+      console.log(this.billingHistory);
+
       this.getCurrentPlan()
 
-      this.doneLoading = true
     })
+  }
+
+  showDetail():boolean{
+    return this.userHasPremium() && this.doneLoading
   }
 
   getCurrentPlan():void{
@@ -66,13 +68,23 @@ export class PremiumMembershipComponent implements OnInit {
 
     this.billingHistory.forEach(e => {
       
-      if(currentDay >= parseInt(e.start_day) && currentDay <= parseInt(e.end_day) &&
-        currentMonth >= parseInt(e.start_month) && currentMonth <= parseInt(e.end_month) &&
+      if(currentMonth >= parseInt(e.start_month) && currentMonth <= parseInt(e.end_month) &&
           currentYear >= parseInt(e.start_year) && currentYear <= parseInt(e.end_year)){
             this.currentPlan = e
+            this.userHavePremium = true
           }
-    });
+    });    
+
+    if(this.currentPlan == undefined){
+      this.userHavePremium = false;
+    }
+
+    this.doneLoading = true
     
+  }
+
+  hideDetails(){
+    return !this.userDB || !this.userHavePremium
   }
 
   userHasPremium():boolean{

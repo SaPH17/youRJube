@@ -1,11 +1,13 @@
+$width: 55vw;
+
 .container{
     display: flex;
     .video-section{
-        width: 1000px;
-        max-width: 1000px;
+        width: $width;
+        max-width: $width;
 
         .video-player{
-            width: 1000px;
+            width: $width;
 
         }
 
@@ -109,16 +111,25 @@
                     align-items: center;
 
                     .channel-left{
-                        img{
-                            width: 75px;
-                            border-radius: 50%;
+                        a{
+                            img{
+                                width: 75px;
+                                border-radius: 50%;
+                            }
                         }
                     }
                     .channel-right{
                         margin-left: 0.5vw;
-                        .channel-name{
-                            font-size: 15px;
+                        a{
+                            text-decoration: none;
+                            color: black;
                             font-weight: bolder;
+                            
+                            .channel-name{
+                                font-size: 15px;
+                                font-weight: bolder;
+                                color: black;
+                            }
                         }
                         .subs-count{
                             font-size: 13px;

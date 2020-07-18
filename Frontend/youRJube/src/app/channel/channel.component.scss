@@ -1,0 +1,104 @@
+.container{
+    margin-top: -4vh;
+    margin-left: -0.75vw;
+    max-width: 1300px;
+
+    .background-image{
+        img{
+            max-height: 200px;
+        }
+    }
+
+    .profile{
+        padding: 0vh 5vw;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        .profile-top{
+            display: flex;
+            flex-direction: row;
+
+            .profile-center{
+                display: flex;
+                flex-direction: column;
+                padding: 3vh 0;
+                margin-left: 1vw;
+
+                .name{
+                    font-size: 20px;
+                }
+
+                .subs-count{
+                    color: gray;
+                    font-size: 15px;
+                }
+            }
+
+            .profile-right{
+                position: absolute;
+                right: 5vw;
+                padding-top: 3vh;
+
+                .subscribe-container{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
+                    .subscribe-button{
+                        color: white;
+                        background-color: rgb(226, 5, 5);
+                        padding: 8px 16px;
+                        font-size: 14px;
+                        font-weight: bolder;
+                    }
+
+                    i{
+                        color: gray;
+                        font-size: 24px;
+                    }
+                }
+
+                .edit-channel-container{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
+                    .edit-channel-button{
+                        color: white;
+                        background-color: blueviolet;
+                        padding: 8px 16px;
+                        font-size: 14px;
+                        font-weight: bolder;
+                    }
+
+                    i{
+                        color: gray;
+                        font-size: 24px;
+                    }
+                }
+            }
+
+        }
+
+        .profile-bottom{
+            padding-top: 1vh;
+
+            ul{
+                list-style: none;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+
+                li{
+                    font-size: 16px;
+                    color: rgb(100, 100, 100)
+                }
+                
+                li:hover{
+                    color: rgb(44, 44, 44)
+                }
+            }
+        }
+    }
+}

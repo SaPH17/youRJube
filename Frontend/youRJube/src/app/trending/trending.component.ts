@@ -7,40 +7,47 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrendingComponent implements OnInit {
 
-  videos = [{
-    id:1,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
+  videos=[{
+    id: 1,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    description: "Test2",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
   },{
-    id:2,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
+    id: 2,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    description: "Test2",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
   },{
-    id:3,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
+    id: 3,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    description: "Test2",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
   },{
-    id:4,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
-  },{
-    id:5,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
-  },{
-    id:6,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
-  },{
-    id:7,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
-  },{
-    id:8,
-    vidthumbnail: "../../assets/thumbnail.jpg",
-    vidpropic: "../../assets/1x1.png"
-  }
-  ]
+    id: 8,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    description: "Test2",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
+  }]
 
   constructor() { }
 

@@ -52,8 +52,8 @@ func (r *mutationResolver) CreatePremiumSubscription(ctx context.Context, input 
 	} else {
 		endyear = year
 		endmonth = int(month) + 1
-		
-		if(endmonth == 13){
+
+		if endmonth == 13 {
 			endmonth = 1
 		}
 	}
@@ -68,7 +68,6 @@ func (r *mutationResolver) CreatePremiumSubscription(ctx context.Context, input 
 		EndYear:    endyear,
 		Plan:       input.Plan,
 	}
-
 
 	_, err2 := r.DB.Model(&premiumsubs).Insert()
 
@@ -227,6 +226,7 @@ func (r *mutationResolver) CreatePlaylist(ctx context.Context, input *model.NewP
 		LastUpdatedMonth: int(month),
 		LastUpdatedYear:  year,
 		View:             input.View,
+		VideoID:          input.VideoID,
 	}
 
 	_, err2 := r.DB.Model(&playlist).Insert()
@@ -243,11 +243,33 @@ func (r *mutationResolver) DeletePlaylist(ctx context.Context, id string) (bool,
 }
 
 func (r *mutationResolver) UpdatePlaylist(ctx context.Context, id string, input *model.NewPlaylist) (*model.Playlist, error) {
-	panic(fmt.Errorf("not implemented"))
-}
+	var playlist model.Playlist
 
-func (r *mutationResolver) CreatePlaylistDetail(ctx context.Context, input *model.NewPlaylistDetail) (*model.PlaylistDetail, error) {
-	panic(fmt.Errorf("not implemented"))
+	err := r.DB.Model(&playlist).Where("id = ?", id).First()
+
+	if err != nil {
+		return nil, errors.New("Playlist doesn't exist")
+	}
+
+	year, month, day := time.Now().Date()
+
+	playlist.ChannelID = input.ChannelID
+	playlist.Title = input.Title
+	playlist.Description = input.Description
+	playlist.Privacy = input.Privacy
+	playlist.Thumbnail = input.Thumbnail
+	playlist.LastUpdatedDay = day
+	playlist.LastUpdatedMonth = int(month)
+	playlist.LastUpdatedYear = year
+	playlist.VideoID = input.VideoID
+
+	_, err2 := r.DB.Model(&playlist).Where("id = ?", id).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &playlist, nil
 }
 
 func (r *mutationResolver) DeletePlaylistDetail(ctx context.Context, id string) (bool, error) {
@@ -463,10 +485,6 @@ func (r *queryResolver) GetPlaylistByChannelID(ctx context.Context, channelID st
 }
 
 func (r *queryResolver) GetPlaylistByUserID(ctx context.Context, userID string) ([]*model.Playlist, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) GetPlaylistDetailByPlaylistID(ctx context.Context, playlistID string) ([]*model.PlaylistDetail, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

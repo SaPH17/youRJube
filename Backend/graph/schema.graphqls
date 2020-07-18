@@ -159,6 +159,7 @@ type Playlist{
   last_updated_month: Int!
   last_updated_year: Int!
   view: Int!
+  video_id: String!
 }
 
 input newPlaylist{
@@ -168,22 +169,7 @@ input newPlaylist{
   privacy: String!
   thumbnail: String!
   view: Int!
-}
-
-type PlaylistDetail{
-  playlist_id: ID!
-  video_id: ID!
-  day_added: Int!
-  month_added: Int!
-  year_added: Int!
-}
-
-input newPlaylistDetail{
-  playlist_id: ID!
-  video_id: ID!
-  day_added: Int!
-  month_added: Int!
-  year_added: Int!
+  video_id: String!
 }
 
 type Comment{
@@ -265,7 +251,6 @@ type Query{
 
   getPlaylistByChannelId(channel_id: ID!): [Playlist!]!
   getPlaylistByUserId(user_id: ID!): [Playlist!]!
-  getPlaylistDetailByPlaylistId(playlist_id: ID!): [PlaylistDetail!]!
 
   getCommentByVideoId(video_id: ID!): [Comment!]!
 
@@ -305,7 +290,6 @@ type Mutation{
   createPlaylist(input: newPlaylist): Playlist!
   deletePlaylist(id: ID!): Boolean!
   updatePlaylist(id: ID!, input: newPlaylist): Playlist!
-  createPlaylistDetail(input: newPlaylistDetail): PlaylistDetail!
   deletePlaylistDetail(id: ID!): Boolean!
 
   createComment(input: newComment): Comment!

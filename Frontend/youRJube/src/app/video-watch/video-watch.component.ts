@@ -92,6 +92,44 @@ export class VideoWatchComponent implements OnInit {
   commentsLoaded:boolean = false
   commentCountOutput: String
 
+  videos=[{
+    id: 1,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
+  },{
+    id: 2,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
+  },{
+    id: 3,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
+  },{
+    id: 8,
+    channel_id: 3,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
+    title: "Test",
+    view: 100,
+    upload_day: 18,
+    upload_month: 7,
+    upload_year: 2020
+  }]
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
@@ -134,7 +172,7 @@ export class VideoWatchComponent implements OnInit {
     }).valueChanges.subscribe(result => {
       this.video = result.data.getVideoById[0]
       
-      this.viewOutput = this.video.view - 1 + " view(s)"
+      this.viewOutput = this.convertView(this.video.view - 1)
       this.dateOutput = this.convertMonthToText(this.video.upload_month) + " " + this.video.upload_day + ", " + this.video.upload_year
       this.likeOutput = this.convertLikeToText(this.video.like)
       this.dislikeOutput = this.convertLikeToText(this.video.dislike)
@@ -146,8 +184,6 @@ export class VideoWatchComponent implements OnInit {
 
       this.loadChannelInformation()
     })
-
-
   }
 
   isTheSameChannel():boolean{
@@ -166,6 +202,21 @@ export class VideoWatchComponent implements OnInit {
       this.validCommentInput = true;
     }
     this.commentInput = e    
+  }
+
+  convertView(view){
+    if(view >= 1000 && view < 1000000){
+      return (view / 1000).toFixed(1) + "K views"
+    }
+    else if(view <= 1){
+      return view + " view"
+    }
+    else if(view < 1000){
+      return view + " views"
+    }
+    else if(view >= 1000000){
+      return (view / 1000000).toFixed(1) + "M views" 
+    }
   }
 
   insertComment():void{

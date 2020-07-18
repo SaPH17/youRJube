@@ -7,6 +7,7 @@ import {  AngularFireStorage } from 'angularfire2/storage';
 import { Component, OnInit } from '@angular/core';
 import { AngularFireUploadTask } from 'angularfire2/storage';
 import { Observable } from 'rxjs';
+import { getVideoQuery } from '../home/home.component'
 import gql from 'graphql-tag';
 
 @Component({
@@ -328,7 +329,11 @@ export class VideoUploadComponent implements OnInit {
         privacy: this.privacy,
         is_premium: this.premium,
         age_restricted: this.restricted
-      }
+      },
+      refetchQueries: [{
+        query: getVideoQuery,
+        variables: { repoFullName: 'apollographql/apollo-client' },
+      }],
     }).subscribe(result => {
       console.log(result)
       if(result){

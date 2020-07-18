@@ -1,0 +1,15 @@
+.container{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    .title{
+        margin-top: 5vh;
+        font-size: 30px;
+    }
+
+    .terms1{
+        margin-top: 10vh;
+    }
+}

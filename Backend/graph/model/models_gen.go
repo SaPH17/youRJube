@@ -63,14 +63,7 @@ type Playlist struct {
 	LastUpdatedMonth int    `json:"last_updated_month"`
 	LastUpdatedYear  int    `json:"last_updated_year"`
 	View             int    `json:"view"`
-}
-
-type PlaylistDetail struct {
-	PlaylistID string `json:"playlist_id"`
-	VideoID    string `json:"video_id"`
-	DayAdded   int    `json:"day_added"`
-	MonthAdded int    `json:"month_added"`
-	YearAdded  int    `json:"year_added"`
+	VideoID          string `json:"video_id"`
 }
 
 type PremiumSubscription struct {
@@ -181,14 +174,7 @@ type NewPlaylist struct {
 	Privacy     string `json:"privacy"`
 	Thumbnail   string `json:"thumbnail"`
 	View        int    `json:"view"`
-}
-
-type NewPlaylistDetail struct {
-	PlaylistID string `json:"playlist_id"`
-	VideoID    string `json:"video_id"`
-	DayAdded   int    `json:"day_added"`
-	MonthAdded int    `json:"month_added"`
-	YearAdded  int    `json:"year_added"`
+	VideoID     string `json:"video_id"`
 }
 
 type NewPremiumSubscription struct {

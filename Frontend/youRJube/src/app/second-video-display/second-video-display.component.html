@@ -1,0 +1,48 @@
+<div class="container">
+    <div class="left">
+        <a href="watch/{{video.id}}">
+            <img src="{{video.thumbnail}}" alt="" width="300px">
+        </a>
+    </div>
+
+    <div class="right">
+        <div class="top">
+            <a href="watch/{{video.id}}">
+                {{video.title}}
+            </a>
+
+            <div class="settings-button">
+                <a (click)="settingsClick()" class="settings-button-icon">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </a>
+    
+                <div class="dropdown-content" id="video-settings-dropdown-{{video.id}}">
+                    <a><i class="fa fa-list-ol" aria-hidden="true"></i>
+                        Add to queue</a>
+                    <a *ngIf="isUserSignedIn()"><i class="fa fa-random" aria-hidden="true"></i>
+                        Add to playlist</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="center">
+            <div class="channel">
+                My Channel • 
+            </div>
+
+            <div class="view">
+                {{viewOutput}} • 
+            </div>
+
+            <div class="date">
+                {{dateOutput}}
+            </div>
+        </div>
+
+        <div class="bottom">
+            <a href="watch/{{video.id}}">
+                {{video.description}}
+            </a>
+        </div>
+    </div>
+</div>

@@ -65,11 +65,15 @@
             <div class="top">
                 <div class="channel-info">
                     <div class="channel-left">
-                        <img src="{{channel.icon}}" alt="">
+                        <a href="channel/{{channel.id}}">
+                            <img src="{{channel.icon}}" alt="">
+                        </a>
                     </div>
                     <div class="channel-right">
                         <div class="channel-name">
-                            {{channel.name}}
+                            <a href="channel/{{channel.id}}">
+                                {{channel.name}}
+                            </a>
                         </div>
                         <div class="subs-count">
                             {{subscriberCountOutput}}
@@ -152,5 +156,6 @@
     </div>
     
     <div class="related-video">
+        <app-video-related *ngFor="let v of videos" [vid]="v"></app-video-related>
     </div>
 </div>

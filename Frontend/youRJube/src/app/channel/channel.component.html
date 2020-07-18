@@ -1,0 +1,82 @@
+<div class="container" *ngIf="doneLoading">
+
+    <div class="background-image">
+        <img src="{{channel.background_image}}" alt="" width="1300px">
+    </div>
+
+    <div class="profile">
+        <div class="profile-top">
+            <div class="profile-left">
+                <img src="{{channel.icon}}" alt="">
+            </div>
+
+            <div class="profile-center">
+                <div class="name">
+                    {{channel.name}}
+                </div>
+
+                <div class="subs-count">
+                    {{subsCountOutput}}
+                </div>
+
+            </div>
+
+            <div class="profile-right">
+                <div class="subscribe-container" *ngIf="showSubscribeButton()">
+                    <a>
+                        <div class="subscribe-button">
+                            SUBSCRIBE
+                        </div>
+                    </a>
+
+                    <!-- <div class="bell-button">
+                        <i class="fa fa-bell" aria-hidden="true"></i>
+                    </div>
+
+                    <div class="bell-button2">
+                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                    </div> -->
+
+                </div>
+
+                <div class="edit-channel-container" *ngIf="!showSubscribeButton()">
+                    <a>
+                        <div class="edit-channel-button">
+                            EDIT CHANNEL
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-bottom">
+            <ul>
+                <li>
+                    <a>
+                        HOME
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        VIDEOS
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        PLAYLISTS
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        COMMUNITY
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        ABOUT
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -12,7 +12,7 @@
         <p>View Not Yet Published or Schedule Videos</p>
     </div>
 
-    <div class="billing-plans" *ngIf="!userHasPremium()">
+    <div class="billing-plans" *ngIf="hideDetails()">
         <p>Billing Plans</p>
 
         <input type="radio" name="billing-plan" id="monthly" value="Monthly" (change)="changePlan($event)">
@@ -25,7 +25,7 @@
         
     </div>
 
-    <div class="billing-history" *ngIf="userHasPremium() && doneLoading">
+    <div class="billing-history" *ngIf="showDetail()">
         <div class="title">
             Your billing history
         </div>

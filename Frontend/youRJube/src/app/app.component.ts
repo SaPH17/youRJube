@@ -19,6 +19,7 @@ export class AppComponent implements OnInit{
   user : SocialUser
   loggedIn: boolean = false;
   userDB: any
+  userChannel: any
 
   restrictMode: boolean = false
 
@@ -30,8 +31,18 @@ export class AppComponent implements OnInit{
       this.user = user;
       this.loggedIn = (user != null);
     });
-    
+
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
+
+    if(localStorage.getItem('user') == null){
+      console.log("User is null");
+      this.user == null
+    }
+    else{
+      this.getUserFromStorage();
+      this.data.changeUser(this.user)
+      this.validateUserExistance()
+    }
 
   }
 
@@ -109,9 +120,12 @@ export class AppComponent implements OnInit{
 
   signInWithGoogle():void {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(()=>{
-      this.data.changeUser(this.user)
-      this.loggedIn = true;
-      this.validateUserExistance()
+      if(this.user){
+        this.data.changeUser(this.user)
+        this.loggedIn = true;
+        this.addToLocalStorage(this.user)
+        this.validateUserExistance()
+      }
     })
   }
 
@@ -124,7 +138,9 @@ export class AppComponent implements OnInit{
         query getUserByEmail($email: String!){
           getUserByEmail(email: $email){
             id,
-            email
+            email,
+            restrict_mode,
+            location
           }
         }
       `,
@@ -133,8 +149,11 @@ export class AppComponent implements OnInit{
       }
     }).subscribe(result => {
       this.userDB = result.data.getUserByEmail[0]
+      console.log(this.userDB);
 
       if(this.userDB === undefined || this.userDB.length == 0){
+        console.log("TESSS");
+        
         this.apollo.mutate<any>({
           mutation: gql`
             mutation insertUser($email: String!, $restrict_mode: String!, $location: String!){
@@ -158,9 +177,10 @@ export class AppComponent implements OnInit{
         })
       }
       else{
-        this.data.changeUserDB(this.userDB)
+        console.log("AA");
 
-        console.log(this.userDB[0].id)
+        this.data.changeUserDB(this.userDB)        
+        console.log(this.userDB.id)
         console.log("DB ==");
         
         this.apollo.query<any>({
@@ -180,10 +200,11 @@ export class AppComponent implements OnInit{
             }
           `,
           variables:{
-            user_id: this.userDB[0].id
+            user_id: this.userDB.id
           }
         }).subscribe(result => {
           console.log(result.data.getChannelByUserID)
+          this.userChannel = result.data.getChannelByUserID[0]
           this.data.changeChannel(result.data.getChannelByUserID[0])
         })
       }
@@ -222,12 +243,12 @@ export class AppComponent implements OnInit{
 
   }
 
-
   signOut():void{
     this.authService.signOut(true);
     sessionStorage.clear();
 
     this.data.changeUser(null)
+    this.removeUser()
 
     this.router.navigate(['./home']);
     this.deactivateAllButton();
@@ -245,6 +266,20 @@ export class AppComponent implements OnInit{
     return this.loggedIn
   }
 
+  addToLocalStorage(user){
+    localStorage.setItem('user', JSON.stringify(this.user));
+  }
+
+  getUserFromStorage(){    
+    this.user = JSON.parse(localStorage.getItem('user'));
+    
+    this.loggedIn = true;
+  }
+
+  removeUser(){
+    window.localStorage.clear();
+    this.loggedIn = false;
+  }
   
 
 
