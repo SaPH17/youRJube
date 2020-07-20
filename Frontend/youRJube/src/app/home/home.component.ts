@@ -59,7 +59,8 @@ export class HomeComponent implements OnInit {
             view,
             privacy,
             is_premium,
-            age_restricted
+            age_restricted,
+            duration
           }
         }
       `

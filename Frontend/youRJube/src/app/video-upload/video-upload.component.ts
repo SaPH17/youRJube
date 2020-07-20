@@ -9,6 +9,17 @@ import { AngularFireUploadTask } from 'angularfire2/storage';
 import { Observable } from 'rxjs';
 import { getVideoQuery } from '../home/home.component'
 import gql from 'graphql-tag';
+import { query } from '@angular/animations';
+
+const getPlaylistQuery =  gql `
+  query getPlaylistByChannelId($channel_id: ID!){
+    getPlaylistByChannelId(channel_id: $channel_id){
+      title,
+      description,
+      privacy
+    }
+  }
+`
 
 @Component({
   selector: 'app-video-upload',
@@ -67,6 +78,8 @@ export class VideoUploadComponent implements OnInit {
   isHovering: boolean
 
   userChannel: any
+  rawDuration: number
+  selectedPlaylistIndex: number
 
   constructor(private storage: AngularFireStorage, private db: AngularFirestore, private apollo: Apollo, private data: DataService
     , private router:Router) { }
@@ -75,20 +88,25 @@ export class VideoUploadComponent implements OnInit {
 
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
 
-    this.apollo.query<any>({
+    this.apollo.watchQuery<any>({
       query: gql `
         query getPlaylistByChannelId($channel_id: ID!){
           getPlaylistByChannelId(channel_id: $channel_id){
-            title,
+            id,
+            channel_id,
             description,
-            privacy
+            title,
+            privacy,
+            thumbnail,
+            view,
+            video_id,
           }
         }
       `,
       variables:{
         channel_id: this.userChannel.id
       }
-    }).subscribe(result => {
+    }).valueChanges.subscribe(result => {
       this.channelPlaylist = result.data.getPlaylistByChannelId
       console.log(this.channelPlaylist);
       this.playlistLoaded = true
@@ -166,7 +184,73 @@ export class VideoUploadComponent implements OnInit {
   }
 
   getDuration(e):void{
-    this.duration = (Math.floor(e.target.duration)).toString() + " second(s)"
+    // this.duration = (Math.floor(e.target.duration)).toString() + " second(s)"
+    this.rawDuration = e.target.duration
+    var time = e.target.duration
+    var hour:number
+    var minute:number
+    var second: number
+
+    if(time > 3600){
+      hour = Math.floor(time / 3600)
+      minute = Math.floor((time - (3600 * hour)) / 60)      
+      second = Math.floor(((time - (3600 * hour)) - minute * 60))
+
+      if(hour <= 9 ){
+        this.duration =  "0" + hour   
+      }
+      else{
+        this.duration = hour.toString()
+      }
+
+      this.duration += ":"
+
+      if(minute <= 9){
+        this.duration += "0" + minute 
+      }
+      else{
+        this.duration += minute.toString()
+      }
+
+      this.duration += ":"
+
+      if(second <= 9){
+        this.duration += "0" + second
+      }
+      else{
+        this.duration += second.toString()
+      }
+    }
+    else if(time > 60){
+      minute = Math.floor(time / 60)
+      second = Math.floor((time - minute * 60))
+
+      if(minute <= 9){
+        this.duration = "0" + minute
+      }
+      else{
+        this.duration = minute.toString()  
+      }
+
+      this.duration += ":"
+
+      if(second <= 9){
+        this.duration += "0" + second
+      }
+      else{
+        this.duration += second.toString()
+      }
+    }
+    else{
+      second = time
+
+      if(second <= 9){
+        this.duration = "00:0" + second
+      }
+      else{
+        this.duration = "00:" + second.toString()
+      }
+    }
   }
 
   toggleDateTimeInput():void{
@@ -209,13 +293,15 @@ export class VideoUploadComponent implements OnInit {
 
   changePlaylistValue(e){
 
-    if(e.target.options[e.target.options.selectedIndex].value == "None"){
+    if(e.target.options[e.target.options.selectedIndex].value == "None"){      
       this.addToPlaylist = false;
+      this.selectedPlaylistIndex = -1
       
     }
-    else{
+    else{      
       this.addToPlaylist = true;
       this.choosenPlaylist = e.target.options[e.target.options.selectedIndex].value
+      this.selectedPlaylistIndex = e.target.options.selectedIndex - 1
     }
   }
 
@@ -231,14 +317,15 @@ export class VideoUploadComponent implements OnInit {
       
       this.apollo.mutate<any>({
         mutation: gql`
-          mutation createPlaylist($channel_id: ID!, $title: String!, $privacy: String!){
+          mutation createPlaylist($channel_id: ID!, $title: String!, $privacy: String!, $video_id: String!){
             createPlaylist(input: {
               channel_id: $channel_id,
               title: $title,
               description: "No description given",
               privacy: $privacy,
               thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2Fdefault_thumbnail.png?alt=media&token=d8d25ad6-7273-42f0-a059-d50af36c10ac",
-              view: 1
+              view: 1,
+              video_id: $video_id
             }){
               id,
             }
@@ -247,8 +334,15 @@ export class VideoUploadComponent implements OnInit {
         variables:{
           channel_id: this.userChannel.id,
           title: (this.playlist_title).toString(),
-          privacy: (this.playlist_privacy).toString()
-        }
+          privacy: (this.playlist_privacy).toString(),
+          video_id: ","
+        },
+        refetchQueries: [{
+          query: getPlaylistQuery,
+          variables: { repoFullName: 'apollographql/apollo-client' ,
+                        channel_id: this.userChannel.id
+                    },
+        }],
       }).subscribe(result => {
         console.log(result)
         document.getElementById('details-error').style.visibility = "hidden"
@@ -300,7 +394,7 @@ export class VideoUploadComponent implements OnInit {
     this.apollo.mutate<any>({
       mutation: gql`
         mutation createVideo($channel_id: ID!, $title: String!, $description: String!, $video_url: String!, $thumbnail: String!
-            $category: String!, $location: String!, $privacy: String!, $is_premium: String!, $age_restricted: String!){
+            $category: String!, $location: String!, $privacy: String!, $is_premium: String!, $age_restricted: String!, $duration: Int!){
           createVideo(input: {
             channel_id: $channel_id,
             title: $title,
@@ -309,9 +403,13 @@ export class VideoUploadComponent implements OnInit {
             thumbnail: $thumbnail,
             category: $category,
             location: $location,
+            view: 1
             privacy: $privacy,
             is_premium: $is_premium,
-            age_restricted: $age_restricted
+            age_restricted: $age_restricted,
+            like: 1,
+            dislike: 1,
+            duration: $duration
           }){
             id,
             title
@@ -328,7 +426,8 @@ export class VideoUploadComponent implements OnInit {
         location: "Indonesia",
         privacy: this.privacy,
         is_premium: this.premium,
-        age_restricted: this.restricted
+        age_restricted: this.restricted,
+        duration: Math.floor(this.rawDuration)
       },
       refetchQueries: [{
         query: getVideoQuery,
@@ -336,6 +435,7 @@ export class VideoUploadComponent implements OnInit {
       }],
     }).subscribe(result => {
       console.log(result)
+      this.addVidToPlaylist(result.data.createVideo.id)
       if(result){
         alert("Video succesfuly uploaded")
         this.router.navigate(['home']);
@@ -351,6 +451,54 @@ export class VideoUploadComponent implements OnInit {
     else{
       document.getElementById('details-error').style.visibility = "visible"
     }
+  }
+
+  addVidToPlaylist(id):void{
+    var newStr: String
+
+    var selectedPlaylist = this.channelPlaylist[this.selectedPlaylistIndex]
+    
+    var str = selectedPlaylist.video_id
+
+    newStr = str + id + "," 
+    
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updatePlaylist($id: ID!, $channel_id: ID!, $description: String!, $title: String!, $privacy: String!, $thumbnail: String!
+            $view: Int!, $video_id: String!) {
+          updatePlaylist(id: $id, input: { 
+            channel_id: $channel_id,
+            title: $title,
+            description: $description,
+            privacy: $privacy,
+            thumbnail: $thumbnail,
+            view: $view,
+            video_id: $video_id
+          }){
+            id,
+            video_id
+          }
+        }
+      `,
+      variables:{
+        id: selectedPlaylist.id,
+        channel_id: selectedPlaylist.channel_id,
+        description: selectedPlaylist.description,
+        title: selectedPlaylist.title,
+        privacy: selectedPlaylist.privacy,
+        thumbnail: selectedPlaylist.thumbnail,
+        view: selectedPlaylist.view,
+        video_id: newStr
+      },
+      // refetchQueries: [{
+      //   query: getComputerQuery,
+      //   variables: { repoFullName: 'apollographql/apollo-client' },
+      // }],
+    }).subscribe(result =>{
+      console.log(result);
+      
+    })    
+
   }
 
   validateInput():boolean{
@@ -370,7 +518,7 @@ export class VideoUploadComponent implements OnInit {
     else if(this.premium == ""){
       return false
     }
-    else if(this.addToPlaylist == true && this.choosenPlaylist == ""){
+    else if(this.addToPlaylist == true && this.selectedPlaylistIndex == -1){      
       return false
     }
     else if(this.scheduledPublish == true && this.publishDate == null){

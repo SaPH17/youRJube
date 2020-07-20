@@ -14,9 +14,11 @@ import (
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
 	user := model.User{
-		Email:        input.Email,
-		RestrictMode: input.RestrictMode,
-		Location:     input.Location,
+		Email:         input.Email,
+		RestrictMode:  input.RestrictMode,
+		Location:      input.Location,
+		LikedVideo:    input.LikedVideo,
+		DislikedVideo: input.DislikedVideo,
 	}
 
 	_, err := r.DB.Model(&user).Insert()
@@ -29,7 +31,27 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *model.NewUser) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user model.User
+
+	err := r.DB.Model(&user).Where("id = ?", id).First()
+
+	if err != nil {
+		return nil, errors.New("User doesn't exist")
+	}
+
+	user.Email = input.Email
+	user.RestrictMode = input.RestrictMode
+	user.Location = input.Location
+	user.LikedVideo = input.LikedVideo
+	user.DislikedVideo = input.DislikedVideo
+
+	_, err2 := r.DB.Model(&user).Where("id = ?", id).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &user, nil
 }
 
 func (r *mutationResolver) CreatePremiumSubscription(ctx context.Context, input *model.NewPremiumSubscription) (*model.PremiumSubscription, error) {
@@ -98,7 +120,7 @@ func (r *mutationResolver) CreateChannel(ctx context.Context, input *model.NewCh
 		JoinDay:         day,
 		JoinMonth:       int(month),
 		JoinYear:        year,
-		SubscriberCount: 1,
+		SubscriberCount: input.SubscriberCount,
 	}
 
 	_, err2 := r.DB.Model(&channel).Insert()
@@ -111,7 +133,28 @@ func (r *mutationResolver) CreateChannel(ctx context.Context, input *model.NewCh
 }
 
 func (r *mutationResolver) UpdateChannel(ctx context.Context, id string, input *model.NewChannel) (*model.Channel, error) {
-	panic(fmt.Errorf("not implemented"))
+	var channel model.Channel
+
+	err := r.DB.Model(&channel).Where("id = ?", id).First()
+
+	if err != nil {
+		return nil, errors.New("Channel doesn't exist")
+	}
+
+	channel.UserID = input.UserID
+	channel.Name = input.Name
+	channel.BackgroundImage = input.BackgroundImage
+	channel.Icon = input.Icon
+	channel.Description = input.Description
+	channel.SubscriberCount = input.SubscriberCount
+
+	_, err2 := r.DB.Model(&channel).Where("id = ?", id).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &channel, nil
 }
 
 func (r *mutationResolver) CreateChannelSocialMedia(ctx context.Context, input *model.NewChannelSocialMedia) (*model.ChannelSocialMedia, error) {
@@ -127,15 +170,78 @@ func (r *mutationResolver) DeleteChannelSocialMedia(ctx context.Context, id stri
 }
 
 func (r *mutationResolver) CreateUserSubscription(ctx context.Context, input *model.NewUserSubscription) (*model.UserSubscription, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user []*model.User
+	var channel []*model.Channel
+
+	err := r.DB.Model(&user).Where("id = ?", input.UserID).First()
+	err2 := r.DB.Model(&channel).Where("id = ?", input.ChannelID).First()
+
+	if user == nil || err != nil {
+		return nil, errors.New("User doesn't exists")
+	}
+
+	if channel == nil || err2 != nil {
+		return nil, errors.New("Channel doesn't exists")
+	}
+
+	year, month, day := time.Now().Date()
+
+	userSubs := model.UserSubscription{
+		UserID:         input.UserID,
+		ChannelID:      input.ChannelID,
+		SubscribeDay:   day,
+		SubscribeMonth: int(month),
+		SubscribeYear:  year,
+		ShouldNotify:   input.ShouldNotify,
+	}
+
+	_, err3 := r.DB.Model(&userSubs).Insert()
+
+	if err3 != nil {
+		return nil, errors.New("Insert failed")
+	}
+
+	return &userSubs, nil
 }
 
-func (r *mutationResolver) DeleteUserSubscription(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) DeleteUserSubscription(ctx context.Context, userID string, channelID string) (bool, error) {
+	var subscription model.UserSubscription
+
+	err := r.DB.Model(&subscription).Where("user_id = ? AND channel_id = ?", userID, channelID).First()
+
+	if err != nil {
+		return false, errors.New("Subscription not found")
+	}
+
+	_, err2 := r.DB.Model(&subscription).Where("user_id = ? AND channel_id = ?", userID, channelID).Delete()
+
+	if err2 != nil {
+		return false, errors.New("Delete failed")
+	}
+
+	return true, nil
 }
 
-func (r *mutationResolver) UpdateUserSubscription(ctx context.Context, id string, input *model.NewUserSubscription) (*model.UserSubscription, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) UpdateUserSubscription(ctx context.Context, userID string, channelID string, input *model.NewUserSubscription) (*model.UserSubscription, error) {
+	var userSubs model.UserSubscription
+
+	err := r.DB.Model(&userSubs).Where("user_id = ? AND channel_id = ?", userID, channelID).First()
+
+	if err != nil {
+		return nil, errors.New("Subscription doesn't exist")
+	}
+
+	userSubs.ChannelID = input.ChannelID
+	userSubs.UserID = input.UserID
+	userSubs.ShouldNotify = input.ShouldNotify
+
+	_, err2 := r.DB.Model(&userSubs).Where("user_id = ? AND channel_id = ?", userID, channelID).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &userSubs, nil
 }
 
 func (r *mutationResolver) CreateCommunityPost(ctx context.Context, input *model.NewCommunityPost) (*model.CommunityPost, error) {
@@ -178,6 +284,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input *model.NewVide
 		VideoURL:      input.VideoURL,
 		Like:          1,
 		Dislike:       1,
+		Duration:      input.Duration,
 	}
 
 	_, err2 := r.DB.Model(&video).Insert()
@@ -190,7 +297,36 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input *model.NewVide
 }
 
 func (r *mutationResolver) UpdateVideo(ctx context.Context, id string, input *model.NewVideo) (*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
+	var video model.Video
+
+	err := r.DB.Model(&video).Where("id = ?", id).First()
+
+	if err != nil {
+		return nil, errors.New("Video doesn't exist")
+	}
+
+	video.ChannelID = input.ChannelID
+	video.Title = input.Title
+	video.Description = input.Description
+	video.Thumbnail = input.Thumbnail
+	video.Category = input.Category
+	video.Location = input.Location
+	video.View = input.View
+	video.Privacy = input.Privacy
+	video.IsPremium = input.IsPremium
+	video.AgeRestricted = input.AgeRestricted
+	video.VideoURL = input.VideoURL
+	video.Like = input.Like
+	video.Dislike = input.Dislike
+	video.Duration = input.Duration
+
+	_, err2 := r.DB.Model(&video).Where("id = ?", id).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &video, nil
 }
 
 func (r *mutationResolver) DeleteVideo(ctx context.Context, id string) (bool, error) {
@@ -416,6 +552,18 @@ func (r *queryResolver) GetUserSubscriptionByUserID(ctx context.Context, userID 
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) GetUserSubscriptionByUserIDAndChannelID(ctx context.Context, userID string, channelID string) ([]*model.UserSubscription, error) {
+	var userSubs []*model.UserSubscription
+
+	err := r.DB.Model(&userSubs).Where("user_id = ? AND channel_id = ?", userID, channelID).First()
+
+	if err != nil {
+		return nil, errors.New("Failed to query subscription")
+	}
+
+	return userSubs, nil
+}
+
 func (r *queryResolver) GetCommunityPostByChannelID(ctx context.Context, channelID string) ([]*model.CommunityPost, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -459,7 +607,7 @@ func (r *queryResolver) GetRelatedVideo(ctx context.Context, category string, lo
 func (r *queryResolver) GetVideo(ctx context.Context) ([]*model.Video, error) {
 	var videos []*model.Video
 
-	err := r.DB.Model(&videos).Select()
+	err := r.DB.Model(&videos).Order("id").Select()
 
 	if err != nil {
 		return nil, errors.New("Failed to query video")

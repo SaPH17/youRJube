@@ -89,10 +89,12 @@ type Reply struct {
 }
 
 type User struct {
-	ID           string `json:"id"`
-	Email        string `json:"email"`
-	RestrictMode string `json:"restrict_mode"`
-	Location     string `json:"location"`
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	RestrictMode  string `json:"restrict_mode"`
+	Location      string `json:"location"`
+	LikedVideo    string `json:"liked_video"`
+	DislikedVideo string `json:"disliked_video"`
 }
 
 type UserSubscription struct {
@@ -123,6 +125,7 @@ type Video struct {
 	AgeRestricted string `json:"age_restricted"`
 	Like          int    `json:"like"`
 	Dislike       int    `json:"dislike"`
+	Duration      int    `json:"duration"`
 }
 
 type VideoTag struct {
@@ -137,6 +140,7 @@ type NewChannel struct {
 	BackgroundImage string `json:"background_image"`
 	Icon            string `json:"icon"`
 	Description     string `json:"description"`
+	SubscriberCount int    `json:"subscriber_count"`
 }
 
 type NewChannelSocialMedia struct {
@@ -189,18 +193,17 @@ type NewReply struct {
 }
 
 type NewUser struct {
-	Email        string `json:"email"`
-	RestrictMode string `json:"restrict_mode"`
-	Location     string `json:"location"`
+	Email         string `json:"email"`
+	RestrictMode  string `json:"restrict_mode"`
+	Location      string `json:"location"`
+	LikedVideo    string `json:"liked_video"`
+	DislikedVideo string `json:"disliked_video"`
 }
 
 type NewUserSubscription struct {
-	UserID         string `json:"user_id"`
-	ChannelID      string `json:"channel_id"`
-	SubscribeDay   int    `json:"subscribe_day"`
-	SubscribeMonth int    `json:"subscribe_month"`
-	SubscribeYear  int    `json:"subscribe_year"`
-	ShouldNotify   string `json:"should_notify"`
+	UserID       string `json:"user_id"`
+	ChannelID    string `json:"channel_id"`
+	ShouldNotify string `json:"should_notify"`
 }
 
 type NewVideo struct {
@@ -211,9 +214,13 @@ type NewVideo struct {
 	Thumbnail     string `json:"thumbnail"`
 	Category      string `json:"category"`
 	Location      string `json:"location"`
+	View          int    `json:"view"`
 	Privacy       string `json:"privacy"`
 	IsPremium     string `json:"is_premium"`
 	AgeRestricted string `json:"age_restricted"`
+	Like          int    `json:"like"`
+	Dislike       int    `json:"dislike"`
+	Duration      int    `json:"duration"`
 }
 
 type NewVideoTag struct {

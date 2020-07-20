@@ -7,12 +7,16 @@ type User {
   email: String!
   restrict_mode: String!
   location: String!
+  liked_video: String!
+  disliked_video: String!
 }
 
 input newUser{
   email: String!
   restrict_mode: String!
   location: String!
+  liked_video: String!
+  disliked_video: String!
 }
 
 type Channel{
@@ -34,6 +38,7 @@ input newChannel{
   background_image: String!
   icon: String!
   description: String!
+  subscriber_count: Int!
 }
 
 type ChannelSocialMedia{
@@ -62,9 +67,6 @@ type UserSubscription{
 input newUserSubscription{
   user_id: ID!
   channel_id: ID!
-  subscribe_day: Int!
-  subscribe_month: Int!
-  subscribe_year: Int!
   should_notify: String!
 }
 
@@ -122,6 +124,7 @@ type Video{
   age_restricted: String!
   like: Int!
   dislike: Int!
+  duration: Int!
 }
 
 input newVideo{
@@ -132,9 +135,13 @@ input newVideo{
   thumbnail: String!
   category: String!
   location: String!
+  view: Int!
   privacy: String!
   is_premium: String!
   age_restricted: String!
+  like: Int!
+  dislike: Int!
+  duration: Int!
 }
 
 type VideoTag{
@@ -234,6 +241,7 @@ type Query{
   getChannelSocialMediaByChannelId(channel_id: ID!) : [ChannelSocialMedia!]!
 
   getUserSubscriptionByUserId(user_id: ID!): [UserSubscription!]!
+  getUserSubscriptionByUserIdAndChannelId(user_id: ID!, channel_id: ID!): [UserSubscription!]!
 
   getCommunityPostByChannelId(channel_id: ID!): [CommunityPost!]!
 
@@ -273,8 +281,8 @@ type Mutation{
   deleteChannelSocialMedia(id: ID!): Boolean!
 
   createUserSubscription(input: newUserSubscription): UserSubscription!
-  deleteUserSubscription(id: ID!): Boolean!
-  updateUserSubscription(id: ID!, input: newUserSubscription): UserSubscription!
+  deleteUserSubscription(user_id: ID!, channel_id: ID!): Boolean!
+  updateUserSubscription(user_id: ID!, channel_id: ID!, input: newUserSubscription): UserSubscription!
 
   createCommunityPost(input: newCommunityPost): CommunityPost!
   deleteCommunityPost(id: ID!): Boolean!

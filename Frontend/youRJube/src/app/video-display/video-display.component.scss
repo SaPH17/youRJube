@@ -5,6 +5,22 @@ $container-width: 288px;
     margin: 2vh 0.4vw;
     flex-direction: column;
 
+    a{
+        .thumbnail{
+            position: relative;
+
+            .video-duration{
+                position: absolute;
+                right: 0px;
+                bottom: 0px;
+                color: white;
+                background-color: black;
+                padding: 3px;
+                font-size: 14px;
+            }
+        }
+    }
+
     .video-description-container{
         margin-top: 1vh;
         display: flex;

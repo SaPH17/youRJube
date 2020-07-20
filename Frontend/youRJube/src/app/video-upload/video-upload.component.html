@@ -61,7 +61,7 @@
 
                     <select name="" id="playlist-list" (change)="changePlaylistValue($event)">
                         <option value="None">None</option>
-                        <option *ngFor="let p of channelPlaylist" value="{{p.title}}">{{p.title}}</option>
+                        <option *ngFor="let p of channelPlaylist" value="{{p.id}}">{{p.title}}</option>
                     </select>
 
                     <div class="playlist-title2">

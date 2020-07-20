@@ -140,7 +140,9 @@ export class AppComponent implements OnInit{
             id,
             email,
             restrict_mode,
-            location
+            location,
+            liked_video,
+            disliked_video
           }
         }
       `,
@@ -152,16 +154,17 @@ export class AppComponent implements OnInit{
       console.log(this.userDB);
 
       if(this.userDB === undefined || this.userDB.length == 0){
-        console.log("TESSS");
         
         this.apollo.mutate<any>({
           mutation: gql`
-            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!){
-              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location}){
+            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!, $liked_video: String!, $disliked_video: String!){
+              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location, liked_video: $liked_video, disliked_video: $disliked_video}){
                 id,
                 email,
                 restrict_mode,
-                location
+                location,
+                liked_video,
+                disliked_video
               }
             }
           `,
@@ -169,6 +172,8 @@ export class AppComponent implements OnInit{
             email: this.user.email,
             restrict_mode: this.restrictMode.toString(),
             location: "Indonesia",
+            liked_video: ",",
+            disliked_video: ","
           }
         }).subscribe(result =>{
           this.userDB = result.data.createUser
@@ -225,6 +230,7 @@ export class AppComponent implements OnInit{
             icon: $icon,
             description: "No description given",
             name: $name,
+            subscriber_count: 1
           }){
             id,
             user_id,

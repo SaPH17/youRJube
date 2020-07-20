@@ -2,6 +2,7 @@
     <a href="watch/{{video.id}}">
         <div class="thumbnail">
             <img src="{{video.thumbnail}}" alt="" width="288px" height="162px">
+            <span class="video-duration">{{duration}}</span>
         </div>
     </a>
     <div class="video-description-container">
@@ -62,7 +63,7 @@
         <div class="center">
             <ul>
                 <li *ngFor="let p of userPlaylist">
-                    <input type="checkbox" name="" id="user-playlist-{{p.id}}" (change)="addToPlaylist($event, p)" ng-checked="checkChecked()">
+                    <input type="checkbox" name="" id="user-playlist-{{p.id}}" (change)="addToPlaylist($event, p)" [checked]="checkChecked(p)">
                     <label for="user-playlist-{{p.id}}" class="unselectable">{{p.title}}</label>
                 </li>
             </ul>

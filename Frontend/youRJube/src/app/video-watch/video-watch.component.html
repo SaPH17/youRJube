@@ -4,7 +4,8 @@
         <div class="video-player">
             <mat-video 
             id="video-player"
-            src="{{video.video_url}}">
+            src="{{video.video_url}}"
+            (timeupdate)="changeCurrentTime($event)">
         
             </mat-video>
         </div>
@@ -23,14 +24,14 @@
                 <div class="like-and-dislike">
                     <div class="the-buttons">
                         <a>
-                            <div class="like-button">
+                            <div class="like-button"  id="thumbs-up-logo" (click)="likeVideo()">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                 {{likeOutput}}
                             </div>
                         </a>
                         <a>
-                            <div class="dislike-button">
-                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                            <div class="dislike-button" id="thumbs-down-logo" (click)="dislikeVideo()">
+                            <i class="fa fa-thumbs-down"  aria-hidden="true"></i>
                                 {{dislikeOutput}}
                             </div>
                         </a>
@@ -45,13 +46,13 @@
                     </div>
                 </div>
                 <a>
-                    <div class="share-button">
+                    <div class="share-button"  (click)="showShareModal()">
                     <i class="fa fa-share" aria-hidden="true" style="margin-right: 0.5vw;"></i>
                     SHARE
                     </div>
                 </a>
                 <a>
-                    <div class="add-to-playlist">
+                    <div class="add-to-playlist" (click)="showPlaylistModal()">
                     <i class="fa fa-list-ol" aria-hidden="true" style="margin-right: 0.5vw;"></i>
                     SAVE
                     </div>
@@ -83,18 +84,24 @@
 
                 <div class="subscribe-container">
                     <a>
-                        <div class="subscribe-button">
+                        <div class="subscribe-button" (click)="subscribeToChannel()" *ngIf="userSubCondition == 0">
                             SUBSCRIBE
                         </div>
                     </a>
 
-                    <!-- <div class="bell-button">
+                    <a>
+                        <div class="subscribe-button2" (click)="unsubscribeToChannel()" *ngIf="userSubCondition != 0">
+                            SUBSCRIBE
+                        </div>
+                    </a>
+
+                    <div class="bell-button" *ngIf="userSubCondition == 2" (click)="changeUserSubsNotif('false')">
                         <i class="fa fa-bell" aria-hidden="true"></i>
                     </div>
 
-                    <div class="bell-button2">
+                    <div class="bell-button" *ngIf="userSubCondition == 1" (click)="changeUserSubsNotif('true')">
                         <i class="fa fa-bell-o" aria-hidden="true"></i>
-                    </div> -->
+                    </div>
 
                 </div>
             </div>
@@ -157,5 +164,82 @@
     
     <div class="related-video">
         <app-video-related *ngFor="let v of videos" [vid]="v"></app-video-related>
+    </div>
+</div>
+
+<div class="playlist-modal" id="playlist-modal2">
+    <div class="modal-content">
+
+        <div class="top">
+            <div class="left">
+                Save to..
+            </div>
+
+            <div class="right" (click)="hidePlaylistModal()">
+                &times;
+            </div>
+        </div>
+
+        <div class="center" *ngIf="showModal">
+            <ul>
+                <li *ngFor="let p of userPlaylist">
+                    <input type="checkbox" name="" id="user-playlist2-{{p.id}}" (change)="addToPlaylist($event, p)"  [checked]="checkChecked(p)">
+                    <label for="user-playlist2-{{p.id}}" class="unselectable">{{p.title}}</label>
+                </li>
+            </ul>
+        </div>
+
+        <div class="bottom">
+            <div class="create-new-playlist-button" id="create-new-playlist-button2-{{video.id}}" (click)="toggleCreatePlaylist()">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Create new playlist
+            </div>
+
+            <div class="title" id="ntitle2-{{video.id}}">
+                <label for="nplaylist-title2-{{video.id}}">Name</label>
+                <input type="text" name="" id="nplaylist-title2-{{video.id}}" placeholder="Enter a playlist name..." (change)="playlist_title = $event.target.value"
+               >
+            </div>
+
+            <div class="privacy" id="nprivacy2-{{video.id}}">
+                <label for="nplaylist-privacy2-{{video.id}}">Privacy</label>
+                <select name="" id="nplaylist-privacy2-{{video.id}}" (change)="changePrivacyValue($event)">
+                    <option value="None">Select one</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+            </div>
+
+            <div class="create-button" id="nbutton2-{{video.id}}" (click)="createNewPlaylist()">
+                CREATE
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="share-modal" id="share-modal">
+    <div class="modal-content">
+        <div class="top">
+            <div class="left">
+                Share
+            </div>
+
+            <div class="right" (click)="hideShareModal()">
+                &times;
+            </div>
+
+        </div>
+
+        <div class="center">
+            <input type="text" name="" id="url" [value]="videoURL" readonly>
+            <div class="copy-button" (click)="copyURLToClipboard()">
+                COPY
+            </div>
+        </div>
+
+        <div class="bottom">
+            <input type="checkbox" name="" id="current-time">
+            <label for="current-time">Copy at current time ({{currentTime}})</label>
+        </div>
     </div>
 </div>

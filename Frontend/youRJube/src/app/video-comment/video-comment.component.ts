@@ -3,11 +3,25 @@ import { Apollo } from 'apollo-angular';
 import { Component, OnInit, Input } from '@angular/core';
 import gql from 'graphql-tag';
 
+const getReplyQuery = gql `
+  query getReplyByCommentId($comment_id: ID!){
+    getReplyByCommentId(comment_id: $comment_id){
+      id,
+      comment_id,
+      channel_id,
+      content,
+      day,
+      month,
+      year,
+    }
+  }
+`
 @Component({
   selector: 'app-video-comment',
   templateUrl: './video-comment.component.html',
   styleUrls: ['./video-comment.component.scss']
 })
+
 export class VideoCommentComponent implements OnInit {
 
   @Input('comm')comment:{
@@ -54,7 +68,7 @@ export class VideoCommentComponent implements OnInit {
   constructor(private apollo: Apollo, private data: DataService) { }
 
   ngOnInit(): void {
-
+    
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
 
     this.apollo.query<any>({
@@ -89,19 +103,7 @@ export class VideoCommentComponent implements OnInit {
 
   loadReplies():void{
     this.apollo.watchQuery<any>({
-      query: gql `
-        query getReplyByCommentId($comment_id: ID!){
-          getReplyByCommentId(comment_id: $comment_id){
-            id,
-            comment_id,
-            channel_id,
-            content,
-            day,
-            month,
-            year,
-          }
-        }
-      `,
+      query: getReplyQuery,
       variables:{
         comment_id: this.comment.id
       }
@@ -135,7 +137,11 @@ export class VideoCommentComponent implements OnInit {
         comment_id: this.comment.id,
         channel_id: this.userChannel.id,
         content: this.replyInput
-      }
+      },
+      refetchQueries: [{
+        query: getReplyQuery,
+        variables: { repoFullName: 'apollographql/apollo-client' },
+      }],
     }).subscribe(result => {
       alert("Reply successfuly added!")
 

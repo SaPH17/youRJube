@@ -22,7 +22,6 @@ const getPlaylistByChannelId = gql `
     }    
   `
 
-
 @Component({
   selector: 'app-video-display',
   templateUrl: './video-display.component.html',
@@ -48,7 +47,8 @@ export class VideoDisplayComponent implements OnInit{
     view: number,
     privacy: string,
     is_premium: boolean,
-    age_restricted: boolean
+    age_restricted: boolean,
+    duration: number
   }
 
   viewOutput:any
@@ -63,13 +63,15 @@ export class VideoDisplayComponent implements OnInit{
   playlist_title: String
   playlist_privacy: String
 
+  duration: String ="AA"
+
   constructor(private data: DataService, private apollo: Apollo) { }
 
   ngOnInit() {
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
     this.viewOutput = this.convertView(this.video.view - 1)
-
+     this.getDuration(this.video.duration)
 
     this.apollo.query<any>({
       query: gql `
@@ -176,7 +178,7 @@ export class VideoDisplayComponent implements OnInit{
     var newStr: String
 
     if(e.target.checked == true){
-      newStr = value.video_id + "," + this.video.id    
+      newStr = value.video_id +  this.video.id + "," 
     }
     else{
       var str = value.video_id
@@ -263,9 +265,11 @@ export class VideoDisplayComponent implements OnInit{
     })
   }
 
-  checkChecked():boolean{
-    return false
-  }
+  checkChecked(playlist):boolean{
+    if(playlist.video_id.includes((this.video.id).toString())){
+      return true
+    }
+    return false  }
 
   toggleCreatePlaylist():void{    
     var id = "create-new-playlist-button-" + this.video.id
@@ -328,6 +332,76 @@ export class VideoDisplayComponent implements OnInit{
     this.playlist_privacy = e.target.value
     console.log(this.playlist_privacy);
     
+  }
+
+  getDuration(v):void{
+    // this.duration = (Math.floor(e.target.duration)).toString() + " second(s)"
+
+    var time = v
+    var hour:number
+    var minute:number
+    var second: number
+
+    if(time > 3600){
+      hour = Math.floor(time / 3600)
+      minute = Math.floor((time - (3600 * hour)) / 60)      
+      second = Math.floor(((time - (3600 * hour)) - minute * 60))
+
+      if(hour <= 9 ){
+        this.duration =  "0" + hour   
+      }
+      else{
+        this.duration = hour.toString()
+      }
+
+      this.duration += ":"
+
+      if(minute <= 9){
+        this.duration += "0" + minute 
+      }
+      else{
+        this.duration += minute.toString()
+      }
+
+      this.duration += ":"
+
+      if(second <= 9){
+        this.duration += "0" + second
+      }
+      else{
+        this.duration += second.toString()
+      }
+    }
+    else if(time > 60){
+      minute = Math.floor(time / 60)
+      second = Math.floor((time - minute * 60))
+
+      if(minute <= 9){
+        this.duration = "0" + minute
+      }
+      else{
+        this.duration = minute.toString()  
+      }
+
+      this.duration += ":"
+
+      if(second <= 9){
+        this.duration += "0" + second
+      }
+      else{
+        this.duration += second.toString()
+      }
+    }
+    else{
+      second = time
+
+      if(second <= 9){
+        this.duration = "00:0" + second
+      }
+      else{
+        this.duration = "00:" + second.toString()
+      }
+    }
   }
 
 }

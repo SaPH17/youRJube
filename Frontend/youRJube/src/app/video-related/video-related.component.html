@@ -1,40 +1,90 @@
-    <div class="container">
-        <div class="left">
-            <a href="watch/{{video.id}}">
-                <img src="{{video.thumbnail}}" alt="" height="100px">
-            </a>
-        </div>
-    
-        <div class="right">
-            <div class="top">
-                {{video.title}}
+<div class="container">
+    <div class="left">
+        <a href="watch/{{video.id}}">
+            <img src="{{video.thumbnail}}" alt="" height="100px">
+        </a>
+    </div>
 
-                <div class="settings-button">
-                    <a (click)="settingsClick()" class="settings-button-icon">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                    </a>
-        
-                    <div class="dropdown-content" id="video-settings-dropdown-{{video.id}}">
-                        <a><i class="fa fa-list-ol" aria-hidden="true"></i>
-                            Add to queue</a>
-                        <a *ngIf="isUserSignedIn()"><i class="fa fa-random" aria-hidden="true"></i>
-                            Add to playlist</a>
-                    </div>
+    <div class="right">
+        <div class="top">
+            {{video.title}}
+
+            <div class="settings-button">
+                <a (click)="settingsClick()" class="settings-button-icon">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </a>
+    
+                <div class="dropdown-content" id="video-settings-dropdown-{{video.id}}">
+                    <a><i class="fa fa-list-ol" aria-hidden="true"></i>
+                        Add to queue</a>
+                    <a *ngIf="isUserSignedIn()" (click)="showPlaylistModal()"><i class="fa fa-random" aria-hidden="true"></i>
+                        Add to playlist</a>
                 </div>
             </div>
-    
-            <div class="center">
-                My Channel
+        </div>
+
+        <div class="center">
+            My Channel
+        </div>
+
+        <div class="bottom">
+            <div class="view">
+                {{viewOutput}} • 
             </div>
-    
-            <div class="bottom">
-                <div class="view">
-                    {{viewOutput}} • 
-                </div>
-                
-                <div class="date">
-                      {{dateOutput}}
-                </div>
+            
+            <div class="date">
+                    {{dateOutput}}
             </div>
         </div>
     </div>
+</div>
+
+<div class="playlist-modal" id="playlist-modal3" *ngIf="showModal">
+    <div class="modal-content">
+
+        <div class="top">
+            <div class="left">
+                Save to..
+            </div>
+
+            <div class="right" (click)="hidePlaylistModal()">
+                &times;
+            </div>
+        </div>
+
+        <div class="center" *ngIf="showModal">
+            <ul>
+                <li *ngFor="let p of userPlaylist">
+                    <input type="checkbox" name="" id="user-playlist3-{{video.id}}-{{p.id}}" (change)="addToPlaylist($event, p)"  [checked]="checkChecked(p)">
+                    <label for="user-playlist3-{{video.id}}-{{p.id}}" class="unselectable">{{p.title}}</label>
+                </li>
+            </ul>
+        </div>
+
+        <div class="bottom">
+            <div class="create-new-playlist-button" id="create-new-playlist-button3-{{video.id}}" (click)="toggleCreatePlaylist()">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Create new playlist
+            </div>
+
+            <div class="title" id="ntitle3-{{video.id}}">
+                <label for="nplaylist-title3-{{video.id}}">Name</label>
+                <input type="text" name="" id="nplaylist-title3-{{video.id}}" placeholder="Enter a playlist name..." (change)="playlist_title = $event.target.value"
+                >
+            </div>
+
+            <div class="privacy" id="nprivacy3-{{video.id}}">
+                <label for="nplaylist-privacy3-{{video.id}}">Privacy</label>
+                <select name="" id="nplaylist-privacy3-{{video.id}}" (change)="changePrivacyValue($event)">
+                    <option value="None">Select one</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+            </div>
+
+            <div class="create-button" id="nbutton3-{{video.id}}" (click)="createNewPlaylist()">
+                CREATE
+            </div>
+        </div>
+    </div>
+</div>
