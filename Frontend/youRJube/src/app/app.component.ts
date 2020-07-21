@@ -22,6 +22,31 @@ export class AppComponent implements OnInit{
   userChannel: any
 
   restrictMode: boolean = false
+  restrictModeOutput: String = "OFF"
+  userPlaylist: any
+  playlistLoaded:boolean = false
+
+  country_list = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua and Barbuda","Argentina","Armenia",
+  "Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin",
+  "Bermuda","Bhutan","Bolivia","Bosnia &amp; Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Cape Verde","Cayman Islands","Chad","Chile","China","Colombia","Congo",
+  "Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship","Cuba","Cyprus","Czech Republic","Denmark","Djibouti",
+  "Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Estonia","Ethiopia","Falkland Islands",
+  "Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana",
+  "Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras",
+  "Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan",
+  "Jersey","Jordan","Kazakhstan","Kenya","Kuwait","Kyrgyz Republic","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya",
+  "Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta",
+  "Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia",
+  "Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman",
+  "Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar",
+  "Reunion","Romania","Russia","Rwanda","Saint Pierre &amp; Miquelon","Samoa","San Marino","Satellite","Saudi Arabia","Senegal",
+  "Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka",
+  "St Kitts &amp; Nevis","St Lucia","St Vincent","St. Lucia","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria",
+  "Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad &amp; Tobago","Tunisia","Turkey",
+  "Turkmenistan","Turks &amp; Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan",
+  "Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
+
+
 
   constructor(private authService: SocialAuthService, private router: Router, private data: DataService, private apollo: Apollo) { }
 
@@ -101,7 +126,10 @@ export class AppComponent implements OnInit{
     document.getElementById('categoryButton').className = ""
     document.getElementById('membershipButton').className = ""
     if(this.user != null){
-      document.getElementById('playlistButton').className = "" 
+      for(let i = 0; i < this.userPlaylist.length; i++){
+        var id = "playlistButton-" + this.userPlaylist[i].id
+        document.getElementById(id).className = "" 
+      }
     }
   }
 
@@ -142,7 +170,9 @@ export class AppComponent implements OnInit{
             restrict_mode,
             location,
             liked_video,
-            disliked_video
+            disliked_video,
+            liked_comment,
+            disliked_comment
           }
         }
       `,
@@ -157,14 +187,16 @@ export class AppComponent implements OnInit{
         
         this.apollo.mutate<any>({
           mutation: gql`
-            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!, $liked_video: String!, $disliked_video: String!){
-              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location, liked_video: $liked_video, disliked_video: $disliked_video}){
+            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!){
+              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location, liked_video: $liked_video, disliked_video: $disliked_video, liked_comment: $liked_comment, disliked_comment: $disliked_comment}){
                 id,
                 email,
                 restrict_mode,
                 location,
                 liked_video,
-                disliked_video
+                disliked_video,
+                liked_comment,
+                disliked_comment
               }
             }
           `,
@@ -173,18 +205,38 @@ export class AppComponent implements OnInit{
             restrict_mode: this.restrictMode.toString(),
             location: "Indonesia",
             liked_video: ",",
-            disliked_video: ","
+            disliked_video: ",",
+            liked_comment: ",",
+            disliked_comment: ","
           }
         }).subscribe(result =>{
           this.userDB = result.data.createUser
           this.insertNewChannel()
           this.data.changeUserDB(this.userDB)
+          if(this.userDB.restrict_mode == "false"){
+            this.restrictMode = false
+            this.restrictModeOutput= "OFF"
+          }
+          else{
+            this.restrictMode = true
+            this.restrictModeOutput = "ON"
+          }
         })
       }
       else{
         console.log("AA");
 
-        this.data.changeUserDB(this.userDB)        
+        this.data.changeUserDB(this.userDB) 
+
+        if(this.userDB.restrict_mode == "false"){
+          this.restrictMode = false
+          this.restrictModeOutput= "OFF"
+        }
+        else{
+          this.restrictMode = true
+          this.restrictModeOutput = "ON"
+        }       
+
         console.log(this.userDB.id)
         console.log("DB ==");
         
@@ -211,10 +263,41 @@ export class AppComponent implements OnInit{
           console.log(result.data.getChannelByUserID)
           this.userChannel = result.data.getChannelByUserID[0]
           this.data.changeChannel(result.data.getChannelByUserID[0])
+          this.getUserPlaylist()
         })
       }
     })
 
+  }
+
+  getUserPlaylist():void{        
+
+    this.apollo.watchQuery<any>({
+      query: gql `
+        query getPlaylistByChannelId($channel_id: ID!){
+          getPlaylistByChannelId(channel_id: $channel_id){
+            id,
+            channel_id,
+            title,
+            description,
+            privacy,
+            thumbnail,
+            last_updated_day,
+            last_updated_month,
+            last_updated_year,
+            view,
+            video_id,
+          }
+        }    
+      `,
+      variables:{
+        channel_id: this.userChannel.id
+      }
+    }).valueChanges.subscribe(result => {
+      this.userPlaylist = result.data.getPlaylistByChannelId
+      console.log(this.userPlaylist);
+      this.playlistLoaded = true
+    })
   }
 
   insertNewChannel():void{
@@ -286,7 +369,131 @@ export class AppComponent implements OnInit{
     window.localStorage.clear();
     this.loggedIn = false;
   }
-  
 
+  toggleRestrictedMode(){
+    if(this.restrictMode){
+      this.restrictMode = false;
+      this.restrictModeOutput = "OFF"
+    }
+    else{
+      this.restrictMode = true;
+      this.restrictModeOutput = "ON"
+    }
+
+    if(this.userDB){
+      this.updateUserRestrictMode()
+    }
+
+  }
+
+  updateUserRestrictMode(){
+
+    var str: string
+
+    if(this.restrictMode){
+      str = "true"
+    }
+    else{
+      str = "false"
+    }
+
+    this.apollo.mutate<any>({
+      mutation: gql`
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!){
+          updateUser(id: $id, input:{
+            email: $email,
+            location: $location,
+            restrict_mode: $restrict_mode
+            liked_video: $liked_video,
+            disliked_video: $disliked_video
+          }){
+            id,
+            email,
+            location,
+            restrict_mode,
+            liked_video,
+            disliked_video
+          }
+        }
+      `,
+      variables:{
+        id: this.userDB.id,
+        email: this.userDB.email,
+        location: this.userDB.location,
+        restrict_mode: str,
+        liked_video: this.userDB.liked_video,
+        disliked_video: this.userDB.disliked_video
+      },
+      // refetchQueries: [{
+      //   query: getUserSubsQuery,
+      //   variables: { repoFullName: 'apollographql/apollo-client' ,
+      //               user_id: this.userDB.id,
+      //               channel_id: this.channel.id,
+      //             },
+      // }],
+    }).subscribe(result =>{
+      console.log(result.data.updateUser);
+      this.userDB = result.data.updateUser
+      this.data.changeUserDB(this.userDB)
+    })   
+  }
+  
+  checkCurrentLocation(v){
+    if(this.userDB){
+      return v == this.userDB.location
+    }
+
+    return v == "Indonesia"
+  }
+
+  openLocationModal():void{
+    document.getElementById('select-country').style.visibility = "visible"
+  }
+
+  hideLocationModal():void{
+    document.getElementById('select-country').style.visibility = "hidden"
+  }
+
+  changeCurrentLocation(e){
+    this.apollo.mutate<any>({
+      mutation: gql`
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!){
+          updateUser(id: $id, input:{
+            email: $email,
+            location: $location,
+            restrict_mode: $restrict_mode
+            liked_video: $liked_video,
+            disliked_video: $disliked_video
+          }){
+            id,
+            email,
+            location,
+            restrict_mode,
+            liked_video,
+            disliked_video
+          }
+        }
+      `,
+      variables:{
+        id: this.userDB.id,
+        email: this.userDB.email,
+        location: e,
+        restrict_mode: this.userDB.restrict_mode,
+        liked_video: this.userDB.liked_video,
+        disliked_video: this.userDB.disliked_video
+      },
+      // refetchQueries: [{
+      //   query: getUserSubsQuery,
+      //   variables: { repoFullName: 'apollographql/apollo-client' ,
+      //               user_id: this.userDB.id,
+      //               channel_id: this.channel.id,
+      //             },
+      // }],
+    }).subscribe(result =>{
+      console.log(result.data.updateUser);
+      this.userDB = result.data.updateUser
+      this.data.changeUserDB(this.userDB)
+    })  
+  }
 
 }

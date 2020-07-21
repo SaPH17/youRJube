@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="top">
+        Created playlists
+    </div>
+
+    <div class="content">
+        <div class="no-playlist" *ngIf="!channelHavePlaylist">
+            This channel has no playlists
+        </div>
+
+        <div class="playlists" *ngIf="channelHavePlaylist && playlistLoaded">
+            <app-channel-playlist-display *ngFor="let p of channelPlaylist" [playlist]="p"></app-channel-playlist-display>
+        </div>
+    </div>
+</div>

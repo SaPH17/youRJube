@@ -1,7 +1,7 @@
 .container{
     margin-top: -4vh;
     margin-left: -0.75vw;
-    max-width: 1300px;
+    width: 100%;
 
     .background-image{
         img{
@@ -83,6 +83,8 @@
 
         .profile-bottom{
             padding-top: 1vh;
+            padding-bottom: 2vh;
+            border-bottom: 2px lightgray solid;
 
             ul{
                 list-style: none;
@@ -92,13 +94,26 @@
 
                 li{
                     font-size: 16px;
-                    color: rgb(100, 100, 100)
+                    color: rgb(100, 100, 100);
+                    text-decoration: none;
+
+                    a{
+                        text-decoration: none;
+                        color: rgb(100, 100, 100)
+                    }
                 }
                 
                 li:hover{
-                    color: rgb(44, 44, 44)
+
+                    a{
+                        color: rgb(44, 44, 44)
+                    }
                 }
             }
         }
+    }
+
+    .content{
+        width: 100%;
     }
 }

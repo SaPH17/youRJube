@@ -14,11 +14,13 @@ import (
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
 	user := model.User{
-		Email:         input.Email,
-		RestrictMode:  input.RestrictMode,
-		Location:      input.Location,
-		LikedVideo:    input.LikedVideo,
-		DislikedVideo: input.DislikedVideo,
+		Email:           input.Email,
+		RestrictMode:    input.RestrictMode,
+		Location:        input.Location,
+		LikedVideo:      input.LikedVideo,
+		DislikedVideo:   input.DislikedVideo,
+		LikedComment:    input.LikedComment,
+		DislikedComment: input.DislikedComment,
 	}
 
 	_, err := r.DB.Model(&user).Insert()
@@ -44,6 +46,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 	user.Location = input.Location
 	user.LikedVideo = input.LikedVideo
 	user.DislikedVideo = input.DislikedVideo
+	user.LikedComment = input.LikedComment
+	user.DislikedComment = input.DislikedComment
 
 	_, err2 := r.DB.Model(&user).Where("id = ?", id).Update()
 
@@ -443,6 +447,30 @@ func (r *mutationResolver) CreateComment(ctx context.Context, input *model.NewCo
 	return &comment, nil
 }
 
+func (r *mutationResolver) UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error) {
+	var comment model.Comment
+
+	err := r.DB.Model(&comment).Where("id = ?", id).First()
+
+	if err != nil {
+		return nil, errors.New("Comment doesn't exist")
+	}
+
+	comment.VideoID = input.VideoID
+	comment.ChannelID = input.ChannelID
+	comment.Like = input.Like
+	comment.Dislike = input.Dislike
+	comment.Content = input.Content
+
+	_, err2 := r.DB.Model(&comment).Where("id = ?", id).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &comment, nil
+}
+
 func (r *mutationResolver) CreateReply(ctx context.Context, input *model.NewReply) (*model.Reply, error) {
 	var comment []*model.Comment
 
@@ -585,11 +613,27 @@ func (r *queryResolver) GetVideoByTitle(ctx context.Context, title string) ([]*m
 }
 
 func (r *queryResolver) GetVideoByChannelID(ctx context.Context, channelID string) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
+	var videos []*model.Video
+
+	err := r.DB.Model(&videos).Where("channel_id = ?", channelID).Order("id").Select()
+
+	if err != nil {
+		return nil, errors.New("Failed to query video")
+	}
+
+	return videos, nil
 }
 
-func (r *queryResolver) GetTrendingVideo(ctx context.Context, location string, isRestrict string) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) GetTrendingVideo(ctx context.Context) ([]*model.Video, error) {
+	var videos []*model.Video
+
+	err := r.DB.Model(&videos).Order("view desc").Select()
+
+	if err != nil {
+		return nil, errors.New("Failed to query video")
+	}
+
+	return videos, nil
 }
 
 func (r *queryResolver) GetCategoryVideo(ctx context.Context, rangeArg string, isRestrict string) ([]*model.Video, error) {
@@ -600,14 +644,29 @@ func (r *queryResolver) GetHomeVideo(ctx context.Context, location string, isRes
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) GetRelatedVideo(ctx context.Context, category string, location string, isRestrict string) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) GetRelatedVideo(ctx context.Context, videoID string, category string, location string, isRestrict string) ([]*model.Video, error) {
+	var videos []*model.Video
+	var a string = "false"
+	var err error
+
+	if isRestrict == "false" {
+		err = r.DB.Model(&videos).Where("id != ? AND location = ? AND category = ?", videoID, location, category).Order("id").Select()
+	} else {
+		err = r.DB.Model(&videos).Where("id != ? AND location = ? AND category = ? AND age_restricted = ?", videoID, location, category, a).Order("id").Select()
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Failed to query video")
+	}
+
+	return videos, nil
 }
 
 func (r *queryResolver) GetVideo(ctx context.Context) ([]*model.Video, error) {
 	var videos []*model.Video
 
-	err := r.DB.Model(&videos).Order("id").Select()
+	err := r.DB.Model(&videos).Select()
 
 	if err != nil {
 		return nil, errors.New("Failed to query video")
@@ -636,10 +695,22 @@ func (r *queryResolver) GetPlaylistByUserID(ctx context.Context, userID string) 
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) GetPlaylistByID(ctx context.Context, id string) ([]*model.Playlist, error) {
+	var playlist []*model.Playlist
+
+	err := r.DB.Model(&playlist).Where("id = ?", id).Select()
+
+	if err != nil {
+		return nil, errors.New("Failed to query playlist")
+	}
+
+	return playlist, nil
+}
+
 func (r *queryResolver) GetCommentByVideoID(ctx context.Context, videoID string) ([]*model.Comment, error) {
 	var comments []*model.Comment
 
-	err := r.DB.Model(&comments).Where("video_id = ?", videoID).Select()
+	err := r.DB.Model(&comments).Where("video_id = ?", videoID).Order("id").Select()
 
 	if err != nil {
 		return nil, errors.New("Failed to query comments")

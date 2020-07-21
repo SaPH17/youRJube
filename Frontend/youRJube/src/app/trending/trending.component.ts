@@ -1,4 +1,6 @@
+import { Apollo } from 'apollo-angular';
 import { Component, OnInit } from '@angular/core';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-trending',
@@ -7,51 +9,57 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrendingComponent implements OnInit {
 
-  videos=[{
-    id: 1,
-    channel_id: 3,
-    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
-    title: "Test",
-    description: "Test2",
-    view: 100,
-    upload_day: 18,
-    upload_month: 7,
-    upload_year: 2020
-  },{
-    id: 2,
-    channel_id: 3,
-    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
-    title: "Test",
-    description: "Test2",
-    view: 100,
-    upload_day: 18,
-    upload_month: 7,
-    upload_year: 2020
-  },{
-    id: 3,
-    channel_id: 3,
-    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
-    title: "Test",
-    description: "Test2",
-    view: 100,
-    upload_day: 18,
-    upload_month: 7,
-    upload_year: 2020
-  },{
-    id: 8,
-    channel_id: 3,
-    thumbnail: "https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/thumbnail%2F1594898707760_thumbnail3.png?alt=media&token=35930348-0bf3-4f54-8868-621773015922",
-    title: "Test",
-    description: "Test2",
-    view: 100,
-    upload_day: 18,
-    upload_month: 7,
-    upload_year: 2020
-  }]
+  videos: any
 
-  constructor() { }
+  constructor(private apollo: Apollo) { }
 
   ngOnInit(): void {
+    this.apollo.watchQuery<any>({
+      query: gql `
+        query getTrendingVideo{
+          getTrendingVideo{
+            id,
+            channel_id,
+            title,
+            description,
+            video_url,
+            thumbnail,
+            upload_day,
+            upload_month,
+            upload_year
+            category,
+            location,
+            view,
+            privacy,
+            is_premium,
+            age_restricted,
+            like,
+            dislike,
+            duration
+          }
+        }
+      `
+    }).valueChanges.subscribe(result =>{
+      this.videos = result.data.getTrendingVideo
+      this.filterVideo()
+    })
+  }
+
+  filterVideo():void{
+    var currDate = new Date()
+
+    for(let i = 0; i < this.videos.length; i++){
+      var v = this.videos[i]
+
+      var date = new Date(parseInt(v.upload_year), parseInt(v.upload_month) - 1, parseInt(v.upload_day))
+
+      var diff = Math.floor((Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24))
+
+      if(diff > 7){
+        this.videos.splice(i, 1)
+      }
+    }
   }
 
 }

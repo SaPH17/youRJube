@@ -1,0 +1,21 @@
+.container{
+    padding-top: 2vh;
+    padding-left: 5vw;
+
+    .top{
+        color: gray;
+        font-size: 18px;
+    }
+
+    .content{
+        .no-playlist{
+            font-size: 14px;
+            text-align: center;
+            margin-top: 2vh;
+        }
+        .playlists{
+            display: flex;
+            flex-direction: row;
+        }
+    }
+}

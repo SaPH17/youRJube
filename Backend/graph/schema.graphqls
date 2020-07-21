@@ -9,6 +9,8 @@ type User {
   location: String!
   liked_video: String!
   disliked_video: String!
+  liked_comment: String!
+  disliked_comment: String!
 }
 
 input newUser{
@@ -17,6 +19,8 @@ input newUser{
   location: String!
   liked_video: String!
   disliked_video: String!
+  liked_comment: String!
+  disliked_comment: String!
 }
 
 type Channel{
@@ -195,6 +199,8 @@ input newComment{
   video_id: ID!
   channel_id: ID!
   content: String!
+  like: Int!
+  dislike: Int!
 }
 
 type Reply{
@@ -249,16 +255,17 @@ type Query{
   getVideoByTitle(title: String!): [Video!]!
   getVideoByChannelId(channel_id: ID!): [Video!]!
 
-  getTrendingVideo(location: String!, is_restrict: String!): [Video!]!
+  getTrendingVideo: [Video!]!
   getCategoryVideo(range: String!, is_restrict: String!): [Video!]!
   getHomeVideo(location: String!, is_restrict: String!): [Video!]!
-  getRelatedVideo(category: String!, location: String!, is_restrict: String!): [Video!]!
+  getRelatedVideo(video_id: ID!, category: String!, location: String!, is_restrict: String!): [Video!]!
   getVideo: [Video!]!
 
   getVideoTagByVideoId(video_id: ID!): [VideoTag!]!
 
   getPlaylistByChannelId(channel_id: ID!): [Playlist!]!
   getPlaylistByUserId(user_id: ID!): [Playlist!]!
+  getPlaylistById(id: ID!): [Playlist!]!
 
   getCommentByVideoId(video_id: ID!): [Comment!]!
 
@@ -301,6 +308,7 @@ type Mutation{
   deletePlaylistDetail(id: ID!): Boolean!
 
   createComment(input: newComment): Comment!
+  updateComment(id: ID!, input: newComment): Comment!
 
   createReply(input: newReply): Reply!
 

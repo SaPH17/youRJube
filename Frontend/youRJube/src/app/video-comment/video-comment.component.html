@@ -27,14 +27,14 @@
     <div class="center">
         <div class="reply-top">
             <a>
-                <div class="like">
+                <div class="like" id="thumbs-up-logo-{{comment.id}}" (click)="likeComment()">
                     <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                     {{likeOutput}}
                 </div>
             </a>
     
             <a>
-                <div class="dislike">
+                <div class="dislike" id="thumbs-down-logo-{{comment.id}}" (click)="dislikeComment()">
                     <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                     {{dislikeOutput}}
                 </div>

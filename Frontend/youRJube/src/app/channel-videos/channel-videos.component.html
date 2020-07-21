@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="top">
+        <div class="title">
+            Uploads
+        </div>
+
+        <div class="sort-options">
+            <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+            <span (click)="toggleSortBy()" class="unselectable">                        
+                SORT BY
+            </span>
+
+            <div class="dropdown-content" id="sortby-options">
+                <ul>
+                    <li (click)="sortVideoByView()">
+                        Most popular
+                    </li>
+                    <li (click)="sortVideoByOldest()">
+                        Oldest
+                    </li>
+                    <li (click)="sortVideoByLatest()">
+                        Newest
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="no-videos" *ngIf="!haveVideos">
+            This channel has no videos
+        </div>
+        <div *ngIf="haveVideos" class="videos">
+            <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+        </div>
+    </div>
+</div>

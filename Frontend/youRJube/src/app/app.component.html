@@ -44,8 +44,8 @@
         </a>
   
         <div class="dropdown-content" id="settings-dropdown">
-            <a><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode</a>
-            <a><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
+            <a (click)="toggleRestrictedMode()"><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode : {{restrictModeOutput}}</a>
+            <a (click)="openLocationModal()"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
             <a (click)="showKeyboardShortcut()"><i class="fa fa-keyboard-o fa-fw" aria-hidden="true"></i>Keyboard Shortcut</a>
         </div>
       </div>
@@ -71,9 +71,9 @@
           
           <a (click)="switchAccount()"><i class="fa fa-users fa-fw" aria-hidden="true"></i>Switch Account</a>
           <a routerLink="premium-membership"><i class="fa fa-tag fa-fw" aria-hidden="true"></i>Premium Membership</a>
-          <a *ngIf="userChannel" href="watch/{{userChannel.id}}"><i class="fa fa-user fa-fw" aria-hidden="true"></i>Your Channel</a>
-          <a><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode</a>
-          <a><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
+          <a *ngIf="userChannel" href="channel/{{userChannel.id}}"><i class="fa fa-user fa-fw" aria-hidden="true"></i>Your Channel</a>
+          <a (click)="toggleRestrictedMode()"><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode : {{restrictModeOutput}}</a>
+          <a (click)="openLocationModal()"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
           <a (click)="showKeyboardShortcut()"><i class="fa fa-keyboard-o fa-fw" aria-hidden="true"></i>Keyboard Shortcut</a>
         </div>
       </div>
@@ -112,10 +112,10 @@
           <span class="title">Membership</span>
         </a>
       </li>
-      <li>
-        <a *ngIf="isUserSignedIn()" routerLink="playlist" class="" id="playlistButton" (click)="changeActive($event)">
+      <li *ngFor="let p of userPlaylist">
+        <a routerLink="playlist/{{p.id}}" *ngIf="isUserSignedIn() && playlistLoaded" class="" id="playlistButton-{{p.id}}" (click)="changeActive($event)">
           <span class="icon"><i class="fa fa-random fa-fw" aria-hidden="true"></i></span>
-          <span class="title">Playlist</span>
+          <span class="title">{{p.title}}</span>
         </a>
       </li>
     </ul>
@@ -196,6 +196,30 @@
           </div>
         </li>
       </ul>
+    </div>
+  </div>
+</div>
+
+<div class="select-country" id="select-country">
+  <div class="modal-content">
+    <div class="top">
+      <div class="left">
+        Choose your location
+      </div>
+
+      <div class="right" (click)="hideLocationModal()">
+        &times;
+      </div>
+    </div>
+
+    <div class="center">
+      <select name="" id="" (change)="changeCurrentLocation($event.target.value)">
+        <option *ngFor="let c of country_list" value="{{c}}" [selected]="checkCurrentLocation(c)" >{{c}}</option>
+      </select>
+    </div>
+
+    <div class="bottom">
+
     </div>
   </div>
 </div>

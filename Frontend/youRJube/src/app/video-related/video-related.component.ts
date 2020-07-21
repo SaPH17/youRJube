@@ -12,14 +12,22 @@ import gql from 'graphql-tag';
 export class VideoRelatedComponent implements OnInit {
 
   @Input('vid')video:{
-    id
-    channel_id,
-    thumbnail,
-    title,
-    view,
-    upload_day,
-    upload_month,
-    upload_year,
+    id:String,
+    channel_id: String,
+    title: String,
+    description: String,
+    video_url: String,
+    thumbnail: String,
+    upload_day: number,
+    upload_month: number,
+    upload_year: number,
+    category: string,
+    location: string,
+    view: number,
+    privacy: string,
+    is_premium: boolean,
+    age_restricted: boolean,
+    duration: number
   }
 
   viewOutput: String
@@ -34,6 +42,8 @@ export class VideoRelatedComponent implements OnInit {
   constructor(private data: DataService, private apollo: Apollo) { }
 
   ngOnInit(): void {
+    console.log("BB");
+    
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
     this.data.currentChannelObject.subscribe(userChannelObject => this.userChannel =  userChannelObject)
 

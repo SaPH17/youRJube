@@ -36,6 +36,12 @@ import { PrivacyComponent } from './privacy/privacy.component';
 import { VideoRelatedComponent } from './video-related/video-related.component';
 import { SecondVideoDisplayComponent } from './second-video-display/second-video-display.component';
 import { ChannelComponent } from './channel/channel.component';
+import { ChannelHomeComponent } from './channel-home/channel-home.component';
+import { ChannelVideosComponent } from './channel-videos/channel-videos.component';
+import { ChannelPlaylistComponent } from './channel-playlist/channel-playlist.component';
+import { ChannelCommunityComponent } from './channel-community/channel-community.component';
+import { ChannelAboutComponent } from './channel-about/channel-about.component';
+import { ChannelPlaylistDisplayComponent } from './channel-playlist-display/channel-playlist-display.component';
 
 
 @NgModule({
@@ -60,6 +66,12 @@ import { ChannelComponent } from './channel/channel.component';
     VideoRelatedComponent,
     SecondVideoDisplayComponent,
     ChannelComponent,
+    ChannelHomeComponent,
+    ChannelVideosComponent,
+    ChannelPlaylistComponent,
+    ChannelCommunityComponent,
+    ChannelAboutComponent,
+    ChannelPlaylistDisplayComponent,
   ],
   imports: [
     BrowserModule,

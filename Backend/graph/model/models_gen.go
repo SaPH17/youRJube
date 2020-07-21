@@ -89,12 +89,14 @@ type Reply struct {
 }
 
 type User struct {
-	ID            string `json:"id"`
-	Email         string `json:"email"`
-	RestrictMode  string `json:"restrict_mode"`
-	Location      string `json:"location"`
-	LikedVideo    string `json:"liked_video"`
-	DislikedVideo string `json:"disliked_video"`
+	ID              string `json:"id"`
+	Email           string `json:"email"`
+	RestrictMode    string `json:"restrict_mode"`
+	Location        string `json:"location"`
+	LikedVideo      string `json:"liked_video"`
+	DislikedVideo   string `json:"disliked_video"`
+	LikedComment    string `json:"liked_comment"`
+	DislikedComment string `json:"disliked_comment"`
 }
 
 type UserSubscription struct {
@@ -153,6 +155,8 @@ type NewComment struct {
 	VideoID   string `json:"video_id"`
 	ChannelID string `json:"channel_id"`
 	Content   string `json:"content"`
+	Like      int    `json:"like"`
+	Dislike   int    `json:"dislike"`
 }
 
 type NewCommunityPost struct {
@@ -193,11 +197,13 @@ type NewReply struct {
 }
 
 type NewUser struct {
-	Email         string `json:"email"`
-	RestrictMode  string `json:"restrict_mode"`
-	Location      string `json:"location"`
-	LikedVideo    string `json:"liked_video"`
-	DislikedVideo string `json:"disliked_video"`
+	Email           string `json:"email"`
+	RestrictMode    string `json:"restrict_mode"`
+	Location        string `json:"location"`
+	LikedVideo      string `json:"liked_video"`
+	DislikedVideo   string `json:"disliked_video"`
+	LikedComment    string `json:"liked_comment"`
+	DislikedComment string `json:"disliked_comment"`
 }
 
 type NewUserSubscription struct {

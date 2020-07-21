@@ -1,0 +1,27 @@
+$height: 135px;
+
+.container{
+    padding-top: 2vh;
+    margin: 2vh 1vw;
+
+    .top{
+        position: relative;
+
+        .count{
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: white;
+            line-height: $height;
+            vertical-align: middle;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.596); 
+            height: $height;
+            width: 30%;
+        }
+    }
+
+    .bottom{
+        font-weight: 500;
+    }
+}

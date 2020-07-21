@@ -1,0 +1,13 @@
+<div class="container" *ngIf="doneLoading">
+    <div class="top">
+        <img src="{{playlistThumbnail}}" alt="" width="240px" height="135px">
+
+        <div class="count unselectable">
+            {{videoCountOutput}}
+        </div>
+    </div>
+
+    <div class="bottom">
+        {{playlist.title}}
+    </div>
+</div>
