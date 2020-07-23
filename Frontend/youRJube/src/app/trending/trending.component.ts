@@ -59,6 +59,7 @@ export class TrendingComponent implements OnInit {
       if(diff > 7){
         this.videos.splice(i, 1)
       }
+      
     }
   }
 

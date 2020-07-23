@@ -33,7 +33,7 @@
                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
             </a>
 
-            <div class="dropdown-content" id="video-settings-dropdown-{{video.id}}">
+            <div class="dropdown-content" [style.display]="settingsOpen ? 'block' : 'none'">
                 <a>
                     <i class="fa fa-list-ol" aria-hidden="true"></i>
                     Add to queue

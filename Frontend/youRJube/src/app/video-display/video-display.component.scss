@@ -2,7 +2,7 @@ $container-width: 288px;
 
 .container{
     display: flex;
-    margin: 2vh 0.4vw;
+    margin: 5vh 0.4vw;
     flex-direction: column;
 
     a{
@@ -22,7 +22,7 @@ $container-width: 288px;
     }
 
     .video-description-container{
-        margin-top: 1vh;
+        margin-top: 2vh;
         display: flex;
         max-width: $container-width;
         position: relative;

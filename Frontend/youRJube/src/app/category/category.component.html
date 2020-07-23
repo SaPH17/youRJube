@@ -1,37 +1,37 @@
 <div class="container">
     <div class="category-list">
         <ul>
-            <li>
+            <li routerLink="music">
                 <a>
                     <span class="icon"><i class="fa fa-music" aria-hidden="true"></i></span>
                     <span class="name">Music</span>
                 </a>   
             </li>
-            <li>                
+            <li routerLink="sport">                
                 <a>
                     <span class="icon"><i class="fa fa-futbol-o" aria-hidden="true"></i></span>
                     <span class="name">Sport</span>
                 </a>
             </li>
-            <li>
+            <li routerLink="gaming">
                 <a>
                     <span class="icon"><i class="fa fa-gamepad" aria-hidden="true"></i></span>
                     <span class="name">Gaming</span>
                 </a>
             </li>
-            <li>
+            <li routerLink="entertainment">
                 <a>
                     <span class="icon"><i class="fa fa-smile-o" aria-hidden="true"></i></span>
-                    <span class="name">Entertaiment</span>
+                    <span class="name">Entertainment</span>
                 </a>
             </li>
-            <li>
+            <li routerLink="news">
                 <a>
                     <span class="icon"><i class="fa fa-newspaper-o" aria-hidden="true"></i></span>
                     <span class="name">News</span>
                 </a>
             </li>
-            <li>
+            <li routerLink="travel">
                 <a>
                     <span class="icon"><i class="fa fa-plane" aria-hidden="true"></i></span>
                     <span class="name">Travel</span>
@@ -41,41 +41,6 @@
     </div>
 
     <div class="video-list-container">
-        <div class="video-container">
-            <div class="title">
-                Popular All Time
-            </div>
-
-            <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
-            </div>
-        </div>
-
-        <div class="video-container">
-            <div class="title">
-                Popular This Week
-            </div>
-            <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
-            </div>
-        </div>
-
-        <div class="video-container">
-            <div class="title">
-                Popular of the Month
-            </div>
-            <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
-            </div>
-        </div>
-
-        <div class="video-container">
-            <div class="title">
-                Recently Uploaded
-            </div>
-            <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
-            </div>
-        </div>
+        <router-outlet></router-outlet>
     </div>
 </div>

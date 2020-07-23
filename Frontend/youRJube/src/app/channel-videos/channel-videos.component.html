@@ -12,13 +12,13 @@
 
             <div class="dropdown-content" id="sortby-options">
                 <ul>
-                    <li (click)="sortVideoByView()">
+                    <li (click)="sortVideoByView()" class="unselectable">
                         Most popular
                     </li>
-                    <li (click)="sortVideoByOldest()">
+                    <li (click)="sortVideoByOldest()" class="unselectable">
                         Oldest
                     </li>
-                    <li (click)="sortVideoByLatest()">
+                    <li (click)="sortVideoByLatest()" class="unselectable">
                         Newest
                     </li>
                 </ul>

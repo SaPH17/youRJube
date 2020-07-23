@@ -61,11 +61,11 @@
       </div>
 
       <div *ngIf="isUserSignedIn()" class="user-profile" >
-        <img src="{{ user.photoUrl }}" width="50px" class="user-profile-picture" (click)="userProfileClick()">
+        <img src="{{ user.photoUrl }}" width="40px" class="user-profile-picture" (click)="userProfileClick()">
 
         <div class="dropdown-content" id="user-dropdown">
           <div class="user-information">
-            <img src="{{ user.photoUrl }}" width="100px">
+            <img src="{{ user.photoUrl }}" width="50px">
             <h4>{{ user.name }}</h4>
           </div>
           

@@ -1,13 +1,13 @@
 <div class="container" *ngIf="doneLoading">
 
     <div class="background-image">
-        <img src="{{channel.background_image}}" alt="" width="1300px">
+        <img src="{{channel.background_image}}" alt="" width="1250px">
     </div>
 
     <div class="profile">
         <div class="profile-top">
             <div class="profile-left">
-                <img src="{{channel.icon}}" alt="">
+                <img src="{{channel.icon}}" alt="" width="100px">
             </div>
 
             <div class="profile-center">
@@ -41,7 +41,7 @@
 
                 <div class="edit-channel-container" *ngIf="!showSubscribeButton()">
                     <a>
-                        <div class="edit-channel-button">
+                        <div class="edit-channel-button" routerLink="edit">
                             EDIT CHANNEL
                         </div>
                     </a>

@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="top">
+        Edit Channel
+    </div>
+
+    <div class="center">
+
+        <div class="left">
+            <div class="icon-container">
+                <label for="icon-input">Channel icon : 
+                    <img src="{{iconUrl}}" alt="" width="100px">
+                </label>
+                <input type="file" name="" id="icon-input" (change)="handleIconlInput($event.target.files)">
+            </div>
+    
+            <div class="background-image-container">
+                <label for="img-input">Background image : 
+                    <img src="{{backgroundUrl}}" alt="" width="250px"> 
+                </label>
+                <input type="file" name="" id="img-input" (change)="handleBgImageInput($event.target.files)">
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="description-container">
+                <label for="desc-input">Channel description : </label>
+                <br>
+                <textarea name="" id="desc-input" cols="40" rows="7" [value]="channelDesc" (change)="channelDesc = $event.target.value"></textarea>
+            </div>
+    
+            <div class="links-container">
+                <div class="title">
+                    Links : 
+                </div>
+
+                <div class="all-links" *ngIf="linkLoaded">
+                    <ul>
+                        <li *ngFor="let l of links"><a href="{{l.link}}">{{l.social_media}}</a></li>
+                    </ul>
+                </div>
+
+                <div class="name-container">
+                    <input type="text" id="name" placeholder="Name" (change)="name = $event.target.value">
+                </div>
+
+                <div class="links-container">
+                    <input type="text" id="link" placeholder="Links" (change)="link = $event.target.value">
+                </div>
+
+                <div class="add-link-button" (click)="createLink()">
+                    ADD LINK
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div class="update-button" (click)="updateChannel()">
+            UPDATE
+        </div>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 .container{
     margin-top: -4vh;
     margin-left: -0.75vw;
+    margin-bottom: 4vh;
     width: 100%;
 
     .background-image{
@@ -18,6 +19,14 @@
         .profile-top{
             display: flex;
             flex-direction: row;
+
+            .profile-left{
+                border-radius: 100%;
+
+                img{
+                    border-radius: 100%;
+                }
+            }
 
             .profile-center{
                 display: flex;

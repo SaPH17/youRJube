@@ -209,6 +209,7 @@
 
         .user-profile-picture{
             cursor: pointer;
+            border-radius: 50%;
         }
 
         .dropdown-content {
@@ -223,6 +224,11 @@
             .user-information{
                 text-align: center;
                 border-bottom: 1px lightgray solid;
+                margin-top: 2vh;
+
+                img{
+                    border-radius: 50%;
+                }
 
                 h4{
                     margin-bottom: 2vh;

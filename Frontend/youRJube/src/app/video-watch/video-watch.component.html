@@ -67,7 +67,7 @@
                 <div class="channel-info">
                     <div class="channel-left">
                         <a href="channel/{{channel.id}}">
-                            <img src="{{channel.icon}}" alt="">
+                            <img src="{{channel.icon}}" alt="" style="border-radius: 50%;">
                         </a>
                     </div>
                     <div class="channel-right">
@@ -82,7 +82,7 @@
                     </div>
                 </div>
 
-                <div class="subscribe-container" *ngIf="channel.id != userChannel.id">
+                <div class="subscribe-container" *ngIf="userChannel && channel.id != userChannel.id">
                     <a>
                         <div class="subscribe-button" (click)="subscribeToChannel()" *ngIf="userSubCondition == 0">
                             SUBSCRIBE
@@ -104,11 +104,15 @@
                     </div>
 
                 </div>
+
+                <div class="sign-in-to-subs" *ngIf="!userChannel">
+                    SIGN IN TO SUBSCRIBE
+                </div>
             </div>
 
-            <div class="center">
+            <p class="center">
                 {{video.description}}
-            </div>
+            </p>
 
             <div class="bottom">
                 Category : {{video.category}}
@@ -144,7 +148,7 @@
             <div class="input-comment">
 
                 <div class="profile-picture" *ngIf="userChannel">
-                    <img src="{{userChannel.icon}}" alt="profilePic" width="50px">
+                    <img src="{{userChannel.icon}}" alt="profilePic" width="50px" style="border-radius: 50%;">
                 </div>
 
                 <div class="profile-picture" *ngIf="!userChannel">

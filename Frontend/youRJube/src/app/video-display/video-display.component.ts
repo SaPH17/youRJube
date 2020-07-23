@@ -21,16 +21,14 @@ const getPlaylistByChannelId = gql `
       }
     }    
   `
-
+  
 @Component({
   selector: 'app-video-display',
   templateUrl: './video-display.component.html',
   styleUrls: ['./video-display.component.scss']
 })
-export class VideoDisplayComponent implements OnInit{
 
-  // @Input('vid') video: {id:BigInteger, channel_id:BigInteger, title:string, description:string, upload_date:Date, 
-  //   category:string, location:string, view: BigInteger, privacy: string, isPremium: boolean, ageRestricted: boolean}
+export class VideoDisplayComponent implements OnInit{
 
   @Input('vid') video:{
     id:String,
@@ -64,6 +62,8 @@ export class VideoDisplayComponent implements OnInit{
   playlist_privacy: String
 
   duration: String ="AA"
+
+  settingsOpen:boolean = false;
 
   constructor(private data: DataService, private apollo: Apollo) { }
 
@@ -116,13 +116,7 @@ export class VideoDisplayComponent implements OnInit{
   }
 
   settingsClick(): void {
-    var componentId = "video-settings-dropdown-" + this.video.id.toString()
-    if(document.getElementById(componentId).style.display == 'block'){
-      document.getElementById(componentId).style.display = 'none'
-    }
-    else{
-      document.getElementById(componentId).style.display = 'block'
-    }
+    this.settingsOpen = !this.settingsOpen
   }
 
   isUserSignedIn(){
@@ -134,22 +128,27 @@ export class VideoDisplayComponent implements OnInit{
   }
 
   convertDate(day, month, year){
-    var currentDate = new Date()
-    
-    if(currentDate.getDate() == day){
+    var currDate = new Date()
+
+    var date = new Date(parseInt(year), parseInt(month), parseInt(day))
+
+    var diff = Math.floor((Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24))
+
+    if(diff == 0){
       return "Today"
     }
-    else if(currentDate.getMonth() == month && currentDate.getDate() - day < 7){
-      return (currentDate.getDate() - day).toString() + " day(s) ago"
+    else if(diff < 7){
+      return diff + " day(s) ago"
     }
-    else if(currentDate.getMonth() == month && currentDate.getDate() - day > 7 ){
-      return (Math.floor((currentDate.getDate() - day) / 7)).toString() + " week(s) ago"
+    else if(diff >= 7 && diff <= 28){
+      return diff/7 + " week(s) ago"
     }
-    else if(currentDate.getFullYear() == year){
-      return (currentDate.getMonth() - month).toString() + " month(s) ago"
+    else if(diff >= 28 && diff <= 365){
+      return diff/28 + " month(s) ago"
     }
-    else if(currentDate.getFullYear() - year > 0){
-      return (currentDate.getFullYear() - year ).toString() + " year(s) ago"
+    else if(diff > 365){
+      return diff/365 + "year(s) ago"
     }
   }
 
@@ -269,7 +268,8 @@ export class VideoDisplayComponent implements OnInit{
     if(playlist.video_id.includes((this.video.id).toString())){
       return true
     }
-    return false  }
+    return false  
+  }
 
   toggleCreatePlaylist():void{    
     var id = "create-new-playlist-button-" + this.video.id
@@ -335,7 +335,6 @@ export class VideoDisplayComponent implements OnInit{
   }
 
   getDuration(v):void{
-    // this.duration = (Math.floor(e.target.duration)).toString() + " second(s)"
 
     var time = v
     var hour:number
@@ -393,7 +392,7 @@ export class VideoDisplayComponent implements OnInit{
       }
     }
     else{
-      second = time
+      second = Math.floor(time)
 
       if(second <= 9){
         this.duration = "00:0" + second

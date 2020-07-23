@@ -1,0 +1,31 @@
+<div class="container">
+    <div class="top" *ngIf="userChannel.id == channelId">
+        <img src="{{user.photoUrl}}" alt="" width="75px">
+        <div class="input-text">
+            <textarea name="" id="comment-input-text" cols="10" rows="3" placeholder="Add a community post..." (input)="detectReplyInput($event.target.value)"></textarea>
+        </div>
+
+        <div class="image">
+
+            <a>
+                <label for="image-input" class="add-image-button">ADD IMAGE</label>
+                <input type="file" name="" id="image-input" (change)="handleThumbnailInput($event.target.files)">
+            </a>
+
+            <img src="{{imageSrc}}" alt="" width="150px">
+
+        </div>
+
+        <a>
+            <div class="post-button" id="post-button" (click)="insertNewPost()">
+                POST
+            </div>
+        </a>
+
+    </div>
+
+    <div class="bottom">
+        <app-channel-community-display *ngFor="let p of communityPosts" [post]="p"></app-channel-community-display>
+    </div>
+
+</div>

@@ -1,6 +1,7 @@
 .container{
 
     .recommended-title{
+        margin-top: 2vh;
         font-size: 20px;
     }
 
@@ -8,6 +9,11 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
-    
+
+        div{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
     }
 }

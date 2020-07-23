@@ -48,34 +48,35 @@
             flex-direction: row;
             align-items: center;
             
-            a{
+            .like{
+                color: gray;
+                font-size: 14px;
                 margin-right: 2vw;
-    
-                .like{
-                    color: gray;
-                    font-size: 14px;
-    
-                    i{
-                        font-size: 20px;
-                        margin-right: 0.5vw;
-                    }
-                }
-        
-                .dislike{
-                    color: gray;
-                    font-size: 14px;
-    
-                    i{
-                        font-size: 20px;
-                        margin-right: 0.5vw;
-                    }
-                }
-        
-                .reply-button{
-                    color: gray;
-                    font-size: 14px;
+
+                i{
+                    font-size: 20px;
+                    margin-right: 0.5vw;
+                    cursor: pointer;
                 }
             }
+    
+            .dislike{
+                color: gray;
+                font-size: 14px;
+                margin-right: 2vw;
+
+                i{
+                    font-size: 20px;
+                    margin-right: 0.5vw;
+                    cursor: pointer;
+                }
+            }
+    
+            .reply-button{
+                color: gray;
+                font-size: 14px;
+            }
+            
         }
 
         .reply-bottom{

@@ -9,7 +9,6 @@ import { AngularFireUploadTask } from 'angularfire2/storage';
 import { Observable } from 'rxjs';
 import { getVideoQuery } from '../home/home.component'
 import gql from 'graphql-tag';
-import { query } from '@angular/animations';
 
 const getPlaylistQuery =  gql `
   query getPlaylistByChannelId($channel_id: ID!){
@@ -242,7 +241,7 @@ export class VideoUploadComponent implements OnInit {
       }
     }
     else{
-      second = time
+      second = Math.floor(time)
 
       if(second <= 9){
         this.duration = "00:0" + second
@@ -378,7 +377,6 @@ export class VideoUploadComponent implements OnInit {
               this.thumbnailURL = url
               this.thumbnailDoneUploading = true;
               console.log(this.thumbnailURL);
-              
               this.insertVideoToDatabase()
             }
           })
@@ -435,7 +433,9 @@ export class VideoUploadComponent implements OnInit {
       }],
     }).subscribe(result => {
       console.log(result)
-      this.addVidToPlaylist(result.data.createVideo.id)
+      if(this.addToPlaylist){
+        this.addVidToPlaylist(result.data.createVideo.id)
+      }
       if(result){
         alert("Video succesfuly uploaded")
         this.router.navigate(['home']);

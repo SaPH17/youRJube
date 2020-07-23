@@ -21,6 +21,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser)
 		DislikedVideo:   input.DislikedVideo,
 		LikedComment:    input.LikedComment,
 		DislikedComment: input.DislikedComment,
+		LikedPost:       input.LikedPost,
+		DislikedPost:    input.DislikedPost,
 	}
 
 	_, err := r.DB.Model(&user).Insert()
@@ -48,6 +50,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 	user.DislikedVideo = input.DislikedVideo
 	user.LikedComment = input.LikedComment
 	user.DislikedComment = input.DislikedComment
+	user.LikedPost = input.LikedPost
+	user.DislikedPost = input.DislikedPost
 
 	_, err2 := r.DB.Model(&user).Where("id = ?", id).Update()
 
@@ -162,7 +166,27 @@ func (r *mutationResolver) UpdateChannel(ctx context.Context, id string, input *
 }
 
 func (r *mutationResolver) CreateChannelSocialMedia(ctx context.Context, input *model.NewChannelSocialMedia) (*model.ChannelSocialMedia, error) {
-	panic(fmt.Errorf("not implemented"))
+	var channel []*model.Channel
+
+	err := r.DB.Model(&channel).Where("id = ?", input.ChannelID).First()
+
+	if channel == nil || err != nil {
+		return nil, errors.New("Channel doesn't exists")
+	}
+
+	socMed := model.ChannelSocialMedia{
+		ChannelID:   input.ChannelID,
+		SocialMedia: input.SocialMedia,
+		Link:        input.Link,
+	}
+
+	_, err2 := r.DB.Model(&socMed).Insert()
+
+	if err2 != nil {
+		return nil, errors.New("Insert failed")
+	}
+
+	return &socMed, nil
 }
 
 func (r *mutationResolver) UpdateChannelSocialMedia(ctx context.Context, id string, input *model.NewChannelSocialMedia) (*model.ChannelSocialMedia, error) {
@@ -249,7 +273,29 @@ func (r *mutationResolver) UpdateUserSubscription(ctx context.Context, userID st
 }
 
 func (r *mutationResolver) CreateCommunityPost(ctx context.Context, input *model.NewCommunityPost) (*model.CommunityPost, error) {
-	panic(fmt.Errorf("not implemented"))
+	var channel []*model.Channel
+
+	err := r.DB.Model(&channel).Where("id = ?", input.ChannelID).First()
+
+	if channel == nil || err != nil {
+		return nil, errors.New("Channel doesn't exists")
+	}
+
+	post := model.CommunityPost{
+		ChannelID: input.ChannelID,
+		Content:   input.Content,
+		Image:     input.Image,
+		Like:      input.Like,
+		Dislike:   input.Dislike,
+	}
+
+	_, err2 := r.DB.Model(&post).Insert()
+
+	if err2 != nil {
+		return nil, errors.New("Insert failed")
+	}
+
+	return &post, nil
 }
 
 func (r *mutationResolver) DeleteCommunityPost(ctx context.Context, id string) (bool, error) {
@@ -257,7 +303,27 @@ func (r *mutationResolver) DeleteCommunityPost(ctx context.Context, id string) (
 }
 
 func (r *mutationResolver) UpdateCommunityPost(ctx context.Context, id string, input *model.NewCommunityPost) (*model.CommunityPost, error) {
-	panic(fmt.Errorf("not implemented"))
+	var post model.CommunityPost
+
+	err := r.DB.Model(&post).Where("id = ?", id).First()
+
+	if err != nil {
+		return nil, errors.New("Community post doesn't exist")
+	}
+
+	post.ChannelID = input.ChannelID
+	post.Content = input.Content
+	post.Image = input.Image
+	post.Like = input.Like
+	post.Dislike = input.Dislike
+
+	_, err2 := r.DB.Model(&post).Where("id = ?", id).Update()
+
+	if err2 != nil {
+		return nil, errors.New("Update failed")
+	}
+
+	return &post, nil
 }
 
 func (r *mutationResolver) CreateVideo(ctx context.Context, input *model.NewVideo) (*model.Video, error) {
@@ -294,6 +360,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input *model.NewVide
 	_, err2 := r.DB.Model(&video).Insert()
 
 	if err2 != nil {
+		fmt.Println(err)
 		return nil, errors.New("Insert failed")
 	}
 
@@ -334,14 +401,6 @@ func (r *mutationResolver) UpdateVideo(ctx context.Context, id string, input *mo
 }
 
 func (r *mutationResolver) DeleteVideo(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *mutationResolver) CreateVideoTag(ctx context.Context, input *model.NewVideoTag) (*model.VideoTag, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *mutationResolver) DeleteVideoTag(ctx context.Context, id string) (bool, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -573,7 +632,16 @@ func (r *queryResolver) GetchannelByName(ctx context.Context, name string) ([]*m
 }
 
 func (r *queryResolver) GetChannelSocialMediaByChannelID(ctx context.Context, channelID string) ([]*model.ChannelSocialMedia, error) {
-	panic(fmt.Errorf("not implemented"))
+	var socMed []*model.ChannelSocialMedia
+
+	err := r.DB.Model(&socMed).Where("channel_id = ?", channelID).Order("id").Select()
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Failed to query social media")
+	}
+
+	return socMed, nil
 }
 
 func (r *queryResolver) GetUserSubscriptionByUserID(ctx context.Context, userID string) ([]*model.UserSubscription, error) {
@@ -593,7 +661,15 @@ func (r *queryResolver) GetUserSubscriptionByUserIDAndChannelID(ctx context.Cont
 }
 
 func (r *queryResolver) GetCommunityPostByChannelID(ctx context.Context, channelID string) ([]*model.CommunityPost, error) {
-	panic(fmt.Errorf("not implemented"))
+	var post []*model.CommunityPost
+
+	err := r.DB.Model(&post).Where("channel_id = ?", channelID).Order("id desc").Select()
+
+	if err != nil {
+		return nil, errors.New("Failed to query community post")
+	}
+
+	return post, nil
 }
 
 func (r *queryResolver) GetVideoByID(ctx context.Context, id string) ([]*model.Video, error) {
@@ -615,7 +691,7 @@ func (r *queryResolver) GetVideoByTitle(ctx context.Context, title string) ([]*m
 func (r *queryResolver) GetVideoByChannelID(ctx context.Context, channelID string) ([]*model.Video, error) {
 	var videos []*model.Video
 
-	err := r.DB.Model(&videos).Where("channel_id = ?", channelID).Order("id").Select()
+	err := r.DB.Model(&videos).Where("channel_id = ?", channelID).Order("id desc").Select()
 
 	if err != nil {
 		return nil, errors.New("Failed to query video")
@@ -636,9 +712,16 @@ func (r *queryResolver) GetTrendingVideo(ctx context.Context) ([]*model.Video, e
 	return videos, nil
 }
 
-func (r *queryResolver) GetCategoryVideo(ctx context.Context, rangeArg string, isRestrict string) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
-}
+func (r *queryResolver) GetCategoryVideo(ctx context.Context, category string) ([]*model.Video, error) {
+	var video []*model.Video
+
+	err := r.DB.Model(&video).Where("category = ?", category).Order("view desc").Select()
+
+	if err != nil {
+		return nil, errors.New("Failed to query video")
+	}
+
+	return video, nil}
 
 func (r *queryResolver) GetHomeVideo(ctx context.Context, location string, isRestrict string) ([]*model.Video, error) {
 	panic(fmt.Errorf("not implemented"))
@@ -656,7 +739,6 @@ func (r *queryResolver) GetRelatedVideo(ctx context.Context, videoID string, cat
 	}
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, errors.New("Failed to query video")
 	}
 
@@ -669,14 +751,11 @@ func (r *queryResolver) GetVideo(ctx context.Context) ([]*model.Video, error) {
 	err := r.DB.Model(&videos).Select()
 
 	if err != nil {
+		fmt.Println(err)
 		return nil, errors.New("Failed to query video")
 	}
 
 	return videos, nil
-}
-
-func (r *queryResolver) GetVideoTagByVideoID(ctx context.Context, videoID string) ([]*model.VideoTag, error) {
-	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) GetPlaylistByChannelID(ctx context.Context, channelID string) ([]*model.Playlist, error) {

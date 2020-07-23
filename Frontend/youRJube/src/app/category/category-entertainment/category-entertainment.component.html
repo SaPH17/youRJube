@@ -1,0 +1,44 @@
+<div class="video-container">
+    <div class="title">
+        Popular All Time
+    </div>
+
+    <div class="video-list">
+        <div *ngFor="let v of allTimeVideos, let i = index">
+            <app-video-display *ngIf="i < 20" [vid]="v"></app-video-display>
+        </div>
+    </div>
+</div>
+
+<div class="video-container">
+    <div class="title">
+        Popular This Week
+    </div>
+    <div class="video-list">
+        <div *ngFor="let v of thisWeekVideos, let i = index">
+            <app-video-display *ngIf="i < 20" [vid]="v"></app-video-display>
+        </div>
+    </div>
+</div>
+
+<div class="video-container">
+    <div class="title">
+        Popular of the Month
+    </div>
+    <div class="video-list">
+        <div *ngFor="let v of thisMonthVideos, let i = index">
+            <app-video-display *ngIf="i < 20" [vid]="v"></app-video-display>
+        </div>
+    </div>
+</div>
+
+<div class="video-container">
+    <div class="title">
+        Recently Uploaded
+    </div>
+    <div class="video-list">
+        <div *ngFor="let v of recentVideos, let i = index">
+            <app-video-display *ngIf="i < 20" [vid]="v"></app-video-display>
+        </div>
+    </div>
+</div>

@@ -26,6 +26,13 @@ export class DataService {
         this.channelObjectSource.next(newChannel)
     }
 
+    private locationObjectSource = new BehaviorSubject<any>(null)
+    locationObject = this.locationObjectSource.asObservable();
+
+    changeLocation(newLocation: any){
+        this.locationObjectSource.next(newLocation)
+    }
+
     constructor() {
         
     }

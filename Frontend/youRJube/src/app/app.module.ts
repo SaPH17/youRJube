@@ -2,7 +2,6 @@ import { environment } from './../environments/environment.prod';
 import { DataService } from './data.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphQLModule } from './graphql.module';
@@ -42,6 +41,14 @@ import { ChannelPlaylistComponent } from './channel-playlist/channel-playlist.co
 import { ChannelCommunityComponent } from './channel-community/channel-community.component';
 import { ChannelAboutComponent } from './channel-about/channel-about.component';
 import { ChannelPlaylistDisplayComponent } from './channel-playlist-display/channel-playlist-display.component';
+import { ChannelCommunityDisplayComponent } from './channel-community-display/channel-community-display.component';
+import { ChannelEditComponent } from './channel-edit/channel-edit.component';
+import { CategoryMusicComponent } from './category/category-music/category-music.component';
+import { CategorySportComponent } from './category/category-sport/category-sport.component';
+import { CategoryGamingComponent } from './category/category-gaming/category-gaming.component';
+import { CategoryEntertainmentComponent } from './category/category-entertainment/category-entertainment.component';
+import { CategoryNewsComponent } from './category/category-news/category-news.component';
+import { CategoryTravelComponent } from './category/category-travel/category-travel.component';
 
 
 @NgModule({
@@ -72,6 +79,14 @@ import { ChannelPlaylistDisplayComponent } from './channel-playlist-display/chan
     ChannelCommunityComponent,
     ChannelAboutComponent,
     ChannelPlaylistDisplayComponent,
+    ChannelCommunityDisplayComponent,
+    ChannelEditComponent,
+    CategoryMusicComponent,
+    CategorySportComponent,
+    CategoryGamingComponent,
+    CategoryEntertainmentComponent,
+    CategoryNewsComponent,
+    CategoryTravelComponent,
   ],
   imports: [
     BrowserModule,

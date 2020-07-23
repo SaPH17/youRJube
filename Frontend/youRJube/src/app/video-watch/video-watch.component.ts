@@ -235,6 +235,7 @@ export class VideoWatchComponent implements OnInit {
         this.updateVideoView(this.video.view + 1)
       }
       this.loadRelatedVideo()
+      
       this.doneLoading = true
     })
   }
@@ -287,7 +288,12 @@ export class VideoWatchComponent implements OnInit {
             like: 1,
             dislike: 1
           }){
-            id
+            id,
+            video_id,
+            channel_id,
+            content,
+            like,
+            dislike
           }
         }
       `,
@@ -303,6 +309,8 @@ export class VideoWatchComponent implements OnInit {
     }).subscribe(result => {
       console.log(result)
       alert("Comment successfuly added!")
+      this.comments.push(result.data.createComment)
+      this.commentCountOutput = this.comments.length + " Comments"      
       var a = document.getElementById('comment-input-text') as HTMLInputElement
       a.value = ""
     })
@@ -333,14 +341,16 @@ export class VideoWatchComponent implements OnInit {
       this.channel = result.data.getChannelById[0]
       this.subscriberCountOutput = (this.channel.subscriber_count -1) + " subscriber(s)"      
       this.descriptionLoaded = true
-      this.checkUserLikeOrNot()
-      this.userHasSubscribed()
+      if(this.userDB){
+        this.checkUserLikeOrNot()
+        this.userHasSubscribed()
+      }
       this.loadVideoComments()
     })
   }
 
   loadVideoComments():void{
-    this.apollo.watchQuery<any>({
+    this.apollo.query<any>({
       query: gql `
         query getCommentByVideoId($video_id: ID!){
           getCommentByVideoId(video_id: $video_id){
@@ -359,8 +369,8 @@ export class VideoWatchComponent implements OnInit {
       variables:{
         video_id: this.video.id
       }
-    }).valueChanges.subscribe(result => {
-      this.comments = result.data.getCommentByVideoId      
+    }).subscribe(result => {
+      this.comments = result.data.getCommentByVideoId            
       this.commentCountOutput = this.comments.length + " Comments"      
       this.commentsLoaded = true
     })
@@ -816,7 +826,7 @@ export class VideoWatchComponent implements OnInit {
 
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!){
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
           updateUser(id: $id, input:{
             email: $email,
             location: $location,
@@ -824,7 +834,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video: $liked_video,
             disliked_video: $disliked_video,
             liked_comment: $liked_comment,
-            disliked_comment: $disliked_comment
+            disliked_comment: $disliked_comment,
+            liked_post: $liked_post,
+            disliked_post: $disliked_post
           }){
             id,
             email,
@@ -833,7 +845,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video,
             disliked_video,
             liked_comment,
-            disliked_comment
+            disliked_comment,
+            liked_post,
+            disliked_post
           }
         }
       `,
@@ -845,15 +859,10 @@ export class VideoWatchComponent implements OnInit {
         liked_video: this.userDB.liked_video,
         disliked_video: newStr,
         liked_comment: this.userDB.liked_comment,
-        disliked_comment: this.userDB.disliked_comment
+        disliked_comment: this.userDB.disliked_comment,
+        liked_post: this.userDB.liked_post,
+        disliked_post: this.userDB.disliked_post
       },
-      // refetchQueries: [{
-      //   query: getUserSubsQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' ,
-      //               user_id: this.userDB.id,
-      //               channel_id: this.channel.id,
-      //             },
-      // }],
     }).subscribe(result =>{
       console.log(result.data.updateUser);
       this.userDB = result.data.updateUser
@@ -877,7 +886,7 @@ export class VideoWatchComponent implements OnInit {
       
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!){
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
           updateUser(id: $id, input:{
             email: $email,
             location: $location,
@@ -886,7 +895,8 @@ export class VideoWatchComponent implements OnInit {
             disliked_video: $disliked_video,
             liked_comment: $liked_comment,
             disliked_comment: $disliked_comment,
-            
+            liked_post: $liked_post,
+            disliked_post: $disliked_post
           }){
             id,
             email,
@@ -895,7 +905,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video,
             disliked_video,
             liked_comment,
-            disliked_comment
+            disliked_comment,
+            liked_post,
+            disliked_post
           }
         }
       `,
@@ -907,22 +919,16 @@ export class VideoWatchComponent implements OnInit {
         liked_video: this.userDB.liked_video,
         disliked_video: newStr,
         liked_comment: this.userDB.liked_comment,
-        disliked_comment: this.userDB.disliked_comment
+        disliked_comment: this.userDB.disliked_comment,
+        liked_post: this.userDB.liked_post,
+        disliked_post: this.userDB.disliked_post
       },
-      // refetchQueries: [{
-      //   query: getUserSubsQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' ,
-      //               user_id: this.userDB.id,
-      //               channel_id: this.channel.id,
-      //             },
-      // }],
     }).subscribe(result =>{
       console.log(result.data.updateUser);
       this.userDB = result.data.updateUser
       this.data.changeUserDB(this.userDB)    
       this.checkUserLikeOrNot()
 
-      
       if(v){
         this.addToUserLikedVideo()
       }
@@ -930,13 +936,12 @@ export class VideoWatchComponent implements OnInit {
   }
 
   addToUserLikedVideo():void{    
-
     var str = this.userDB.liked_video
     var newStr = str + this.video.id + ","
 
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!){
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
           updateUser(id: $id, input:{
             email: $email,
             location: $location,
@@ -944,7 +949,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video: $liked_video,
             disliked_video: $disliked_video,
             liked_comment: $liked_comment,
-            disliked_comment: $disliked_comment
+            disliked_comment: $disliked_comment,
+            liked_post: $liked_post,
+            disliked_post: $disliked_post
           }){
             id,
             email,
@@ -953,7 +960,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video,
             disliked_video,
             liked_comment,
-            disliked_comment
+            disliked_comment,
+            liked_post,
+            disliked_post
           }
         }
       `,
@@ -965,21 +974,15 @@ export class VideoWatchComponent implements OnInit {
         liked_video: newStr,
         disliked_video: this.userDB.disliked_video,
         liked_comment: this.userDB.liked_comment,
-        disliked_comment: this.userDB.disliked_comment
+        disliked_comment: this.userDB.disliked_comment,
+        liked_post: this.userDB.liked_post,
+        disliked_post: this.userDB.disliked_post
       },
-      // refetchQueries: [{
-      //   query: getUserSubsQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' ,
-      //               user_id: this.userDB.id,
-      //               channel_id: this.channel.id,
-      //             },
-      // }],
     }).subscribe(result =>{
       console.log(result.data.updateUser);
       this.userDB = result.data.updateUser
       this.data.changeUserDB(this.userDB)
       this.checkUserLikeOrNot()
-
     })   
   }
 
@@ -988,17 +991,17 @@ export class VideoWatchComponent implements OnInit {
 
     var res = str.split(",")
 
-      for(let i = 0; i < res.length; i++){
-        if(res[i] == this.video.id){
-          res.splice(i, 1)
-        }
+    for(let i = 0; i < res.length; i++){
+      if(res[i] == this.video.id){
+        res.splice(i, 1)
       }
+    }
 
     var newStr = res.toString()
 
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!){
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
           updateUser(id: $id, input:{
             email: $email,
             location: $location,
@@ -1006,7 +1009,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video: $liked_video,
             disliked_video: $disliked_video,
             liked_comment: $liked_comment,
-            disliked_comment: $disliked_comment
+            disliked_comment: $disliked_comment,
+            liked_post: $liked_post,
+            disliked_post: $disliked_post
           }){
             id,
             email,
@@ -1015,7 +1020,9 @@ export class VideoWatchComponent implements OnInit {
             liked_video,
             disliked_video,
             liked_comment,
-            disliked_comment
+            disliked_comment,
+            liked_post,
+            disliked_post
           }
         }
       `,
@@ -1027,15 +1034,10 @@ export class VideoWatchComponent implements OnInit {
         liked_video: newStr,
         disliked_video: this.userDB.disliked_video,
         liked_comment: this.userDB.liked_comment,
-        disliked_comment: this.userDB.disliked_comment
+        disliked_comment: this.userDB.disliked_comment,
+        liked_post: this.userDB.liked_post,
+        disliked_post: this.userDB.disliked_post
       },
-      // refetchQueries: [{
-      //   query: getUserSubsQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' ,
-      //               user_id: this.userDB.id,
-      //               channel_id: this.channel.id,
-      //             },
-      // }],
     }).subscribe(result =>{
 
       console.log(result.data.updateUser);
@@ -1366,6 +1368,19 @@ export class VideoWatchComponent implements OnInit {
   }
 
   loadRelatedVideo():void{
+
+    let loc:String
+    let restrict:String
+
+    if(this.userDB){            
+      loc = this.userDB.location
+      restrict = this.userDB.restrict_mode
+    }
+    else{
+      loc = "Indonesia"
+      restrict = "false"
+    }
+    
     
     this.apollo.watchQuery<any>({
       query: gql `
@@ -1395,8 +1410,8 @@ export class VideoWatchComponent implements OnInit {
       variables:{
         video_id: this.video.id,
         category: this.video.category,
-        location: this.userDB.location,
-        is_restrict: this.userDB.restrict_mode
+        location: loc,
+        is_restrict: restrict
       }
     }).valueChanges.subscribe(result => {
       this.relatedVideos = result.data.getRelatedVideo

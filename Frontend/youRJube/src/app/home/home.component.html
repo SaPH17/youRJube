@@ -2,7 +2,11 @@
     <h3 class="recommended-title">Recommended Video</h3>
 
     <div class="recommended-video-container">
-        <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+        <div *ngFor="let v of videos, let i = index">
+            <app-video-display [vid]="v" *ngIf="i < (lastKey)"></app-video-display>
+        </div>
     </div>
+
+    <div class="footer"></div>
 
 </div>

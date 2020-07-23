@@ -5,6 +5,23 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import gql from 'graphql-tag';
 
+export const getChannelQuery = gql `
+  query getChannelById($id: ID!){
+    getChannelById(id: $id){
+      id,
+      user_id,
+      name,
+      background_image,
+      icon,
+      description,
+      join_day,
+      join_month,
+      join_year,
+      subscriber_count
+    }
+  }
+`
+
 @Component({
   selector: 'app-channel',
   templateUrl: './channel.component.html',
@@ -28,7 +45,7 @@ export class ChannelComponent implements OnInit {
     const channelId = +this.route.snapshot.paramMap.get('id');    
     this.data.currentChannelObject.subscribe(userChannelObject => this.userChannel = userChannelObject)
     
-    this.apollo.query<any>({
+    this.apollo.watchQuery<any>({
       query: gql `
         query getChannelById($id: ID!){
           getChannelById(id: $id){
@@ -48,7 +65,7 @@ export class ChannelComponent implements OnInit {
       variables:{
         id: channelId
       }
-    }).subscribe(result => {
+    }).valueChanges.subscribe(result => {
       this.channel = result.data.getChannelById[0]
 
       this.subsCountOutput = this.convertSubs(this.channel.subscriber_count - 1)

@@ -38,39 +38,45 @@ export class VideoRelatedComponent implements OnInit {
   playlist_title: String
   playlist_privacy: String
   userPlaylist: any
+  channel : any
 
   constructor(private data: DataService, private apollo: Apollo) { }
 
   ngOnInit(): void {
-    console.log("BB");
     
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
     this.data.currentChannelObject.subscribe(userChannelObject => this.userChannel =  userChannelObject)
+    this.loadChannelInformation()
 
     this.viewOutput = this.convertView(this.video.view)
     this.dateOutput = this.convertDate(this.video.upload_day, this.video.upload_month - 1, this.video.upload_year)
   }
 
   convertDate(day, month, year){
-    var currentDate = new Date()
-    
-    if(currentDate.getDate() == day){
+    var currDate = new Date()
+
+    var date = new Date(parseInt(year), parseInt(month), parseInt(day))
+
+    var diff = Math.floor((Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24))
+
+    if(diff == 0){
       return "Today"
     }
-    else if(currentDate.getMonth() == month && currentDate.getDate() - day < 7){
-      return (currentDate.getDate() - day).toString() + " day(s) ago"
+    else if(diff < 7){
+      return diff + " day(s) ago"
     }
-    else if(currentDate.getMonth() == month && currentDate.getDate() - day > 7 ){
-      return (Math.floor((currentDate.getDate() - day) / 7)).toString() + " week(s) ago"
+    else if(diff >= 7 && diff <= 28){
+      return diff/7 + " week(s) ago"
     }
-    else if(currentDate.getFullYear() == year){
-      return (currentDate.getMonth() - month).toString() + " month(s) ago"
+    else if(diff >= 28 && diff <= 365){
+      return diff/28 + " month(s) ago"
     }
-    else if(currentDate.getFullYear() - year > 0){
-      return (currentDate.getFullYear() - year ).toString() + " year(s) ago"
+    else if(diff > 365){
+      return diff/365 + "year(s) ago"
     }
   }
-
+  
   convertView(view){
     if(view >= 1000 && view < 1000000){
       return (view / 1000).toFixed(1) + "K views"
@@ -286,5 +292,31 @@ export class VideoRelatedComponent implements OnInit {
     this.playlist_privacy = e.target.value
     console.log(this.playlist_privacy);
     
+  }
+
+  loadChannelInformation():void{
+    this.apollo.query<any>({
+      query: gql `
+        query getChannelById($id: ID!){
+          getChannelById(id: $id){
+            id,
+            user_id,
+            name,
+            background_image,
+            icon,
+            description,
+            join_day,
+            join_month,
+            join_year,
+            subscriber_count
+          }
+        }
+      `,
+      variables:{
+        id: this.video.channel_id
+      }
+    }).subscribe(result => {
+      this.channel = result.data.getChannelById[0]
+    })
   }
 }

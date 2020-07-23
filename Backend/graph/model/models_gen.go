@@ -37,7 +37,6 @@ type Comment struct {
 type CommunityPost struct {
 	ID        string  `json:"id"`
 	ChannelID string  `json:"channel_id"`
-	Title     string  `json:"title"`
 	Content   string  `json:"content"`
 	Image     *string `json:"image"`
 	Like      int     `json:"like"`
@@ -97,6 +96,8 @@ type User struct {
 	DislikedVideo   string `json:"disliked_video"`
 	LikedComment    string `json:"liked_comment"`
 	DislikedComment string `json:"disliked_comment"`
+	LikedPost       string `json:"liked_post"`
+	DislikedPost    string `json:"disliked_post"`
 }
 
 type UserSubscription struct {
@@ -130,12 +131,6 @@ type Video struct {
 	Duration      int    `json:"duration"`
 }
 
-type VideoTag struct {
-	ID      string `json:"id"`
-	VideoID string `json:"video_id"`
-	Tag     string `json:"tag"`
-}
-
 type NewChannel struct {
 	UserID          string `json:"user_id"`
 	Name            string `json:"name"`
@@ -161,7 +156,6 @@ type NewComment struct {
 
 type NewCommunityPost struct {
 	ChannelID string  `json:"channel_id"`
-	Title     string  `json:"title"`
 	Content   string  `json:"content"`
 	Image     *string `json:"image"`
 	Like      int     `json:"like"`
@@ -204,6 +198,8 @@ type NewUser struct {
 	DislikedVideo   string `json:"disliked_video"`
 	LikedComment    string `json:"liked_comment"`
 	DislikedComment string `json:"disliked_comment"`
+	LikedPost       string `json:"liked_post"`
+	DislikedPost    string `json:"disliked_post"`
 }
 
 type NewUserSubscription struct {
@@ -227,9 +223,4 @@ type NewVideo struct {
 	Like          int    `json:"like"`
 	Dislike       int    `json:"dislike"`
 	Duration      int    `json:"duration"`
-}
-
-type NewVideoTag struct {
-	VideoID string `json:"video_id"`
-	Tag     string `json:"tag"`
 }

@@ -38,27 +38,32 @@ export class SecondVideoDisplayComponent implements OnInit {
     this.data.currentChannelObject.subscribe(userChannelObject => this.userChannel = userChannelObject)
 
     this.dateOutput  = this.convertDate(this.video.upload_day, this.video.upload_month - 1, this.video.upload_year)
-    this.viewOutput = this.convertView(this.video.view)
+    this.viewOutput = this.convertView(this.video.view - 1)
     
   }
 
   convertDate(day, month, year){
-    var currentDate = new Date()
-    
-    if(currentDate.getDate() == day){
+    var currDate = new Date()
+
+    var date = new Date(parseInt(year), parseInt(month), parseInt(day))
+
+    var diff = Math.floor((Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24))
+
+    if(diff == 0){
       return "Today"
     }
-    else if(currentDate.getMonth() == month && currentDate.getDate() - day < 7){
-      return (currentDate.getDate() - day).toString() + " day(s) ago"
+    else if(diff < 7){
+      return diff + " day(s) ago"
     }
-    else if(currentDate.getMonth() == month && currentDate.getDate() - day > 7 ){
-      return (Math.floor((currentDate.getDate() - day) / 7)).toString() + " week(s) ago"
+    else if(diff >= 7 && diff <= 28){
+      return diff/7 + " week(s) ago"
     }
-    else if(currentDate.getFullYear() == year){
-      return (currentDate.getMonth() - month).toString() + " month(s) ago"
+    else if(diff >= 28 && diff <= 365){
+      return diff/28 + " month(s) ago"
     }
-    else if(currentDate.getFullYear() - year > 0){
-      return (currentDate.getFullYear() - year ).toString() + " year(s) ago"
+    else if(diff > 365){
+      return diff/365 + "year(s) ago"
     }
   }
 

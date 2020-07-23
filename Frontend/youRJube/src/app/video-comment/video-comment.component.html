@@ -2,7 +2,7 @@
     <div class="top">
 
         <div class="left">
-            <img src="{{commentChannel.icon}}" alt="" width="50px">
+            <img src="{{commentChannel.icon}}" alt="" width="50px" style="border-radius: 50%;">
         </div>
 
         <div class="right">
@@ -26,19 +26,15 @@
 
     <div class="center">
         <div class="reply-top">
-            <a>
-                <div class="like" id="thumbs-up-logo-{{comment.id}}" (click)="likeComment()">
-                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                    {{likeOutput}}
-                </div>
-            </a>
-    
-            <a>
-                <div class="dislike" id="thumbs-down-logo-{{comment.id}}" (click)="dislikeComment()">
-                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                    {{dislikeOutput}}
-                </div>
-            </a>
+            <div class="like" >
+                <i class="fa fa-thumbs-up" aria-hidden="true" [style.color]="isLiked ? 'blueviolet' : 'gray'" (click)="likeComment()"></i>
+                {{likeOutput}}
+            </div>
+
+            <div class="dislike">
+                <i class="fa fa-thumbs-down" aria-hidden="true" [style.color]="isDisliked ? 'blueviolet' : 'gray'"  (click)="dislikeComment()"></i>
+                {{dislikeOutput}}
+            </div>
     
             <a>
                 <div class="reply-button" (click)="enableReplyInput()" *ngIf="userChannel">

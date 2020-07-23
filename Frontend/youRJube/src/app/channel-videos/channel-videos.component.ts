@@ -53,7 +53,6 @@ export class ChannelVideosComponent implements OnInit {
     }).subscribe(result => {
       
       this.videos = result.data.getVideoByChannelId
-      this.videos.reverse()
 
       if(this.videos.length != 0){
         this.haveVideos = true
@@ -65,15 +64,15 @@ export class ChannelVideosComponent implements OnInit {
   }
 
   sortVideoByView():void{
-    this.videos.sort((a,b)=> (a.view > b.view) ? -1 : 1)
+    this.videos.sort((a, b)=> (parseInt(a.view) > parseInt(b.view)) ? -1 : 1)
   }
 
   sortVideoByOldest():void{
-    this.videos.sort((a,b)=> (a.id > b.id) ? -1 : 1)
+    this.videos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? 1 : -1)
   }
 
   sortVideoByLatest():void{
-    this.videos.sort((a,b)=> (a.id > b.id) ? 1 : -1)
+    this.videos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? -1 : 1)    
   }
 
   toggleSortBy():void{

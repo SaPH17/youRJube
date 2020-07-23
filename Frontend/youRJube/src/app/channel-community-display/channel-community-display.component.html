@@ -1,0 +1,30 @@
+<div class="container" *ngIf="channelLoaded">
+    <div class="left">
+        <img src="{{channel.icon}}" alt="" width="50px">
+    </div>
+
+    <div class="right">
+        <div class="name">
+            {{channel.name}}
+        </div>
+        <div class="content">
+            {{communityPost.content}}
+        </div>
+
+        <div class="image" *ngIf="communityPost.image">
+            <img src="{{communityPost.image}}" alt="">
+        </div>
+
+        <div class="bottom">
+            <div class="like" >
+                <i class="fa fa-thumbs-up" aria-hidden="true" [style.color]="isLiked ? 'blueviolet' : 'gray'" (click)="likePost()"></i>
+                {{likeOutput}}
+            </div>
+
+            <div class="dislike">
+                <i class="fa fa-thumbs-down" aria-hidden="true" [style.color]="isDisliked ? 'blueviolet' : 'gray'"  (click)="dislikePost()"></i>
+                {{dislikeOutput}}
+            </div>
+        </div>
+    </div>
+</div>

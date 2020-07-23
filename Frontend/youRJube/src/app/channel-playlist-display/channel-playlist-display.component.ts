@@ -34,9 +34,7 @@ export class ChannelPlaylistDisplayComponent implements OnInit {
 
     this.videoCountOutput = (split.length - 2).toString()
 
-    if(split.length > 2){
-      console.log(parseInt(split[1]));
-      
+    if(split.length > 2){      
       this.apollo.watchQuery<any>({
         query: gql `
           query getVideoById($id : ID!){

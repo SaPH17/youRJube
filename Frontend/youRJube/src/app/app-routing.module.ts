@@ -1,3 +1,6 @@
+import { CategorySportComponent } from './category/category-sport/category-sport.component';
+import { CategoryMusicComponent } from './category/category-music/category-music.component';
+import { ChannelEditComponent } from './channel-edit/channel-edit.component';
 import { ChannelVideosComponent } from './channel-videos/channel-videos.component';
 import { ChannelHomeComponent } from './channel-home/channel-home.component';
 import { ChannelComponent } from './channel/channel.component';
@@ -18,6 +21,10 @@ import { VideoUploadComponent } from './video-upload/video-upload.component';
 import { ChannelCommunityComponent } from './channel-community/channel-community.component';
 import { ChannelPlaylistComponent } from './channel-playlist/channel-playlist.component';
 import { ChannelAboutComponent } from './channel-about/channel-about.component';
+import { CategoryGamingComponent } from './category/category-gaming/category-gaming.component';
+import { CategoryEntertainmentComponent } from './category/category-entertainment/category-entertainment.component';
+import { CategoryNewsComponent } from './category/category-news/category-news.component';
+import { CategoryTravelComponent } from './category/category-travel/category-travel.component';
 
 
 const routes: Routes = [
@@ -25,7 +32,16 @@ const routes: Routes = [
   {path:"home", component: HomeComponent},
   {path:"trending", component: TrendingComponent},
   {path:"subscription", component: SubscriptionComponent},
-  {path:"category", component: CategoryComponent},
+  {path:"category", component: CategoryComponent,
+    children:[
+      {path:"", redirectTo:"music", pathMatch: 'full'},
+      {path:"music", component: CategoryMusicComponent},
+      {path:"sport", component: CategorySportComponent},
+      {path:"gaming", component: CategoryGamingComponent},
+      {path:"entertainment", component: CategoryEntertainmentComponent},
+      {path:"news", component: CategoryNewsComponent},
+      {path:"travel", component: CategoryTravelComponent},
+  ]},
   {path:"playlist/:id", component: PlaylistComponent},
   {path:"premium-membership", component: PremiumMembershipComponent},
   {path:"watch/:id", component: VideoWatchComponent},
@@ -42,6 +58,7 @@ const routes: Routes = [
       {path:"community", component: ChannelCommunityComponent},
       {path:"playlist", component: ChannelPlaylistComponent},
       {path:"about", component: ChannelAboutComponent},
+      {path:"edit", component: ChannelEditComponent},
     ]
   },
 ];

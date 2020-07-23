@@ -1,0 +1,18 @@
+.video-container{
+    padding-bottom: 2vh;
+    margin-top: 2vh;
+    border-bottom: 2px lightgray solid;
+    width: 80vw;
+
+    .title{
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .video-list{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+}

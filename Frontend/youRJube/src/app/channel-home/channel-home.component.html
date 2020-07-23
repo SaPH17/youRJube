@@ -3,17 +3,33 @@
         <div class="title">
             Recently Uploaded
         </div>
+        <div class="videos">
+            <div *ngFor="let v of videos, let i = index">
+                <app-video-display *ngIf="i < 4" [vid]="v"></app-video-display>
+            </div>
+        </div>
     </div>
 
     <div class="section2">
         <div class="title">
             Random Videos
         </div>
+        <div class="videos">
+            <div *ngFor="let v of randomVideos, let i = index">
+                <app-video-display *ngIf="i < 5" [vid]="v"></app-video-display>
+            </div>
+        </div>
     </div>
 
     <div class="section3">
         <div class="title">
             Random Playlists
+        </div>
+
+        <div class="playlists">
+            <div *ngFor="let p of randomPlaylist, let i = index">
+                <app-channel-playlist-display *ngIf="i < 3" [playlist]="p"></app-channel-playlist-display>
+            </div>
         </div>
     </div>
 </div>

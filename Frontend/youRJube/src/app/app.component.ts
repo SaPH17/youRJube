@@ -1,3 +1,4 @@
+import { IpServiceService } from './ip-service.service';
 import { Apollo } from 'apollo-angular';
 import { DataService } from './data.service';
 import { Component, OnInit } from '@angular/core';
@@ -6,7 +7,8 @@ import { GoogleLoginProvider } from "angularx-social-login";
 import { SocialUser } from "angularx-social-login";
 import {Router} from '@angular/router';
 import gql from 'graphql-tag';
-
+// import IPinfoWrapper from "node-ipinfo";
+const IPinfoWrapper = require ('node-ipinfo');
 
 @Component({
   selector: 'app-root',
@@ -25,6 +27,13 @@ export class AppComponent implements OnInit{
   restrictModeOutput: String = "OFF"
   userPlaylist: any
   playlistLoaded:boolean = false
+
+  userIPAddress: String
+
+  token = "eacfce37620a0b"
+  ipInfoWrapper = new IPinfoWrapper(this.token)
+  userLocation: String
+
 
   country_list = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua and Barbuda","Argentina","Armenia",
   "Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin",
@@ -46,11 +55,12 @@ export class AppComponent implements OnInit{
   "Turkmenistan","Turks &amp; Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan",
   "Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
 
-
-
-  constructor(private authService: SocialAuthService, private router: Router, private data: DataService, private apollo: Apollo) { }
+  constructor(private authService: SocialAuthService, private router: Router, private data: DataService, private apollo: Apollo
+    , private ip: IpServiceService) { }
 
   ngOnInit(): void {
+
+    this.getLocation()
 
     this.authService.authState.subscribe((user) => {
       this.user = user;
@@ -69,6 +79,17 @@ export class AppComponent implements OnInit{
       this.validateUserExistance()
     }
 
+  }
+
+  getLocation(){
+    this.ip.getIPAddress().subscribe((res:any) =>{
+      this.userIPAddress = res.ip
+
+      this.ipInfoWrapper.lookupIp(this.userIPAddress).then((response: any) => {
+        this.userLocation = response.country
+        this.data.changeLocation(this.userLocation)
+      });
+    })
   }
 
   settingsClick(): void {
@@ -172,7 +193,9 @@ export class AppComponent implements OnInit{
             liked_video,
             disliked_video,
             liked_comment,
-            disliked_comment
+            disliked_comment,
+            liked_post,
+            disliked_post
           }
         }
       `,
@@ -187,8 +210,8 @@ export class AppComponent implements OnInit{
         
         this.apollo.mutate<any>({
           mutation: gql`
-            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!){
-              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location, liked_video: $liked_video, disliked_video: $disliked_video, liked_comment: $liked_comment, disliked_comment: $disliked_comment}){
+            mutation insertUser($email: String!, $restrict_mode: String!, $location: String!, $liked_video: String!, $disliked_video: String!, $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
+              createUser(input: {email: $email, restrict_mode: $restrict_mode, location: $location, liked_video: $liked_video, disliked_video: $disliked_video, liked_comment: $liked_comment, disliked_comment: $disliked_comment, liked_post: $liked_post, disliked_post: $disliked_post}){
                 id,
                 email,
                 restrict_mode,
@@ -196,7 +219,9 @@ export class AppComponent implements OnInit{
                 liked_video,
                 disliked_video,
                 liked_comment,
-                disliked_comment
+                disliked_comment,
+                liked_post,
+                disliked_post
               }
             }
           `,
@@ -207,7 +232,9 @@ export class AppComponent implements OnInit{
             liked_video: ",",
             disliked_video: ",",
             liked_comment: ",",
-            disliked_comment: ","
+            disliked_comment: ",",
+            liked_post: ",",
+            disliked_post: ","
           }
         }).subscribe(result =>{
           this.userDB = result.data.createUser
@@ -443,7 +470,7 @@ export class AppComponent implements OnInit{
       return v == this.userDB.location
     }
 
-    return v == "Indonesia"
+    return v == this.userLocation
   }
 
   openLocationModal():void{
