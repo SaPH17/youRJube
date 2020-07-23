@@ -142,13 +142,13 @@ export class VideoDisplayComponent implements OnInit{
       return diff + " day(s) ago"
     }
     else if(diff >= 7 && diff <= 28){
-      return diff/7 + " week(s) ago"
+      return Math.floor(diff/7) + " week(s) ago"
     }
     else if(diff >= 28 && diff <= 365){
-      return diff/28 + " month(s) ago"
+      return Math.floor(diff/28) + " month(s) ago"
     }
     else if(diff > 365){
-      return diff/365 + "year(s) ago"
+      return Math.floor(diff/365)+ "year(s) ago"
     }
   }
 

@@ -33,6 +33,13 @@ export class DataService {
         this.locationObjectSource.next(newLocation)
     }
 
+    private restrictedModeObjectSource = new BehaviorSubject<any>(null)
+    restrictedModeObject = this.restrictedModeObjectSource.asObservable();
+
+    changeRestrictedMode(newMode: any){
+        this.restrictedModeObjectSource.next(newMode)
+    }
+
     constructor() {
         
     }

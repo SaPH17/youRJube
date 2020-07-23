@@ -49,6 +49,7 @@ import { CategoryGamingComponent } from './category/category-gaming/category-gam
 import { CategoryEntertainmentComponent } from './category/category-entertainment/category-entertainment.component';
 import { CategoryNewsComponent } from './category/category-news/category-news.component';
 import { CategoryTravelComponent } from './category/category-travel/category-travel.component';
+import { VideoSearchComponent } from './video-search/video-search.component';
 
 
 @NgModule({
@@ -87,6 +88,7 @@ import { CategoryTravelComponent } from './category/category-travel/category-tra
     CategoryEntertainmentComponent,
     CategoryNewsComponent,
     CategoryTravelComponent,
+    VideoSearchComponent,
   ],
   imports: [
     BrowserModule,

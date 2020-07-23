@@ -33,7 +33,9 @@ export class AppComponent implements OnInit{
   token = "eacfce37620a0b"
   ipInfoWrapper = new IPinfoWrapper(this.token)
   userLocation: String
+  restrictedMode: String
 
+  searchQuery: String
 
   country_list = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua and Barbuda","Argentina","Armenia",
   "Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin",
@@ -59,6 +61,12 @@ export class AppComponent implements OnInit{
     , private ip: IpServiceService) { }
 
   ngOnInit(): void {
+    this.data.currentUserObject.subscribe(userObject => this.user = userObject)
+    this.data.locationObject.subscribe(locationObject => this.userLocation = locationObject)
+    this.data.restrictedModeObject.subscribe(restrictedModeObject => this.restrictMode = restrictedModeObject)
+    this.data.changeRestrictedMode("false")
+    this.data.changeLocation("Indonesia")
+
 
     this.getLocation()
 
@@ -66,8 +74,6 @@ export class AppComponent implements OnInit{
       this.user = user;
       this.loggedIn = (user != null);
     });
-
-    this.data.currentUserObject.subscribe(userObject => this.user = userObject)
 
     if(localStorage.getItem('user') == null){
       console.log("User is null");
@@ -78,6 +84,13 @@ export class AppComponent implements OnInit{
       this.data.changeUser(this.user)
       this.validateUserExistance()
     }
+
+    var input = document.getElementById('searchbox')
+    input.addEventListener("keydown", (e) => {
+      if(e.keyCode === 13){
+        this.searchVideo()
+      }
+    })
 
   }
 
@@ -451,17 +464,11 @@ export class AppComponent implements OnInit{
         liked_video: this.userDB.liked_video,
         disliked_video: this.userDB.disliked_video
       },
-      // refetchQueries: [{
-      //   query: getUserSubsQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' ,
-      //               user_id: this.userDB.id,
-      //               channel_id: this.channel.id,
-      //             },
-      // }],
     }).subscribe(result =>{
       console.log(result.data.updateUser);
       this.userDB = result.data.updateUser
       this.data.changeUserDB(this.userDB)
+      this.data.changeRestrictedMode(str)
     })   
   }
   
@@ -482,6 +489,9 @@ export class AppComponent implements OnInit{
   }
 
   changeCurrentLocation(e){
+
+    this.data.changeLocation(e)
+
     this.apollo.mutate<any>({
       mutation: gql`
         mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!){
@@ -509,13 +519,6 @@ export class AppComponent implements OnInit{
         liked_video: this.userDB.liked_video,
         disliked_video: this.userDB.disliked_video
       },
-      // refetchQueries: [{
-      //   query: getUserSubsQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' ,
-      //               user_id: this.userDB.id,
-      //               channel_id: this.channel.id,
-      //             },
-      // }],
     }).subscribe(result =>{
       console.log(result.data.updateUser);
       this.userDB = result.data.updateUser
@@ -523,4 +526,8 @@ export class AppComponent implements OnInit{
     })  
   }
 
+  searchVideo():void{
+    var newUrl = 'search/' + this.searchQuery
+    this.router.navigate([newUrl])
+  }
 }

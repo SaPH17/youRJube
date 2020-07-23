@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="top">
+        
+        <div class="filter-button">
+            <p (click)="toggleFilterOptions()" class="unselectable">
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                FILTER
+            </p>
+        </div>
+
+
+        <div class="filter-options" id="filter-options" [style.height]="show ? 'auto' : '0'" [style.paddingTop]="show ? '4vh' : '0'">
+            <div class="left">
+                <div class="title">
+                    Upload Date
+                </div>
+
+                <div class="options">
+                    <ul>
+                        <li (click)="filterThisWeek()">This week</li>
+                        <li (click)="filterThisMonth()">This month</li>
+                        <li (click)="filterThisYear()">This year</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right">
+                <div class="title">
+                    Type
+                </div>
+
+                <div class="options">
+                    <ul>
+                        <li>Video</li>
+                        <li>Channel</li>
+                        <li>Playlist</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center">
+        <div *ngFor="let v of videos">
+            <app-second-video-display [vid]="v"></app-second-video-display>
+        </div>
+    </div>
+</div>

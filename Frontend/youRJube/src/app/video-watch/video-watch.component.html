@@ -2,11 +2,10 @@
     <div class="video-section">
 
         <div class="video-player">
-            <mat-video 
-            id="video-player"
-            src="{{video.video_url}}"
-            (timeupdate)="changeCurrentTime($event)">
-        
+
+            <mat-video [autoplay]="false" [preload]="true" [fullscreen]="true" [download]="false" 
+            color="accent" spinner="spin" src="{{video.video_url}}" 
+            [quality]="true" showFrameByFrame="true" id="video-player">
             </mat-video>
         </div>
 

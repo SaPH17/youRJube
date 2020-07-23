@@ -13,8 +13,8 @@
   
     <form id="search-form">
         <div class="searchbox-container">
-            <input type="text" name="" id="searchbox" placeholder="Search">
-            <button type="submit" id="search-submit"><i class="fa fa-search"></i></button>
+            <input type="text" name="" id="searchbox" placeholder="Search" (input)="searchQuery = $event.target.value">
+            <button type="button" id="search-submit" (click)="searchVideo()"><i class="fa fa-search"></i></button>
         </div>
     </form>
   

@@ -1,7 +1,7 @@
 .container{
 
     .recommended-title{
-        margin-top: 2vh;
+        margin-top: 3vh;
         font-size: 20px;
     }
 
@@ -15,5 +15,9 @@
             flex-wrap: wrap;
             justify-content: flex-start;
         }
+    }
+
+    .footer{
+        height: 50px;
     }
 }

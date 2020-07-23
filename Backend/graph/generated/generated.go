@@ -170,7 +170,7 @@ type ComplexityRoot struct {
 		GetVideo                                func(childComplexity int) int
 		GetVideoByChannelID                     func(childComplexity int, channelID string) int
 		GetVideoByID                            func(childComplexity int, id string) int
-		GetVideoByTitle                         func(childComplexity int, title string) int
+		GetVideoByTitle                         func(childComplexity int, title string, isRestrict string) int
 		GetchannelByName                        func(childComplexity int, name string) int
 	}
 
@@ -269,7 +269,7 @@ type QueryResolver interface {
 	GetUserSubscriptionByUserIDAndChannelID(ctx context.Context, userID string, channelID string) ([]*model.UserSubscription, error)
 	GetCommunityPostByChannelID(ctx context.Context, channelID string) ([]*model.CommunityPost, error)
 	GetVideoByID(ctx context.Context, id string) ([]*model.Video, error)
-	GetVideoByTitle(ctx context.Context, title string) ([]*model.Video, error)
+	GetVideoByTitle(ctx context.Context, title string, isRestrict string) ([]*model.Video, error)
 	GetVideoByChannelID(ctx context.Context, channelID string) ([]*model.Video, error)
 	GetTrendingVideo(ctx context.Context) ([]*model.Video, error)
 	GetCategoryVideo(ctx context.Context, category string) ([]*model.Video, error)
@@ -1253,7 +1253,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetVideoByTitle(childComplexity, args["title"].(string)), true
+		return e.complexity.Query.GetVideoByTitle(childComplexity, args["title"].(string), args["is_restrict"].(string)), true
 
 	case "Query.getchannelByName":
 		if e.complexity.Query.GetchannelByName == nil {
@@ -1870,7 +1870,7 @@ type Query{
   getCommunityPostByChannelId(channel_id: ID!): [CommunityPost!]!
 
   getVideoById(id: ID!): [Video!]!
-  getVideoByTitle(title: String!): [Video!]!
+  getVideoByTitle(title: String!, is_restrict: String!): [Video!]!
   getVideoByChannelId(channel_id: ID!): [Video!]!
 
   getTrendingVideo: [Video!]!
@@ -2734,6 +2734,14 @@ func (ec *executionContext) field_Query_getVideoByTitle_args(ctx context.Context
 		}
 	}
 	args["title"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["is_restrict"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["is_restrict"] = arg1
 	return args, nil
 }
 
@@ -6161,7 +6169,7 @@ func (ec *executionContext) _Query_getVideoByTitle(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetVideoByTitle(rctx, args["title"].(string))
+		return ec.resolvers.Query().GetVideoByTitle(rctx, args["title"].(string), args["is_restrict"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

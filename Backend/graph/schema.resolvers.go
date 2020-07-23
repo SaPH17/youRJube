@@ -10,6 +10,7 @@ import (
 	"time"
 	"youRJube/graph/generated"
 	"youRJube/graph/model"
+	"strings"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
@@ -684,8 +685,27 @@ func (r *queryResolver) GetVideoByID(ctx context.Context, id string) ([]*model.V
 	return video, nil
 }
 
-func (r *queryResolver) GetVideoByTitle(ctx context.Context, title string) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) GetVideoByTitle(ctx context.Context, title string, isRestrict string) ([]*model.Video, error) {
+	var videos []*model.Video
+	var a string = "false"
+	var err error
+
+	var newTitle = "%" + title + "%"
+
+	newTitle = strings.ToLower(newTitle)
+
+	if isRestrict == "false" {
+		err = r.DB.Model(&videos).Where("LOWER(title) LIKE ?", newTitle).Select()
+	} else {
+		err = r.DB.Model(&videos).Where("LOWER(title) LIKE ? AND age_restricted = ?", newTitle, a).Select()
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Failed to query video")
+	}
+
+	return videos, nil
 }
 
 func (r *queryResolver) GetVideoByChannelID(ctx context.Context, channelID string) ([]*model.Video, error) {
@@ -721,10 +741,25 @@ func (r *queryResolver) GetCategoryVideo(ctx context.Context, category string) (
 		return nil, errors.New("Failed to query video")
 	}
 
-	return video, nil}
+	return video, nil
+}
 
 func (r *queryResolver) GetHomeVideo(ctx context.Context, location string, isRestrict string) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented"))
+	var videos []*model.Video
+	var a string = "false"
+	var err error
+
+	if isRestrict == "false" {
+		err = r.DB.Model(&videos).Where("location = ?", location).Order("id").Select()
+	} else {
+		err = r.DB.Model(&videos).Where("location = ? AND age_restricted = ?", location, a).Order("id").Select()
+	}
+
+	if err != nil {
+		return nil, errors.New("Failed to query video")
+	}
+
+	return videos, nil
 }
 
 func (r *queryResolver) GetRelatedVideo(ctx context.Context, videoID string, category string, location string, isRestrict string) ([]*model.Video, error) {

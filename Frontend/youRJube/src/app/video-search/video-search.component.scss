@@ -1,0 +1,94 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    padding-top: 2vh;
+    padding-left: 2vw;
+
+    .top{
+        display: flex;
+        flex-direction: column;
+        border-bottom: 2px lightgray solid;
+        padding-bottom: 2vh;
+        padding-left: 2vw;
+
+        .filter-button{
+            display: flex;
+
+            p{
+                cursor: pointer;
+                color: rgb(92, 88, 88);
+    
+                i{
+                    margin-right: 0.5vw;
+                    font-size: 20px;
+                }
+            }
+        }
+
+        .filter-options{
+            display: flex;
+            flex-direction: row;
+            color: gray;
+            height: 0vh;
+            overflow: hidden;
+            transition-duration: 0.3s;
+
+            .left{
+                flex: 1;
+
+
+                .title{
+                    padding-bottom: 2vh;
+                    border-bottom: 1px gray solid;
+                    width: 25%;
+                }
+
+                ul{
+                    margin-top: 2vh;
+                    list-style: none;
+                    padding: 0;
+
+                    li{
+                        cursor: pointer;
+                        margin: 1vh 0.5vw;
+                    }
+                }
+            }
+
+            .right{
+                flex: 1;
+
+                .title{
+                    padding-bottom: 2vh;
+                    border-bottom: 1px gray solid;
+                    width: 25%;
+                }
+
+                ul{
+                    margin-top: 2vh;
+                    list-style: none;
+                    padding: 0;
+
+                    
+                    li{
+                        cursor: pointer;
+                        margin: 1vh 0.5vw;
+                    }
+                }
+            }
+        }
+
+        .filter-options .show{
+            height: auto;
+            padding-top: 4vh;
+            transition-duration: 0.3s;
+        }
+
+    }
+
+    .center{
+        display: flex;
+        flex-direction: column;
+        padding-top: 3vh;
+    }
+}

@@ -1,3 +1,4 @@
+import { VideoSearchComponent } from './video-search/video-search.component';
 import { CategorySportComponent } from './category/category-sport/category-sport.component';
 import { CategoryMusicComponent } from './category/category-music/category-music.component';
 import { ChannelEditComponent } from './channel-edit/channel-edit.component';
@@ -50,6 +51,7 @@ const routes: Routes = [
   {path:"terms", component: TermsComponent},
   {path:"copyright", component: CopyrightComponent},
   {path:"privacy", component: PrivacyComponent},
+  {path:"search/:query", component: VideoSearchComponent},
   {path:"channel/:id", component: ChannelComponent,
     children:[
       {path:"", redirectTo:"home", pathMatch: 'full'},
