@@ -1,3 +1,53 @@
 <div class="container" *ngIf="doneLoading">
-    {{playlist.title}}
+    <div class="left">
+        <div class="top">
+            <img src="{{playlistVideos[0].thumbnail}}" alt="" width="350px" height="200px">
+            <div class="overlay unselectable">
+                <i class="fa fa-play" aria-hidden="true"></i>
+                PLAY ALL
+            </div>
+        </div>
+        <div class="center">
+            <div class="title">
+                {{playlist.title}}
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </div>
+
+            <div class="info">
+                {{playlistCountOutput}} • {{viewCountOutput}} • {{lastUpdatedOutput}}
+            </div>
+
+            <div class="privacy">
+                Public
+            </div>
+
+            <div class="button">
+                <div class="shuffle">
+                    <i class="fa fa-random" aria-hidden="true"></i>
+                </div>
+
+                <div class="share">
+                    <i class="fa fa-share" aria-hidden="true"></i>
+                </div>
+
+                <div class="remove-all">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </div>
+            </div>
+
+            <div class="description">
+                {{playlist.description}}
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="bottom">
+            <img src="{{channel.icon}}" alt="" width="60px">
+            {{channel.name}}
+        </div>
+    </div>
+    <div class="right">
+        <div *ngFor="let v of playlistVideos">
+            <app-second-video-display [vid]="v"></app-second-video-display>
+        </div>
+    </div>
 </div>

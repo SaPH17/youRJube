@@ -14,14 +14,14 @@
 </div>
 
 <div *ngIf="isUserSignedIn()" class="user-signedin-container">
-    <div class="video-list-container">
+    <div class="video-list-container" *ngIf="doneLoading">
         <div class="video-container">
             <div class="title">
                 Today
             </div>
 
             <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+                <app-video-display *ngFor="let v of todayVideos" [vid]="v"></app-video-display>
             </div>
         </div>
 
@@ -30,7 +30,7 @@
                 This Week
             </div>
             <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+                <app-video-display *ngFor="let v of thisWeekVideos" [vid]="v"></app-video-display>
             </div>
         </div>
 
@@ -39,7 +39,7 @@
                 This Month
             </div>
             <div class="video-list">
-                <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+                <app-video-display *ngFor="let v of thisMonthVideos" [vid]="v"></app-video-display>
             </div>
         </div>
     </div>

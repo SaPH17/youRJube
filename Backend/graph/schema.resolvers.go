@@ -646,7 +646,16 @@ func (r *queryResolver) GetChannelSocialMediaByChannelID(ctx context.Context, ch
 }
 
 func (r *queryResolver) GetUserSubscriptionByUserID(ctx context.Context, userID string) ([]*model.UserSubscription, error) {
-	panic(fmt.Errorf("not implemented"))
+	var userSubs []*model.UserSubscription
+
+	err := r.DB.Model(&userSubs).Where("user_id = ?", userID).Select()
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Failed to query subscription")
+	}
+
+	return userSubs, nil
 }
 
 func (r *queryResolver) GetUserSubscriptionByUserIDAndChannelID(ctx context.Context, userID string, channelID string) ([]*model.UserSubscription, error) {
@@ -786,7 +795,6 @@ func (r *queryResolver) GetVideo(ctx context.Context) ([]*model.Video, error) {
 	err := r.DB.Model(&videos).Select()
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, errors.New("Failed to query video")
 	}
 
@@ -796,7 +804,7 @@ func (r *queryResolver) GetVideo(ctx context.Context) ([]*model.Video, error) {
 func (r *queryResolver) GetPlaylistByChannelID(ctx context.Context, channelID string) ([]*model.Playlist, error) {
 	var playlist []*model.Playlist
 
-	err := r.DB.Model(&playlist).Where("channel_id = ?", channelID).Select()
+	err := r.DB.Model(&playlist).Where("channel_id = ?", channelID).Order("id desc").Select()
 
 	if err != nil {
 		return nil, errors.New("Failed to query playlist")

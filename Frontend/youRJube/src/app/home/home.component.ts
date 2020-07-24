@@ -50,12 +50,10 @@ export class HomeComponent implements OnInit {
 
     this.observer = new IntersectionObserver((entry)=>{
       if(entry[0].isIntersecting){
-        let card = document.querySelector(".recommended-video-container")
-        console.log("Intersecting");
-        
+        let card = document.querySelector(".recommended-video-container")        
         for(let i = 0; i < 4; i++){
+          
           if(this.lastKey < this.videos.length){
-            
             let div = document.createElement("div")
             let video = document.createElement("app-video-display")
             video.setAttribute("vid",  "this.videos[this.lastKey]")
@@ -66,6 +64,7 @@ export class HomeComponent implements OnInit {
         }
       }
     })
+
     this.observer.observe(document.querySelector(".footer"))
 
     this.getVideoQuery()
@@ -114,7 +113,7 @@ export class HomeComponent implements OnInit {
     }).valueChanges.subscribe(result => {
       this.videos = result.data.getHomeVideo
       this.shuffle(this.videos)
-    })
+    });
   }
 
   shuffle(array) {
