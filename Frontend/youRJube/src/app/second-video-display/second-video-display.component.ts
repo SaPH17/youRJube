@@ -2,6 +2,7 @@ import { Apollo } from 'apollo-angular';
 import { DataService } from './../data.service';
 import { Component, OnInit, Input } from '@angular/core';
 import gql from 'graphql-tag';
+import { title } from 'process';
 
 @Component({
   selector: 'app-second-video-display',
@@ -30,16 +31,27 @@ export class SecondVideoDisplayComponent implements OnInit {
   playlist_privacy: String
   showModal: boolean = false
   userPlaylist: any
+  titleOutput:String
 
   constructor(private data: DataService, private apollo: Apollo) { }
 
   ngOnInit(): void {
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
     this.data.currentChannelObject.subscribe(userChannelObject => this.userChannel = userChannelObject)
+    this.titleOutput = this.convertTitle(this.video.title)
 
     this.dateOutput  = this.convertDate(this.video.upload_day, this.video.upload_month - 1, this.video.upload_year)
     this.viewOutput = this.convertView(this.video.view - 1)
     
+  }
+
+  convertTitle(title):String{
+    if(title.length >= 50){
+      return title.substring(0, 50) + "..."
+    }
+    else{
+      return title
+    }
   }
 
   convertDate(day, month, year){

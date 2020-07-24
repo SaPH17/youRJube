@@ -138,6 +138,8 @@ export class VideoWatchComponent implements OnInit {
   currentTime: String
   userSubCondition: number = 0
 
+  isInput:boolean = false
+
   videos=[{
     id: 1,
     channel_id: 3,
@@ -238,6 +240,81 @@ export class VideoWatchComponent implements OnInit {
       
       this.doneLoading = true
     })
+
+    document.onkeydown = (e) => {
+
+      var video = (document.getElementsByTagName('mat-video')[0] as HTMLVideoElement).querySelector('video')
+
+      if(e.keyCode ==  74){
+        e.preventDefault();
+        video.currentTime -= 10
+      }
+      else if(e.keyCode == 75){
+        e.preventDefault();
+        if(video.paused){
+          video.play()
+        }
+        else{
+          video.pause()
+        }
+      }
+      else if(e.keyCode == 76){
+        e.preventDefault();
+        video.currentTime += 10
+      }
+      else if(e.keyCode == 38){
+
+        e.preventDefault();
+        var currVolume = video.volume
+        if(currVolume != 1){
+          try {
+            var x = currVolume + 0.02;
+            video.volume = x;
+            var a = (((video.closest("mat-video").querySelector("mat-volume-control")
+            .querySelector("mat-slider").querySelector(".mat-slider-thumb-container"))) as HTMLElement);
+            var min = (1-x)*100;
+            var c = "translate(-" + min +"%)";
+            a.style.transform = c;
+
+            a.querySelector(".mat-slider-thumb-label-text").innerHTML = x.toString();
+            
+          } catch (err) {
+            video.volume = 1
+          }
+        }
+
+      }
+      else if(e.keyCode == 40){
+        e.preventDefault();
+        var currVolume = video.volume
+        if (currVolume!=0) {
+          try {
+            var x = currVolume - 0.02;
+            video.volume = x;
+            var a = (((video.closest("mat-video").querySelector("mat-volume-control")
+            .querySelector("mat-slider").querySelector(".mat-slider-thumb-container"))) as HTMLElement);
+            var min = (1-x)*100;
+            var c = "translate(-" + min +"%)";
+            a.style.transform = c;
+
+            a.querySelector(".mat-slider-thumb-label-text").innerHTML = x.toString();
+          }
+          catch(err) {
+              video.volume = 0;
+          }
+          
+        }
+      }
+    }
+
+  }
+
+  inputTextFocus():void{
+    this.isInput = true    
+  }
+
+  inputTextBlur():void{
+    this.isInput = false    
   }
 
   isTheSameChannel():boolean{

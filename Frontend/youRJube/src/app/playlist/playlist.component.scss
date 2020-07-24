@@ -25,7 +25,7 @@ $width: "350px";
                 line-height: 40px;
                 vertical-align: middle;
                 color: white;
-                background-color: rgba(0, 0, 0, 0.664); 
+                background-color: rgba(0, 0, 0, 0.733); 
 
                 i{
                     margin-right: 0.5vw;
@@ -34,19 +34,65 @@ $width: "350px";
         }
 
         .center{
-             margin-top: 2vh;
+             margin-top: 3vh;
              padding-bottom: 4vh;
              border-bottom: 1px lightgray solid;
 
-            .title{
-                font-weight: 500;
-                font-size: 20px;
-                display: flex;
-                justify-content: space-between;
+             .title{
 
-                i{
-                    color: gray;
-                    cursor: pointer;
+                .display{
+                    font-size: 20px;
+                    // display: flex;
+                    justify-content: space-between;
+
+                    i{
+                        color: gray;
+                        cursor: pointer;
+                    }
+                }
+
+                .input{
+                    display: flex;
+                    flex-direction: column;
+
+                    .top{
+                        input{
+                            padding: 8px 16px;
+                            font-size: 20px;
+                            width: 20vw;
+                            outline: 0;
+                            border: none;
+                            border-bottom: 2px lightgray solid;
+                            transition-duration: 0.3s;
+                        }
+        
+                        input:focus{
+                            border-color: black;
+                            transition-duration: 0.3s;
+                        }
+                    }
+
+                    .bottom{
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-end;
+
+                        .b1{
+                            color: gray;
+                            padding: 8px 16px;
+                            font-size: 14px;
+                            font-weight: bolder;
+                            cursor: pointer;
+                        }
+
+                        .b2{
+                            color: blueviolet;
+                            padding: 8px 16px;
+                            font-size: 14px;
+                            font-weight: bolder;
+                            cursor: pointer;
+                        }
+                    }
                 }
             }
 
@@ -60,6 +106,14 @@ $width: "350px";
                 margin-top: 2vh;
                 font-size: 15px;
                 color: gray;
+
+                select{
+                    font-size: 16px;
+                    border: none;
+                    outline: none;
+                    padding: 8px;
+                    border-bottom: 1px gray solid;
+                }
             }
 
             .button{
@@ -98,14 +152,61 @@ $width: "350px";
 
             .description{
                 margin-top: 4vh;
-                font-size: 15px;
-                color: gray;
-                display: flex;
-                justify-content: space-between;
 
-                i{
-                    font-size: 20px;
-                    cursor: pointer;
+                .display{
+                    justify-content: space-between;
+                    display: flex;
+                    color: gray;
+                    font-size: 15px;
+
+                    i{
+                        font-size: 20px;
+                        cursor: pointer;
+                    }
+                }
+
+                .input{
+                    display: flex;
+                    flex-direction: column;
+                    
+                    .top{
+                        input{
+                            padding: 8px 16px;
+                            font-size: 15px;
+                            width: 20vw;
+                            outline: 0;
+                            border: none;
+                            border-bottom: 2px lightgray solid;
+                            transition-duration: 0.3s;
+                        }
+        
+                        input:focus{
+                            border-color: black;
+                            transition-duration: 0.3s;
+                        }
+                    }
+
+                    .bottom{
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-end;
+
+                        .b1{
+                            color: gray;
+                            padding: 8px 16px;
+                            font-size: 14px;
+                            font-weight: bolder;
+                            cursor: pointer;
+                        }
+
+                        .b2{
+                            color: blueviolet;
+                            padding: 8px 16px;
+                            font-size: 14px;
+                            font-weight: bolder;
+                            cursor: pointer;
+                        }
+                    }
                 }
             }
         }
@@ -128,6 +229,112 @@ $width: "350px";
         padding: 2vh 0;
         background-color: rgb(248, 244, 244);
         width: 100%;
+
+        .top{
+            padding-left: 2vw;
+            color: gray;
+            margin-bottom: 2vh;
+            margin-top: 2vh;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+
+            p{
+                cursor: pointer;
+
+                i{
+                    margin-right: 0.5vw;
+                    font-size: 20px;
+                }
+            }
+
+            .dropdown-content{
+                top: 4vh;
+                position: absolute;
+                background-color: white;
+                box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.2);
+                padding: 1vh 0;
+                opacity: 0;
+                transition-duration: 0.3s;
+
+                ul{
+                    padding: 0;
+                    list-style: none;
+
+                    li{
+                        padding: 2vh 1.5vw;
+                        cursor: pointer;
+                    }
+
+                    li:hover{
+                        background-color: lightgray;
+                    }
+                }
+            }
+
+        }
     }
 
+}
+
+.share-modal{
+    visibility: hidden;
+    position: fixed; 
+    z-index: 3;
+    padding-top: 30vh;
+    padding-left: 10vw;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4); 
+    transition: ease;
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 25%;
+        max-height: 70vh;
+
+        .top{
+            display: flex;
+            justify-content: space-between;
+
+            .right{
+                font-size: large;
+                cursor: pointer;
+            }
+        }
+
+        .center{
+            padding: 1vh 2vw 1vh 1vw;
+            background-color: rgb(236, 234, 230);
+            margin-top: 2vh;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            input{
+                background-color: rgb(236, 234, 230);
+                font-size: 13px;
+                padding: 6px 6px;
+                width: 80%;
+                outline: none;
+                border: none;
+            }
+
+            .copy-button{
+                display: flex;
+                align-self: center;
+                justify-content: center;
+                text-align: center;
+                color: blueviolet;
+                cursor: pointer;
+                margin-left: 1vw;
+            }
+        } 
+    }
 }

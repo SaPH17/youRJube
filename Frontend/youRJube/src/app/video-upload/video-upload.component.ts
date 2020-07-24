@@ -79,6 +79,7 @@ export class VideoUploadComponent implements OnInit {
   userChannel: any
   rawDuration: number
   selectedPlaylistIndex: number
+  currLocation: String
 
   constructor(private storage: AngularFireStorage, private db: AngularFirestore, private apollo: Apollo, private data: DataService
     , private router:Router) { }
@@ -86,6 +87,7 @@ export class VideoUploadComponent implements OnInit {
   ngOnInit(): void {
 
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
+    this.data.locationObject.subscribe(locationObject => this.currLocation = locationObject)
 
     this.apollo.watchQuery<any>({
       query: gql `
@@ -421,7 +423,7 @@ export class VideoUploadComponent implements OnInit {
         video_url: this.videoURL,
         thumbnail: this.thumbnailURL,
         category: this.category,
-        location: "Indonesia",
+        location: this.currLocation,
         privacy: this.privacy,
         is_premium: this.premium,
         age_restricted: this.restricted,
@@ -490,13 +492,9 @@ export class VideoUploadComponent implements OnInit {
         view: selectedPlaylist.view,
         video_id: newStr
       },
-      // refetchQueries: [{
-      //   query: getComputerQuery,
-      //   variables: { repoFullName: 'apollographql/apollo-client' },
-      // }],
     }).subscribe(result =>{
       console.log(result);
-      
+
     })    
 
   }

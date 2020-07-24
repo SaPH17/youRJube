@@ -60,8 +60,9 @@ export class VideoDisplayComponent implements OnInit{
   showModal:boolean = false
   playlist_title: String
   playlist_privacy: String
+  titleOutput: String
 
-  duration: String ="AA"
+  duration: String
 
   settingsOpen:boolean = false;
 
@@ -71,6 +72,7 @@ export class VideoDisplayComponent implements OnInit{
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
     this.viewOutput = this.convertView(this.video.view - 1)
+    this.titleOutput = this.convertTitle(this.video.title)
      this.getDuration(this.video.duration)
 
     this.apollo.query<any>({
@@ -98,6 +100,15 @@ export class VideoDisplayComponent implements OnInit{
       this.dateOutput = this.convertDate(this.video.upload_day, this.video.upload_month - 1, this.video.upload_year)
       this.doneLoading = true;
     })
+  }
+
+  convertTitle(title):String{
+    if(title.length >= 50){
+      return title.substring(0, 50) + "..."
+    }
+    else{
+      return title
+    }
   }
 
   convertView(view){

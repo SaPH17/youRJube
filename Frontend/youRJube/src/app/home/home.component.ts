@@ -4,8 +4,8 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 
 export const getVideoQuery = gql `
-  query getVideo{
-    getVideo{
+  query getHomeVideo($location: String!, $is_restrict: String!){
+    getHomeVideo(location: $location, is_restrict: $is_restrict){
       id,
       channel_id,
       title,
@@ -20,16 +20,18 @@ export const getVideoQuery = gql `
       view,
       privacy,
       is_premium,
-      age_restricted
+      age_restricted,
+      duration
     }
   }
-  `
+`
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
+
 export class HomeComponent implements OnInit {
 
   videos: any

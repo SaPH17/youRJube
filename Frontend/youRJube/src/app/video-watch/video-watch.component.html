@@ -4,14 +4,14 @@
         <div class="video-player">
 
             <mat-video [autoplay]="false" [preload]="true" [fullscreen]="true" [download]="false" 
-            color="accent" spinner="spin" src="{{video.video_url}}" 
+            color="accent" spinner="spin" src="{{video.video_url}}" [keyboard]="!isInput"
             [quality]="true" showFrameByFrame="true" id="video-player">
             </mat-video>
         </div>
 
         <div class="video-title">
             {{video.title}}
-        </div>
+        </div> 
 
         <div class="video-additional">
 
@@ -160,7 +160,8 @@
                 </div>
 
                 <div class="input-text" *ngIf="userChannel">
-                    <input type="text" name="" id="comment-input-text" placeholder="Add a public comment..." (input)="detectReplyInput($event.target.value)">
+                    <input type="text" name="" id="comment-input-text" placeholder="Add a public comment..." 
+                    (input)="detectReplyInput($event.target.value)" (focus)="inputTextFocus()" (blur)="inputTextBlur()">
                 </div>
 
                 <a *ngIf="userChannel">

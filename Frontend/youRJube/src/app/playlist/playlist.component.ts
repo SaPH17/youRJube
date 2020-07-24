@@ -1,8 +1,27 @@
+import { title } from 'process';
 import { Apollo } from 'apollo-angular';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, Input } from '@angular/core';
 import gql from 'graphql-tag';
+
+const getPlaylistQuery = gql `
+  query getPlaylistById($id: ID!){
+    getPlaylistById(id: $id){
+      id,
+      channel_id,
+      title,
+      description,
+      privacy,
+      thumbnail,
+      last_updated_day,
+      last_updated_month,
+      last_updated_year,
+      view,
+      video_id,
+    }
+  }
+`
 
 @Component({
   selector: 'app-playlist',
@@ -25,12 +44,37 @@ export class PlaylistComponent implements OnInit {
   viewCountOutput: String
   lastUpdatedOutput: String
 
+  playlistURL:String
+
+  isInputTitle: boolean = false
+  isInputDesc: boolean = false
+  inputTitle: String
+  inputDesc: String
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.playlistVideos = []
       this.playlistId = parseInt(params.get('id'))
+      this.playlistURL = "http://localhost:4200/playlist/" + this.playlistId
       this.loadPlaylist()
     })
+  }
+
+  toggleInputTitle():void{
+    this.isInputTitle = !this.isInputTitle
+  }
+
+  toggleInputDesc():void{
+    this.isInputDesc = !this.isInputDesc
+  }
+
+  toggleSortBy():void{
+    if(document.getElementById('dropdown-content').style.opacity == "0"){
+      document.getElementById('dropdown-content').style.opacity = "1"
+    }
+    else{
+      document.getElementById('dropdown-content').style.opacity = "0"
+    }
   }
 
   loadPlaylist():void{
@@ -58,11 +102,11 @@ export class PlaylistComponent implements OnInit {
     }).valueChanges.subscribe(result =>{
       this.playlist = result.data.getPlaylistById[0]
 
-      if(this.playlist.view <= 1){
-        this.viewCountOutput = this.playlist.view + " view"
+      if(this.playlist.view - 1 <= 1){
+        this.viewCountOutput = this.playlist.view - 1 + " view"
       }
       else{
-        this.viewCountOutput = this.playlist.view + " views"
+        this.viewCountOutput = this.playlist.view - 1 + " views"
       }
 
       this.lastUpdatedOutput = "Updated " +  this.convertLastUpdated(this.playlist.last_updated_day, 
@@ -126,7 +170,9 @@ export class PlaylistComponent implements OnInit {
           id: res[i]
         }
       }).valueChanges.subscribe(result => {
-        this.playlistVideos.push(result.data.getVideoById[0])     
+        if(!this.playlistVideos.includes(result.data.getVideoById[0])){
+          this.playlistVideos.push(result.data.getVideoById[0])     
+        }
 
         if( this.playlistVideos.length <= 1){
           this.playlistCountOutput = this.playlistVideos.length + " video"
@@ -166,4 +212,112 @@ export class PlaylistComponent implements OnInit {
     })
   }
 
+  sortDateAdded():void{
+
+  }
+
+  sortVideoByOldest():void{
+    this.playlistVideos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? 1 : -1)
+  }
+
+  sortVideoByLatest():void{
+    this.playlistVideos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? -1 : 1)    
+  }
+
+  sortPopularity():void{
+    this.playlistVideos.sort((a, b)=> (parseInt(a.view) > parseInt(b.view)) ? -1 : 1)
+  }
+
+  copyURLToClipboard(){
+    var copyText = document.getElementById("url") as HTMLInputElement
+    copyText.select()
+    copyText.setSelectionRange(0, 99999)
+    document.execCommand("copy")
+  }
+  
+  showShareModal():void{
+    document.getElementById('share-modal').style.visibility = "visible"
+  }
+
+  hideShareModal():void{
+    document.getElementById('share-modal').style.visibility = "hidden"
+  }
+
+  updatePlaylistTitle():void{
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updatePlaylist($id: ID!, $channel_id: ID!, $description: String!, $title: String!, $privacy: String!, $thumbnail: String!
+            $view: Int!, $video_id: String!) {
+          updatePlaylist(id: $id, input: { 
+            channel_id: $channel_id,
+            title: $title,
+            description: $description,
+            privacy: $privacy,
+            thumbnail: $thumbnail,
+            view: $view,
+            video_id: $video_id
+          }){
+            id,
+            video_id
+          }
+        }
+      `,
+      variables:{
+        id: this.playlist.id,
+        channel_id: this.playlist.channel_id,
+        description: this.playlist.description,
+        title: this.inputTitle,
+        privacy: this.playlist.privacy,
+        thumbnail: this.playlist.thumbnail,
+        view: this.playlist.view,
+        video_id: this.playlist.video_id
+      },
+      refetchQueries: [{
+        query: getPlaylistQuery,
+        variables: { repoFullName: 'apollographql/apollo-client', id: this.playlistId },
+      }],
+    }).subscribe(result =>{
+      console.log(result);
+      this.isInputTitle = false
+    })   
+  }
+
+  updatePlaylistDescription():void{
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updatePlaylist($id: ID!, $channel_id: ID!, $description: String!, $title: String!, $privacy: String!, $thumbnail: String!
+            $view: Int!, $video_id: String!) {
+          updatePlaylist(id: $id, input: { 
+            channel_id: $channel_id,
+            title: $title,
+            description: $description,
+            privacy: $privacy,
+            thumbnail: $thumbnail,
+            view: $view,
+            video_id: $video_id
+          }){
+            id,
+            video_id
+          }
+        }
+      `,
+      variables:{
+        id: this.playlist.id,
+        channel_id: this.playlist.channel_id,
+        description: this.inputDesc,
+        title: this.playlist.title,
+        privacy: this.playlist.privacy,
+        thumbnail: this.playlist.thumbnail,
+        view: this.playlist.view,
+        video_id: this.playlist.video_id
+      },
+      refetchQueries: [{
+        query: getPlaylistQuery,
+        variables: { repoFullName: 'apollographql/apollo-client', id: this.playlistId },
+      }],
+    }).subscribe(result =>{
+      console.log(result);
+      this.isInputDesc = false
+    })   
+  }
 }

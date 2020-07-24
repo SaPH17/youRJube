@@ -9,8 +9,27 @@
         </div>
         <div class="center">
             <div class="title">
-                {{playlist.title}}
-                <i class="fa fa-pencil" aria-hidden="true"></i>
+
+                <div class="display" [style.display] = "isInputTitle ? 'none' : 'flex'">
+                    {{playlist.title}}
+                    <i class="fa fa-pencil" aria-hidden="true" (click)="toggleInputTitle()"></i>
+                </div>
+
+                <div class="input" [style.display] = "isInputTitle ? 'flex' : 'none'">
+                    <div class="top">
+                        <input type="text" name="" id="" [value]="playlist.title" (input)="inputTitle = $event.target.value">
+                    </div>
+                    <div class="bottom">
+                        <div class="b1" (click)="toggleInputTitle()">
+                            CANCEL
+                        </div>
+
+                        <div class="b2" (click)="updatePlaylistTitle()">
+                            SAVE
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="info">
@@ -18,7 +37,10 @@
             </div>
 
             <div class="privacy">
-                Public
+                <select name="" id="">
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
             </div>
 
             <div class="button">
@@ -26,8 +48,8 @@
                     <i class="fa fa-random" aria-hidden="true"></i>
                 </div>
 
-                <div class="share">
-                    <i class="fa fa-share" aria-hidden="true"></i>
+                <div class="share" *ngIf="playlist.privacy == 'Public'">
+                    <i class="fa fa-share" aria-hidden="true" (click)="showShareModal()"></i>
                 </div>
 
                 <div class="remove-all">
@@ -36,8 +58,25 @@
             </div>
 
             <div class="description">
-                {{playlist.description}}
-                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <div class="display" [style.display] = "isInputDesc ? 'none' : 'flex'">
+                    {{playlist.description}}
+                    <i class="fa fa-pencil" aria-hidden="true" (click)="toggleInputDesc()"></i>
+                </div>
+
+                <div class="input" [style.display] = "isInputDesc ? 'flex' : 'none'">
+                    <div class="top">
+                        <input type="text" name="" id="" [value]="playlist.description" (input)="inputDesc = $event.target.value">
+                    </div>
+                    <div class="bottom">
+                        <div class="b1" (click)="toggleInputDesc()">
+                            CANCEL
+                        </div>
+
+                        <div class="b2" (click)="updatePlaylistDescription()">
+                            SAVE
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="bottom">
@@ -46,8 +85,50 @@
         </div>
     </div>
     <div class="right">
-        <div *ngFor="let v of playlistVideos">
-            <app-second-video-display [vid]="v"></app-second-video-display>
+        <div class="top">
+            <p (click)="toggleSortBy()" class="unselectable">
+                <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+                SORT BY
+            </p>
+
+            <div class="dropdown-content" id="dropdown-content">
+                <ul>
+                    <li class="unselectable">Date added (oldest)</li>
+                    <li class="unselectable">Date added (newest)</li>
+                    <li class="unselectable" (click)="sortVideoByOldest()">Date published (oldest)</li>
+                    <li class="unselectable" (click)="sortVideoByLatest()">Date published (newest)</li>
+                    <li class="unselectable" (click)="sortPopularity()">Popularity</li>
+                </ul>
+            </div>
         </div>
+
+        <div class="center">
+            <div *ngFor="let v of playlistVideos">
+                <app-second-video-display [vid]="v"></app-second-video-display>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="share-modal" id="share-modal">
+    <div class="modal-content">
+        <div class="top">
+            <div class="left">
+                Share
+            </div>
+
+            <div class="right" (click)="hideShareModal()">
+                &times;
+            </div>
+
+        </div>
+
+        <div class="center">
+            <input type="text" name="" id="url" [value]="playlistURL" readonly>
+            <div class="copy-button" (click)="copyURLToClipboard()">
+                COPY
+            </div>
+        </div>
+
     </div>
 </div>

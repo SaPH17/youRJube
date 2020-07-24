@@ -3,7 +3,23 @@ import { DataService } from './../data.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { SocialUser } from 'angularx-social-login';
 import gql from 'graphql-tag';
-import { parse } from 'path';
+
+const getPremiumQuery = gql`
+  query getPremiumSubscriptionByUserId($user_id: ID!){
+    getPremiumSubscriptionByUserId(user_id: $user_id){
+      id,
+      user_id,
+      start_day,
+      start_month,
+      start_year,
+      end_day,
+      end_month,
+      end_year,
+      plan,
+    }
+  }
+`
+
 
 @Component({
   selector: 'app-premium-membership',
@@ -125,9 +141,17 @@ export class PremiumMembershipComponent implements OnInit {
       variables:{
         user_id: this.userDB.id,
         plan: this.choosenPlan
-      }
-    }).subscribe(result => {
+      },
+      refetchQueries: [{
+        query: getPremiumQuery,
+        variables: { repoFullName: 'apollographql/apollo-client' ,
+                    user_id: this.userDB.id
+                    },
+      }],
+      }).subscribe(result => {
       console.log(result);
+
+      this.getCurrentPlan()
     })
   }
 
