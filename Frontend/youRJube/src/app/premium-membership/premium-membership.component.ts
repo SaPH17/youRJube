@@ -77,18 +77,16 @@ export class PremiumMembershipComponent implements OnInit {
 
   getCurrentPlan():void{
     var date = new Date()
-    
-    var currentDay = parseInt(date.getDate().toString())
-    var currentMonth = parseInt((date.getMonth() + 1).toString())
-    var currentYear = parseInt(date.getFullYear().toString())
 
     this.billingHistory.forEach(e => {
+
+      var from = new Date(parseInt(e.start_year), parseInt(e.start_month) - 1, parseInt(e.start_day))
+      var to = new Date(parseInt(e.end_year), parseInt(e.end_month) - 1, parseInt(e.end_day))
       
-      if(currentMonth >= parseInt(e.start_month) && currentMonth <= parseInt(e.end_month) &&
-          currentYear >= parseInt(e.start_year) && currentYear <= parseInt(e.end_year)){
-            this.currentPlan = e
-            this.userHavePremium = true
-          }
+      if(date > from && date < to){
+        this.currentPlan = e
+        this.userHavePremium = true
+      }
     });    
 
     if(this.currentPlan == undefined){
@@ -96,7 +94,6 @@ export class PremiumMembershipComponent implements OnInit {
     }
 
     this.doneLoading = true
-    
   }
 
   hideDetails(){

@@ -1,0 +1,122 @@
+.container{
+    padding: 3vh 0;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px gray solid;
+
+    .left{
+        display: flex;
+        align-items: center;
+
+        .thumbnail-input{
+            cursor: pointer;
+
+            .thumbnail-title{
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+
+                img{
+                    cursor: pointer;
+                }
+
+            }
+
+            #thumbnail-upload{
+                visibility: hidden;
+            }
+        }
+    }
+
+    .center{
+        padding: 0 1vw;
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+
+        .title-input{
+            input{
+                padding: 6px 8px;
+                font-size: 16px;
+                outline: 0;
+                border: none;
+                border-bottom: 2px lightgray solid;
+                transition-duration: 0.3s;
+            }
+    
+            input:focus{
+                border-color: black;
+                transition-duration: 0.3s;
+            }
+        }
+
+        .description-input{
+            display: flex;
+            flex-direction: column;
+            margin: 0.5vw 0vw;
+
+            #description{
+                padding: 5px;
+                font-size: 16px;
+                white-space: pre-wrap;
+            }
+        }
+
+        .privacy{
+            font-size: 16px;
+            color: gray;
+
+            select{
+                font-size: 16px;
+                border: none;
+                outline: none;
+                padding: 8px;
+                border-bottom: 1px gray solid;
+            }
+        }
+
+        .b2{
+            margin-top: 1vh;
+            display: flex;
+            justify-content: flex-end;
+
+            div{
+                background-color: blueviolet;
+                color: white;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: bolder;
+                cursor: pointer;
+            }
+
+            .enabled{
+                background-color: blueviolet;
+                color: white;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: bolder;
+                cursor: pointer;
+            }
+
+            .disabled{
+                background-color: lightgray;
+                color: gray;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: bolder;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .right{
+        padding-left: 2vw;
+        display: flex;
+        align-items: center;
+        i{
+            font-size: 30px;
+            color: gray;
+            cursor: pointer;
+        }
+    }
+}

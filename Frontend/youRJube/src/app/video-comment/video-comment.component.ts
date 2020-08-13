@@ -93,8 +93,6 @@ export class VideoCommentComponent implements OnInit {
       this.loadReplies()      
       this.checkUserLikeOrNot()
 
-        
-      
     })
 
 

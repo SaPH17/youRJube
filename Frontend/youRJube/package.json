@@ -34,6 +34,7 @@
     "graphql-tag": "^2.10.0",
     "mat-video": "^2.8.1",
     "ng-gapi": "0.0.93",
+    "ng2-social-share": "0.0.10",
     "node-ipinfo": "^1.0.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",

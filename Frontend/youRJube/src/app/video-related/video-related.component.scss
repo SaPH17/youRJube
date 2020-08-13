@@ -64,9 +64,13 @@
         }
 
         .center{
-            margin-top: 1vh;
-            color: gray;
-            font-size: 12px;
+            
+            a{
+                text-decoration: none;
+                margin-top: 1vh;
+                color: gray;
+                font-size: 12px;
+            }
         }
 
         .bottom{

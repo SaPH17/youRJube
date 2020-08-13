@@ -7,6 +7,7 @@
     .background-image{
         img{
             max-height: 200px;
+            object-fit: cover;
         }
     }
 
@@ -25,6 +26,7 @@
 
                 img{
                     border-radius: 100%;
+                    object-fit: cover;
                 }
             }
 
@@ -62,6 +64,20 @@
                         font-weight: bolder;
                     }
 
+                    .subscribe-button2{
+                        color: gray;
+                        background-color: rgb(236, 225, 225);
+                        padding: 8px 16px;
+                        font-size: 14px;
+                        font-weight: bolder;
+                        margin-right: 1vw;
+                        cursor: pointer;
+                    }
+
+                    .bell-button{
+                        cursor: pointer;
+                    }
+
                     i{
                         color: gray;
                         font-size: 24px;
@@ -74,6 +90,15 @@
                     align-items: center;
 
                     .edit-channel-button{
+                        color: white;
+                        background-color: blueviolet;
+                        padding: 8px 16px;
+                        font-size: 14px;
+                        font-weight: bolder;
+                    }
+
+                    .edit-videos-button{
+                        margin-left: 2vw;
                         color: white;
                         background-color: blueviolet;
                         padding: 8px 16px;

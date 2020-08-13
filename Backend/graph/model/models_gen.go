@@ -41,6 +41,9 @@ type CommunityPost struct {
 	Image     *string `json:"image"`
 	Like      int     `json:"like"`
 	Dislike   int     `json:"dislike"`
+	Day       int     `json:"day"`
+	Month     int     `json:"month"`
+	Year      int     `json:"year"`
 }
 
 type Notification struct {

@@ -36,6 +36,20 @@ export class AppComponent implements OnInit{
   restrictedMode: String
 
   searchQuery: String
+  contentLoaded:boolean
+
+  showNotif:boolean = false
+  showUserProf:boolean = false
+  showSettings:boolean = false
+  showLoginModal:boolean = false
+  showAllPlaylist:boolean = false
+  currPlaylistCount:number = 5
+
+  channelIds = []
+  channels = []
+  channelLoaded: boolean = false
+  currChannelCount:number = 10
+  showAllChannel:boolean = false
 
   country_list = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua and Barbuda","Argentina","Armenia",
   "Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin",
@@ -65,9 +79,6 @@ export class AppComponent implements OnInit{
     this.data.locationObject.subscribe(locationObject => this.userLocation = locationObject)
     this.data.restrictedModeObject.subscribe(restrictedModeObject => this.restrictMode = restrictedModeObject)
     this.data.changeRestrictedMode("false")
-    this.data.changeLocation("Indonesia")
-
-
     this.getLocation()
 
     this.authService.authState.subscribe((user) => {
@@ -100,37 +111,25 @@ export class AppComponent implements OnInit{
 
       this.ipInfoWrapper.lookupIp(this.userIPAddress).then((response: any) => {
         this.userLocation = response.country
+        console.log(this.userLocation);
         this.data.changeLocation(this.userLocation)
+        if(this.loggedIn == false){
+          this.contentLoaded = true
+        }
       });
     })
   }
 
   settingsClick(): void {
-    if(document.getElementById('settings-dropdown').style.display == 'block'){
-      document.getElementById('settings-dropdown').style.display = 'none'
-    }
-    else{
-      document.getElementById('settings-dropdown').style.display = 'block'
-    }
+    this.showSettings = !this.showSettings
   }
 
   notifClick(): void {
-    if(document.getElementById('notif-dropdown').style.display == 'block'){
-      document.getElementById('notif-dropdown').style.display = 'none'
-    }
-    else{
-      document.getElementById('notif-dropdown').style.display = 'block'
-    }
+    this.showNotif = !this.showNotif
   }
 
   userProfileClick():void {
-    if(document.getElementById('user-dropdown').style.display == 'block'){
-      document.getElementById('user-dropdown').style.display = 'none'
-    }
-    else{
-      document.getElementById('user-dropdown').style.display = 'block'
-    }
-
+    this.showUserProf = !this.showUserProf
   }
 
   sideBarCollapse():void{
@@ -160,10 +159,16 @@ export class AppComponent implements OnInit{
     document.getElementById('categoryButton').className = ""
     document.getElementById('membershipButton').className = ""
     if(this.user != null){
-      for(let i = 0; i < this.userPlaylist.length; i++){
-        var id = "playlistButton-" + this.userPlaylist[i].id
+      for(let i = 0; i < this.currPlaylistCount; i++){
+        var id = "playlistButton-" + this.userPlaylist[i].id        
         document.getElementById(id).className = "" 
       }
+      // for(let i = 0; i < this.currChannelCount; i++){
+      //   var id = "channelButton-" + this.channels[i].id   
+      //   console.log(id);
+             
+      //   document.getElementById(id).className = "" 
+      // }
     }
   }
 
@@ -184,7 +189,8 @@ export class AppComponent implements OnInit{
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).finally(()=>{
       if(this.user){
         this.data.changeUser(this.user)
-        this.loggedIn = true;
+        this.loggedIn = true
+        this.showLoginModal = false
         this.addToLocalStorage(this.user)
         this.validateUserExistance()
       }
@@ -220,6 +226,8 @@ export class AppComponent implements OnInit{
       console.log(this.userDB);
 
       if(this.userDB === undefined || this.userDB.length == 0){
+
+        this.getLocation()
         
         this.apollo.mutate<any>({
           mutation: gql`
@@ -241,7 +249,7 @@ export class AppComponent implements OnInit{
           variables:{
             email: this.user.email,
             restrict_mode: this.restrictMode.toString(),
-            location: "Indonesia",
+            location: this.userLocation,
             liked_video: ",",
             disliked_video: ",",
             liked_comment: ",",
@@ -261,12 +269,20 @@ export class AppComponent implements OnInit{
             this.restrictMode = true
             this.restrictModeOutput = "ON"
           }
+
         })
       }
       else{
         console.log("AA");
 
         this.data.changeUserDB(this.userDB) 
+
+        if(this.userDB){
+          this.data.changeLocation(this.userDB.location)          
+        }
+        else{
+          this.getLocation()
+        }
 
         if(this.userDB.restrict_mode == "false"){
           this.restrictMode = false
@@ -276,6 +292,8 @@ export class AppComponent implements OnInit{
           this.restrictMode = true
           this.restrictModeOutput = "ON"
         }       
+
+        this.data.changeRestrictedMode(this.restrictMode)
 
         console.log(this.userDB.id)
         console.log("DB ==");
@@ -303,7 +321,9 @@ export class AppComponent implements OnInit{
           console.log(result.data.getChannelByUserID)
           this.userChannel = result.data.getChannelByUserID[0]
           this.data.changeChannel(result.data.getChannelByUserID[0])
+          this.contentLoaded = true;
           this.getUserPlaylist()
+          this.loadUserSubscribedChannel()
         })
       }
     })
@@ -312,7 +332,7 @@ export class AppComponent implements OnInit{
 
   getUserPlaylist():void{        
 
-    this.apollo.watchQuery<any>({
+    this.apollo.query<any>({
       query: gql `
         query getPlaylistByChannelId($channel_id: ID!){
           getPlaylistByChannelId(channel_id: $channel_id){
@@ -333,11 +353,22 @@ export class AppComponent implements OnInit{
       variables:{
         channel_id: this.userChannel.id
       }
-    }).valueChanges.subscribe(result => {
+    }).subscribe(result => {
       this.userPlaylist = result.data.getPlaylistByChannelId
       console.log(this.userPlaylist);
+      this.userPlaylist.sort( a => a.privacy == "Private" ? -1 : 1)
       this.playlistLoaded = true
     })
+  }
+
+  toggleShowPlaylist():void{
+    this.showAllPlaylist = !this.showAllPlaylist
+    if(this.showAllPlaylist){
+      this.currPlaylistCount = this.userPlaylist.length
+    }
+    else{
+      this.currPlaylistCount = 5
+    }
   }
 
   insertNewChannel():void{
@@ -368,6 +399,7 @@ export class AppComponent implements OnInit{
     }).subscribe(result => {
       console.log(result)
       this.data.changeChannel(result)
+      this.contentLoaded = true;
     })
 
   }
@@ -439,20 +471,29 @@ export class AppComponent implements OnInit{
 
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!){
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!
+            $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
           updateUser(id: $id, input:{
             email: $email,
             location: $location,
             restrict_mode: $restrict_mode
             liked_video: $liked_video,
-            disliked_video: $disliked_video
+            disliked_video: $disliked_video,
+            liked_comment: $liked_comment,
+            disliked_comment: $disliked_comment,
+            liked_post: $liked_post,
+            disliked_post: $disliked_post
           }){
             id,
             email,
             location,
             restrict_mode,
             liked_video,
-            disliked_video
+            disliked_video,
+            liked_comment,
+            disliked_comment,
+            liked_post,
+            disliked_post,
           }
         }
       `,
@@ -462,13 +503,16 @@ export class AppComponent implements OnInit{
         location: this.userDB.location,
         restrict_mode: str,
         liked_video: this.userDB.liked_video,
-        disliked_video: this.userDB.disliked_video
+        disliked_video: this.userDB.disliked_video,
+        liked_comment: this.userDB.liked_comment,
+        disliked_comment: this.userDB.disliked_comment,
+        liked_post: this.userDB.liked_post,
+        disliked_post: this.userDB.disliked_post
       },
     }).subscribe(result =>{
       console.log(result.data.updateUser);
       this.userDB = result.data.updateUser
       this.data.changeUserDB(this.userDB)
-      this.data.changeRestrictedMode(str)
     })   
   }
   
@@ -494,22 +538,31 @@ export class AppComponent implements OnInit{
 
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!){
-          updateUser(id: $id, input:{
-            email: $email,
-            location: $location,
-            restrict_mode: $restrict_mode
-            liked_video: $liked_video,
-            disliked_video: $disliked_video
-          }){
-            id,
-            email,
-            location,
-            restrict_mode,
-            liked_video,
-            disliked_video
-          }
+        mutation updateUser($id: ID!, $email: String!, $location: String!, $restrict_mode: String!, $liked_video: String!, $disliked_video: String!
+          $liked_comment: String!, $disliked_comment: String!, $liked_post: String!, $disliked_post: String!){
+        updateUser(id: $id, input:{
+          email: $email,
+          location: $location,
+          restrict_mode: $restrict_mode
+          liked_video: $liked_video,
+          disliked_video: $disliked_video,
+          liked_comment: $liked_comment,
+          disliked_comment: $disliked_comment,
+          liked_post: $liked_post,
+          disliked_post: $disliked_post
+        }){
+          id,
+          email,
+          location,
+          restrict_mode,
+          liked_video,
+          disliked_video,
+          liked_comment,
+          disliked_comment,
+          liked_post,
+          disliked_post,
         }
+      }
       `,
       variables:{
         id: this.userDB.id,
@@ -517,7 +570,11 @@ export class AppComponent implements OnInit{
         location: e,
         restrict_mode: this.userDB.restrict_mode,
         liked_video: this.userDB.liked_video,
-        disliked_video: this.userDB.disliked_video
+        disliked_video: this.userDB.disliked_video,
+        liked_comment: this.userDB.liked_comment,
+        disliked_comment: this.userDB.disliked_comment,
+        liked_post: this.userDB.liked_post,
+        disliked_post: this.userDB.disliked_post
       },
     }).subscribe(result =>{
       console.log(result.data.updateUser);
@@ -529,5 +586,78 @@ export class AppComponent implements OnInit{
   searchVideo():void{
     var newUrl = 'search/' + this.searchQuery
     this.router.navigate([newUrl])
+  }
+
+  loadUserSubscribedChannel():void{
+    this.apollo.watchQuery<any>({
+      query: gql `
+        query getUserSubscriptionByUserId($user_id: ID!){
+          getUserSubscriptionByUserId(user_id: $user_id){
+            id,
+            user_id,
+            channel_id,
+            subscribe_day,
+            subscribe_month,
+            subscribe_year,
+            should_notify
+          }
+        }
+      `,
+      variables:{
+        user_id: this.userDB.id
+      }
+    }).valueChanges.subscribe(result =>{
+      var val = result.data.getUserSubscriptionByUserId
+      
+      for(let i = 0; i < val.length; i++){
+        this.channelIds.push(val[i].channel_id)
+      }
+
+      this.loadSubscribedChannel()
+
+    })
+  }
+
+  loadSubscribedChannel():void{
+    for(let i = 0; i < this.channelIds.length; i++){
+      this.apollo.query<any>({
+        query: gql `
+          query getChannelById($id: ID!){
+            getChannelById(id: $id){
+              id,
+              user_id,
+              name,
+              background_image,
+              icon,
+              description,
+              join_day,
+              join_month,
+              join_year
+            }
+          }
+        `,
+        variables:{
+          id: this.channelIds[i]
+        }
+      }).subscribe(result => {
+        this.channels.push(result.data.getChannelById[0])
+        // for(i = 0; i < 10; i++){
+        //   this.channels.push(result.data.getChannelById[0])
+        // }
+      })
+    }
+    console.log(this.channels);
+    this.channelLoaded = true
+    
+  }
+
+  toggleShowChannel():void{
+    this.showAllChannel = !this.showAllChannel
+    if(this.showAllChannel){
+      this.currChannelCount = this.channels.length
+    }
+    else{
+      this.currChannelCount = 10
+    }
   }
 }

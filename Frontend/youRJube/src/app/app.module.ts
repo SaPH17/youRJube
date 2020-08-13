@@ -1,3 +1,4 @@
+import { CeiboShare } from 'ng2-social-share';
 import { environment } from './../environments/environment.prod';
 import { DataService } from './data.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -35,13 +36,13 @@ import { PrivacyComponent } from './privacy/privacy.component';
 import { VideoRelatedComponent } from './video-related/video-related.component';
 import { SecondVideoDisplayComponent } from './second-video-display/second-video-display.component';
 import { ChannelComponent } from './channel/channel.component';
+import { ChannelCommunityDisplayComponent } from './channel-community/channel-community-display/channel-community-display.component';
+import { ChannelPlaylistDisplayComponent } from './channel-playlist/channel-playlist-display/channel-playlist-display.component';
 import { ChannelHomeComponent } from './channel-home/channel-home.component';
 import { ChannelVideosComponent } from './channel-videos/channel-videos.component';
 import { ChannelPlaylistComponent } from './channel-playlist/channel-playlist.component';
 import { ChannelCommunityComponent } from './channel-community/channel-community.component';
 import { ChannelAboutComponent } from './channel-about/channel-about.component';
-import { ChannelPlaylistDisplayComponent } from './channel-playlist-display/channel-playlist-display.component';
-import { ChannelCommunityDisplayComponent } from './channel-community-display/channel-community-display.component';
 import { ChannelEditComponent } from './channel-edit/channel-edit.component';
 import { CategoryMusicComponent } from './category/category-music/category-music.component';
 import { CategorySportComponent } from './category/category-sport/category-sport.component';
@@ -50,6 +51,11 @@ import { CategoryEntertainmentComponent } from './category/category-entertainmen
 import { CategoryNewsComponent } from './category/category-news/category-news.component';
 import { CategoryTravelComponent } from './category/category-travel/category-travel.component';
 import { VideoSearchComponent } from './video-search/video-search.component';
+import { ChannelEditVideosComponent } from './channel-edit-videos/channel-edit-videos.component';
+import { ChannelEditVideosDisplayComponent } from './channel-edit-videos/channel-edit-videos-display/channel-edit-videos-display.component';
+import { PlaylistDisplayComponent } from './playlist/playlist-display/playlist-display.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PlaylistWatchComponent } from './playlist-watch/playlist-watch.component';
 
 
 @NgModule({
@@ -89,6 +95,10 @@ import { VideoSearchComponent } from './video-search/video-search.component';
     CategoryNewsComponent,
     CategoryTravelComponent,
     VideoSearchComponent,
+    ChannelEditVideosComponent,
+    ChannelEditVideosDisplayComponent,
+    PlaylistDisplayComponent,
+    PlaylistWatchComponent,
   ],
   imports: [
     BrowserModule,
@@ -101,7 +111,8 @@ import { VideoSearchComponent } from './video-search/video-search.component';
     SocialLoginModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatVideoModule
+    MatVideoModule,
+    DragDropModule
   ],
   providers: [
     {

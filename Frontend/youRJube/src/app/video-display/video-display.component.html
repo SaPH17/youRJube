@@ -1,4 +1,4 @@
-<div class="container" *ngIf="doneLoading">
+<div class="container" *ngIf="doneLoading && premiumValidation">
     <a href="watch/{{video.id}}">
         <div class="thumbnail">
             <img src="{{video.thumbnail}}" alt="" width="288px" height="162px">
@@ -25,6 +25,11 @@
                 •
                 <div class="date-uploaded">
                    {{dateOutput}}
+                </div>
+                <div class="premium-tag" *ngIf="video.is_premium == 'true' && userHavePremium">
+                    <p>
+                        PREMIUM
+                    </p>
                 </div>
             </div>
         </a>

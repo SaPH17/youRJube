@@ -1,0 +1,65 @@
+<div class="container" *ngIf="premiumValidation">
+    <div class="left">
+        <a href="watch/{{video.id}}">
+            <div class="thumbnail">
+                <img src="{{video.thumbnail}}" alt="" width="250px" height="140px">
+                <span class="video-duration">{{duration}}</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="right">
+        <div class="top">
+            <a href="watch/{{video.id}}">
+                {{video.title}}
+            </a>
+
+            <div class="settings-button">
+                <a (click)="showDropdown = !showDropdown" class="settings-button-icon">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </a>
+    
+                <div class="dropdown-content"[style.display]="showDropdown ? 'block' : 'none'">
+                    <a (click)="removeFromPlaylist()">
+                        <p>&times;</p>
+                        Remove Video
+                    </a>
+                    <a (click)="moveToTop()"><i class="fa fa-arrow-up" aria-hidden="true"></i>
+                        Move to top
+                    </a>
+                    <a (click)="moveToBottom()"><i class="fa fa-arrow-down" aria-hidden="true"></i>
+                        Move to bottom
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="center">
+            <div class="channel" *ngIf="channel">
+                <a href="channel/{{channel.id}}">
+                    {{channel.name}} • 
+                </a>
+            </div>
+
+            <div class="view">
+                {{viewOutput}} • 
+            </div>
+
+            <div class="date">
+                {{dateOutput}}
+            </div>
+        </div>
+
+        <div class="bottom">
+            <a href="watch/{{video.id}}">
+                {{descOutput}}
+            </a>
+        </div>
+
+        <div class="premium-tag" *ngIf="video.is_premium == 'true' && userHavePremium">
+            <p>
+                PREMIUM
+            </p>
+        </div>
+    </div>
+</div>

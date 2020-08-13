@@ -1,7 +1,10 @@
-<div class="container">
+<div class="container" *ngIf="premiumValidation">
     <div class="left">
         <a href="watch/{{video.id}}">
-            <img src="{{video.thumbnail}}" alt="" width="300px" height="168.75px">
+            <div class="thumbnail">
+                <img src="{{video.thumbnail}}" alt="" width="300px" height="168.75px">
+                <span class="video-duration">{{duration}}</span>
+            </div>
         </a>
     </div>
 
@@ -26,8 +29,10 @@
         </div>
 
         <div class="center">
-            <div class="channel">
-                My Channel • 
+            <div class="channel" *ngIf="channel">
+                <a href="channel/{{channel.id}}">
+                    {{channel.name}} • 
+                </a>
             </div>
 
             <div class="view">
@@ -41,8 +46,14 @@
 
         <div class="bottom">
             <a href="watch/{{video.id}}">
-                {{video.description}}
+                {{descOutput}}
             </a>
+        </div>
+
+        <div class="premium-tag" *ngIf="video.is_premium == 'true' && userHavePremium">
+            <p>
+                PREMIUM
+            </p>
         </div>
     </div>
 </div>

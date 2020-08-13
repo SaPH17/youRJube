@@ -1,11 +1,12 @@
-import { title } from 'process';
+import { DataService } from './../data.service';
 import { Apollo } from 'apollo-angular';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, Input } from '@angular/core';
 import gql from 'graphql-tag';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
-const getPlaylistQuery = gql `
+export const getPlaylistQuery = gql `
   query getPlaylistById($id: ID!){
     getPlaylistById(id: $id){
       id,
@@ -23,6 +24,20 @@ const getPlaylistQuery = gql `
   }
 `
 
+const getUserSubsQuery = gql`
+  query getUserSubscriptionByUserIdAndChannelId($user_id: ID!, $channel_id: ID!){
+    getUserSubscriptionByUserIdAndChannelId(user_id: $user_id, channel_id: $channel_id){
+      id,
+      user_id,
+      channel_id,
+      subscribe_day,
+      subscribe_month,
+      subscribe_year,
+      should_notify
+    }
+  }
+`
+
 @Component({
   selector: 'app-playlist',
   templateUrl: './playlist.component.html',
@@ -32,7 +47,7 @@ export class PlaylistComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private location: Location,
-    private apollo: Apollo) { }
+    private apollo: Apollo, private data: DataService) { }
 
   playlist: any
   doneLoading: boolean = false
@@ -51,11 +66,23 @@ export class PlaylistComponent implements OnInit {
   inputTitle: String
   inputDesc: String
 
+  lastKey:number
+  observer: any
+  allLoaded:boolean = false
+
+  userSubCondition: number = 0
+  userDB: any
+  userChannel:any
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
+      this.data.currentUserDBObject.subscribe(currentUserDBObject => this.userDB = currentUserDBObject)
+      this.data.currentChannelObject.subscribe(currentChannelObject => this.userChannel = currentChannelObject)
+      this.lastKey = 4
       this.playlistVideos = []
       this.playlistId = parseInt(params.get('id'))
       this.playlistURL = "http://localhost:4200/playlist/" + this.playlistId
+
       this.loadPlaylist()
     })
   }
@@ -79,23 +106,7 @@ export class PlaylistComponent implements OnInit {
 
   loadPlaylist():void{
     this.apollo.watchQuery<any>({
-      query: gql `
-        query getPlaylistById($id: ID!){
-          getPlaylistById(id: $id){
-            id,
-            channel_id,
-            title,
-            description,
-            privacy,
-            thumbnail,
-            last_updated_day,
-            last_updated_month,
-            last_updated_year,
-            view,
-            video_id,
-          }
-        }
-      `,
+      query: getPlaylistQuery,
       variables:{
         id: this.playlistId
       }
@@ -180,11 +191,36 @@ export class PlaylistComponent implements OnInit {
         else{
           this.playlistCountOutput = this.playlistVideos.length + " videos"
         }
+
+        // if(i == res.length - 2){
+
+        //   this.observer = new IntersectionObserver((entry)=>{
+        //     if(entry[0].isIntersecting){
+        //       let card = document.querySelector(".center-video")    
+        //       console.log("intersecting");
+      
+        //       for(let i = 0; i < 4; i++){
+                
+        //         if(this.lastKey < this.playlistVideos.length){
+                  
+        //           let div = document.createElement("div")
+        //           let video = document.createElement("app-second-video-display")
+        //           video.setAttribute("vid",  "this.playlistVideos[this.lastKey]")
+        //           div.appendChild(video)
+        //           card.appendChild(div)
+        //           this.lastKey++
+        //         }
+        //       }
+        //     }
+        //   })
+
+        //   console.log(document.querySelector(".footer"));
+        //   this.observer.observe(document.querySelector(".footer"))
+        // }
+
       })
     }
-
     this.doneLoading = true
-
   }
 
   loadChannelInformation():void{
@@ -200,7 +236,8 @@ export class PlaylistComponent implements OnInit {
             description,
             join_day,
             join_month,
-            join_year
+            join_year,
+            subscriber_count
           }
         }
       `,
@@ -209,6 +246,8 @@ export class PlaylistComponent implements OnInit {
       }
     }).subscribe(result => {
       this.channel = result.data.getChannelById[0]
+      this.userHasSubscribed()
+
     })
   }
 
@@ -218,14 +257,33 @@ export class PlaylistComponent implements OnInit {
 
   sortVideoByOldest():void{
     this.playlistVideos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? 1 : -1)
+
+    var str = ","
+    for(let i = 0; i < this.playlistVideos.length; i++){
+      str += this.playlistVideos[i].id + ","
+    }
+
+    this.updatePlaylist(str)
   }
 
   sortVideoByLatest():void{
-    this.playlistVideos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? -1 : 1)    
+    this.playlistVideos.sort((a, b) => (parseInt(a.id) > parseInt(b.id)) ? -1 : 1)   
+
+    var str = ","
+    for(let i = 0; i < this.playlistVideos.length; i++){
+      str += this.playlistVideos[i].id + ","
+    }
+    this.updatePlaylist(str)
   }
 
   sortPopularity():void{
     this.playlistVideos.sort((a, b)=> (parseInt(a.view) > parseInt(b.view)) ? -1 : 1)
+
+    var str = ","
+    for(let i = 0; i < this.playlistVideos.length; i++){
+      str += this.playlistVideos[i].id + ","
+    }
+    this.updatePlaylist(str)
   }
 
   copyURLToClipboard(){
@@ -320,4 +378,288 @@ export class PlaylistComponent implements OnInit {
       this.isInputDesc = false
     })   
   }
+
+  updatePlaylistPrivacy(e):void{
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updatePlaylist($id: ID!, $channel_id: ID!, $description: String!, $title: String!, $privacy: String!, $thumbnail: String!
+            $view: Int!, $video_id: String!) {
+          updatePlaylist(id: $id, input: { 
+            channel_id: $channel_id,
+            title: $title,
+            description: $description,
+            privacy: $privacy,
+            thumbnail: $thumbnail,
+            view: $view,
+            video_id: $video_id
+          }){
+            id,
+            video_id
+          }
+        }
+      `,
+      variables:{
+        id: this.playlist.id,
+        channel_id: this.playlist.channel_id,
+        description: this.playlist.description,
+        title: this.playlist.title,
+        privacy: e,
+        thumbnail: this.playlist.thumbnail,
+        view: this.playlist.view,
+        video_id: this.playlist.video_id
+      },
+      refetchQueries: [{
+        query: getPlaylistQuery,
+        variables: { repoFullName: 'apollographql/apollo-client', id: this.playlistId },
+      }],
+    }).subscribe(result =>{
+      console.log(result);
+    }) 
+  }
+
+  showSubscribeButton():boolean{
+    if(this.userChannel == undefined){
+      return true
+    }
+    else if(this.channel.id != this.userChannel.id){
+      return true
+    }
+
+    return false
+  }
+
+  subscribeToChannel():void{
+
+    if(this.userDB){
+      
+      this.apollo.mutate<any>({
+        mutation: gql`
+          mutation createUserSubscription($user_id: ID!, $channel_id: ID!, $should_notify: String!){
+            createUserSubscription(
+              input: {
+                user_id: $user_id,
+                channel_id: $channel_id,
+                should_notify: $should_notify
+              }
+            ){
+              id
+            }
+          }
+        `,
+        variables:{
+          user_id: this.userDB.id,
+          channel_id: this.channel.id,
+          should_notify: "false"
+        },
+        refetchQueries:[{
+          query: getUserSubsQuery,
+          variables: { repoFullName: 'apollographql/apollo-client',
+                      user_id: this.userDB.id,
+                      channel_id: this.channel.id, },
+        }]
+      }).subscribe(result => {
+        console.log(result)
+      })
+
+      this.updateChannelSubs(this.channel.subscriber_count + 1)
+
+    }
+  }
+
+  userHasSubscribed():void{
+    var res
+
+    if(this.userDB == undefined || this.userDB == null){
+      this.userSubCondition = 0
+    }
+
+    console.log("AAA");
+    
+
+    this.apollo.watchQuery<any>({
+      query: gql`
+        query getUserSubscriptionByUserIdAndChannelId($user_id: ID!, $channel_id: ID!){
+          getUserSubscriptionByUserIdAndChannelId(user_id: $user_id, channel_id: $channel_id){
+            id,
+            should_notify
+          }
+        }
+      `,
+      variables:{
+        user_id: this.userDB.id,
+        channel_id: this.channel.id,
+      }
+    }).valueChanges.subscribe(result => {
+      console.log(result)
+      res = result.data.getUserSubscriptionByUserIdAndChannelId[0]
+
+      if(res == undefined){
+        this.userSubCondition = 0
+      }
+      else if(res.should_notify == "false"){
+        this.userSubCondition = 1
+      }
+      else if(res.should_notify == "true"){
+        this.userSubCondition = 2
+      }
+      else{
+        this.userSubCondition = 0
+      }
+      
+    })
+
+  }
+
+  unsubscribeToChannel():void{
+    if(this.userDB){
+      this.apollo.mutate({
+        mutation: gql`
+          mutation deleteUserSubscription($user_id: ID!, $channel_id: ID!){
+            deleteUserSubscription(user_id: $user_id, channel_id: $channel_id)
+          }
+        `,
+        variables:{
+          user_id: this.userDB.id,
+          channel_id: this.channel.id,
+        },
+        refetchQueries: [{
+          query: getUserSubsQuery,
+          variables: { repoFullName: 'apollographql/apollo-client' ,
+                      user_id: this.userDB.id,
+                      channel_id: this.channel.id,
+                    },
+        }],
+      }).subscribe(result =>{
+        console.log(result);
+      })    
+    }
+
+    this.updateChannelSubs(this.channel.subscriber_count - 1)
+
+  }
+
+  changeUserSubsNotif(value):void{
+
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updateUserSubscription($user_id: ID!, $channel_id: ID!, $should_notify: String!){
+          updateUserSubscription(user_id: $user_id, channel_id: $channel_id, input:{
+            user_id: $user_id,
+            channel_id: $channel_id,
+            should_notify: $should_notify,
+          }){
+            id
+          }
+        }
+      `,
+      variables:{
+        user_id: this.userDB.id,
+        channel_id: this.channel.id,
+        should_notify: value
+      },
+      refetchQueries: [{
+        query: getUserSubsQuery,
+        variables: { repoFullName: 'apollographql/apollo-client' ,
+                    user_id: this.userDB.id,
+                    channel_id: this.channel.id,
+                  },
+      }],
+    }).subscribe(result =>{
+      console.log(result);
+      
+    })    
+  }
+
+  updateChannelSubs(newSubs){
+    this.apollo.mutate<any>({
+    mutation: gql`
+      mutation updateChannel($id: ID!, $user_id: ID!, $name: String!, $background_image: String!, $icon: String!, $description: String!
+          $subscriber_count: Int!){
+        updateChannel(id: $id, input:{
+          user_id: $user_id,
+          name: $name,
+          background_image: $background_image,
+          icon: $icon,
+          description: $description,
+          subscriber_count: $subscriber_count
+        }){
+          id,
+          user_id,
+          name,
+          background_image,
+          icon,
+          description,
+          join_day,
+          join_month,
+          join_year,
+          subscriber_count
+        }
+      }
+    `,
+    variables:{
+      id: this.channel.id,
+      user_id: this.channel.user_id,
+      name: this.channel.name,
+      background_image: this.channel.background_image,
+      icon: this.channel.icon,
+      description: this.channel.description,
+      subscriber_count: newSubs
+    },
+    // refetchQueries: [{
+    //   query: getChannelQuery,
+    //   variables: { repoFullName: 'apollographql/apollo-client' ,
+    //                 id: this.channel.id
+    //             },
+    // }],
+  }).subscribe(result => {
+    console.log(result);
+    this.channel = result.data.updateChannel
+    })
+  }
+
+  updatePlaylist(newStr):void{
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updatePlaylist($id: ID!, $channel_id: ID!, $description: String!, $title: String!, $privacy: String!, $thumbnail: String!
+            $view: Int!, $video_id: String!) {
+          updatePlaylist(id: $id, input: { 
+            channel_id: $channel_id,
+            title: $title,
+            description: $description,
+            privacy: $privacy,
+            thumbnail: $thumbnail,
+            view: $view,
+            video_id: $video_id
+          }){
+            id,
+            video_id
+          }
+        }
+      `,
+      variables:{
+        id: this.playlist.id,
+        channel_id: this.playlist.channel_id,
+        description: this.playlist.description,
+        title: this.playlist.title,
+        privacy: this.playlist.privacy,
+        thumbnail: this.playlist.thumbnail,
+        view: this.playlist.view,
+        video_id: newStr
+      },
+    }).subscribe(result =>{
+      console.log(result);
+    }) 
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.playlistVideos, event.previousIndex, event.currentIndex);
+
+    var str = ","
+    for(let i = 0; i < this.playlistVideos.length; i++){
+      str += this.playlistVideos[i].id + ","
+    }
+
+    this.updatePlaylist(str)
+  }
+  
 }

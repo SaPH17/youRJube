@@ -1,7 +1,7 @@
 <div class="container">
     <h3 class="trending-title">Trending Video</h3>
 
-    <div class="trending-video-container">
+    <div class="trending-video-container" *ngIf="doneLoading">
         <div *ngFor="let v of videos, let i = index">
             <app-second-video-display [vid]="v" *ngIf="i < 20"></app-second-video-display>
         </div>

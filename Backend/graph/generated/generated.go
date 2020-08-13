@@ -78,10 +78,13 @@ type ComplexityRoot struct {
 	CommunityPost struct {
 		ChannelID func(childComplexity int) int
 		Content   func(childComplexity int) int
+		Day       func(childComplexity int) int
 		Dislike   func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Image     func(childComplexity int) int
 		Like      func(childComplexity int) int
+		Month     func(childComplexity int) int
+		Year      func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -154,15 +157,15 @@ type ComplexityRoot struct {
 		GetChannelSocialMediaByChannelID        func(childComplexity int, channelID string) int
 		GetCommentByVideoID                     func(childComplexity int, videoID string) int
 		GetCommunityPostByChannelID             func(childComplexity int, channelID string) int
-		GetHomeVideo                            func(childComplexity int, location string, isRestrict string) int
+		GetHomeVideo                            func(childComplexity int, isRestrict string) int
 		GetNotificationByUserID                 func(childComplexity int, userID string) int
 		GetPlaylistByChannelID                  func(childComplexity int, channelID string) int
 		GetPlaylistByID                         func(childComplexity int, id string) int
 		GetPlaylistByUserID                     func(childComplexity int, userID string) int
 		GetPremiumSubscriptionByUserID          func(childComplexity int, userID string) int
-		GetRelatedVideo                         func(childComplexity int, videoID string, category string, location string, isRestrict string) int
+		GetRelatedVideo                         func(childComplexity int, videoID string, category string, isRestrict string) int
 		GetReplyByCommentID                     func(childComplexity int, commentID string) int
-		GetTrendingVideo                        func(childComplexity int) int
+		GetTrendingVideo                        func(childComplexity int, isPremium string) int
 		GetUserByEmail                          func(childComplexity int, email *string) int
 		GetUserByUserID                         func(childComplexity int, id string) int
 		GetUserSubscriptionByUserID             func(childComplexity int, userID string) int
@@ -271,10 +274,10 @@ type QueryResolver interface {
 	GetVideoByID(ctx context.Context, id string) ([]*model.Video, error)
 	GetVideoByTitle(ctx context.Context, title string, isRestrict string) ([]*model.Video, error)
 	GetVideoByChannelID(ctx context.Context, channelID string) ([]*model.Video, error)
-	GetTrendingVideo(ctx context.Context) ([]*model.Video, error)
+	GetTrendingVideo(ctx context.Context, isPremium string) ([]*model.Video, error)
 	GetCategoryVideo(ctx context.Context, category string) ([]*model.Video, error)
-	GetHomeVideo(ctx context.Context, location string, isRestrict string) ([]*model.Video, error)
-	GetRelatedVideo(ctx context.Context, videoID string, category string, location string, isRestrict string) ([]*model.Video, error)
+	GetHomeVideo(ctx context.Context, isRestrict string) ([]*model.Video, error)
+	GetRelatedVideo(ctx context.Context, videoID string, category string, isRestrict string) ([]*model.Video, error)
 	GetVideo(ctx context.Context) ([]*model.Video, error)
 	GetPlaylistByChannelID(ctx context.Context, channelID string) ([]*model.Playlist, error)
 	GetPlaylistByUserID(ctx context.Context, userID string) ([]*model.Playlist, error)
@@ -474,6 +477,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CommunityPost.Content(childComplexity), true
 
+	case "CommunityPost.day":
+		if e.complexity.CommunityPost.Day == nil {
+			break
+		}
+
+		return e.complexity.CommunityPost.Day(childComplexity), true
+
 	case "CommunityPost.dislike":
 		if e.complexity.CommunityPost.Dislike == nil {
 			break
@@ -501,6 +511,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CommunityPost.Like(childComplexity), true
+
+	case "CommunityPost.month":
+		if e.complexity.CommunityPost.Month == nil {
+			break
+		}
+
+		return e.complexity.CommunityPost.Month(childComplexity), true
+
+	case "CommunityPost.year":
+		if e.complexity.CommunityPost.Year == nil {
+			break
+		}
+
+		return e.complexity.CommunityPost.Year(childComplexity), true
 
 	case "Mutation.createChannel":
 		if e.complexity.Mutation.CreateChannel == nil {
@@ -1071,7 +1095,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetHomeVideo(childComplexity, args["location"].(string), args["is_restrict"].(string)), true
+		return e.complexity.Query.GetHomeVideo(childComplexity, args["is_restrict"].(string)), true
 
 	case "Query.getNotificationByUserId":
 		if e.complexity.Query.GetNotificationByUserID == nil {
@@ -1143,7 +1167,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetRelatedVideo(childComplexity, args["video_id"].(string), args["category"].(string), args["location"].(string), args["is_restrict"].(string)), true
+		return e.complexity.Query.GetRelatedVideo(childComplexity, args["video_id"].(string), args["category"].(string), args["is_restrict"].(string)), true
 
 	case "Query.getReplyByCommentId":
 		if e.complexity.Query.GetReplyByCommentID == nil {
@@ -1162,7 +1186,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetTrendingVideo(childComplexity), true
+		args, err := ec.field_Query_getTrendingVideo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetTrendingVideo(childComplexity, args["is_premium"].(string)), true
 
 	case "Query.getUserByEmail":
 		if e.complexity.Query.GetUserByEmail == nil {
@@ -1712,6 +1741,9 @@ type CommunityPost{
   image: String
   like: Int!
   dislike: Int!
+  day: Int!
+  month: Int!
+  year: Int!
 }
 
 input newCommunityPost{
@@ -1873,10 +1905,10 @@ type Query{
   getVideoByTitle(title: String!, is_restrict: String!): [Video!]!
   getVideoByChannelId(channel_id: ID!): [Video!]!
 
-  getTrendingVideo: [Video!]!
+  getTrendingVideo(is_premium: String!): [Video!]!
   getCategoryVideo(category: String!): [Video!]!
-  getHomeVideo(location: String!, is_restrict: String!): [Video!]!
-  getRelatedVideo(video_id: ID!, category: String!, location: String!, is_restrict: String!): [Video!]!
+  getHomeVideo(is_restrict: String!): [Video!]!
+  getRelatedVideo(video_id: ID!, category: String!, is_restrict: String!): [Video!]!
   getVideo: [Video!]!
 
   getPlaylistByChannelId(channel_id: ID!): [Playlist!]!
@@ -2491,21 +2523,13 @@ func (ec *executionContext) field_Query_getHomeVideo_args(ctx context.Context, r
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["location"]; ok {
+	if tmp, ok := rawArgs["is_restrict"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["location"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["is_restrict"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["is_restrict"] = arg1
+	args["is_restrict"] = arg0
 	return args, nil
 }
 
@@ -2599,21 +2623,13 @@ func (ec *executionContext) field_Query_getRelatedVideo_args(ctx context.Context
 	}
 	args["category"] = arg1
 	var arg2 string
-	if tmp, ok := rawArgs["location"]; ok {
+	if tmp, ok := rawArgs["is_restrict"]; ok {
 		arg2, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["location"] = arg2
-	var arg3 string
-	if tmp, ok := rawArgs["is_restrict"]; ok {
-		arg3, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["is_restrict"] = arg3
+	args["is_restrict"] = arg2
 	return args, nil
 }
 
@@ -2628,6 +2644,20 @@ func (ec *executionContext) field_Query_getReplyByCommentId_args(ctx context.Con
 		}
 	}
 	args["comment_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getTrendingVideo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["is_premium"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["is_premium"] = arg0
 	return args, nil
 }
 
@@ -3762,6 +3792,108 @@ func (ec *executionContext) _CommunityPost_dislike(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Dislike, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityPost_day(ctx context.Context, field graphql.CollectedField, obj *model.CommunityPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "CommunityPost",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityPost_month(ctx context.Context, field graphql.CollectedField, obj *model.CommunityPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "CommunityPost",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Month, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityPost_year(ctx context.Context, field graphql.CollectedField, obj *model.CommunityPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "CommunityPost",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Year, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6242,9 +6374,16 @@ func (ec *executionContext) _Query_getTrendingVideo(ctx context.Context, field g
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getTrendingVideo_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetTrendingVideo(rctx)
+		return ec.resolvers.Query().GetTrendingVideo(rctx, args["is_premium"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6326,7 +6465,7 @@ func (ec *executionContext) _Query_getHomeVideo(ctx context.Context, field graph
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetHomeVideo(rctx, args["location"].(string), args["is_restrict"].(string))
+		return ec.resolvers.Query().GetHomeVideo(rctx, args["is_restrict"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6367,7 +6506,7 @@ func (ec *executionContext) _Query_getRelatedVideo(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetRelatedVideo(rctx, args["video_id"].(string), args["category"].(string), args["location"].(string), args["is_restrict"].(string))
+		return ec.resolvers.Query().GetRelatedVideo(rctx, args["video_id"].(string), args["category"].(string), args["is_restrict"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9938,6 +10077,21 @@ func (ec *executionContext) _CommunityPost(ctx context.Context, sel ast.Selectio
 			}
 		case "dislike":
 			out.Values[i] = ec._CommunityPost_dislike(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "day":
+			out.Values[i] = ec._CommunityPost_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "month":
+			out.Values[i] = ec._CommunityPost_month(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "year":
+			out.Values[i] = ec._CommunityPost_year(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

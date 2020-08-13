@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="left">
+        <div class="thumbnail-input">
+            <label for="thumbnail-upload" class="thumbnail-title">
+                <img src="{{thumbnailSrc}}" alt="" width="250px">
+            </label>
+            <input type="file" (change)="handleThumbnailInput($event.target.files)" name="thumbnail-upload" id="thumbnail-upload">
+        </div>
+    </div>
+
+    <div class="center">
+        <div class="title-input">
+            <input type="text" [value]="video.title" (input)="title = $event.target.value">
+        </div>
+
+        <div class="description-input">
+            <textarea name="description" id="description" cols="30" rows="5" [value]="video.description" (input)="title = $event.target.value"></textarea>
+        </div>    
+
+        <div class="privacy">
+            <select name="" id="" (change)="privacy = $event.target.value" [value]="privacy">
+                <option value="Public">Public</option>
+                <option value="Private">Private</option>
+            </select>
+        </div>
+
+        <div class="b2">
+            <div (click)="updateVideo()" id="update-button">
+                SAVE
+            </div>
+        </div>
+    </div>
+
+    <div class="right">
+        <i class="fa fa-trash" aria-hidden="true" (click)="deleteVideo()"></i>
+    </div>
+</div>

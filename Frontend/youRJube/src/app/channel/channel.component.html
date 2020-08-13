@@ -24,18 +24,24 @@
             <div class="profile-right">
                 <div class="subscribe-container" *ngIf="showSubscribeButton()">
                     <a>
-                        <div class="subscribe-button">
+                        <div class="subscribe-button" (click)="subscribeToChannel()" *ngIf="userSubCondition == 0">
                             SUBSCRIBE
                         </div>
                     </a>
 
-                    <!-- <div class="bell-button">
+                    <a>
+                        <div class="subscribe-button2" (click)="unsubscribeToChannel()" *ngIf="userSubCondition != 0">
+                            SUBSCRIBE
+                        </div>
+                    </a>
+
+                    <div class="bell-button" *ngIf="userSubCondition == 2" (click)="changeUserSubsNotif('false')">
                         <i class="fa fa-bell" aria-hidden="true"></i>
                     </div>
 
-                    <div class="bell-button2">
+                    <div class="bell-button" *ngIf="userSubCondition == 1" (click)="changeUserSubsNotif('true')">
                         <i class="fa fa-bell-o" aria-hidden="true"></i>
-                    </div> -->
+                    </div>
 
                 </div>
 
@@ -43,6 +49,12 @@
                     <a>
                         <div class="edit-channel-button" routerLink="edit">
                             EDIT CHANNEL
+                        </div>
+                    </a>
+
+                    <a>
+                        <div class="edit-videos-button" routerLink="edit-videos">
+                            EDIT VIDEOS
                         </div>
                     </a>
                 </div>

@@ -31,7 +31,12 @@
             This channel has no videos
         </div>
         <div *ngIf="haveVideos" class="videos">
-            <app-video-display *ngFor="let v of videos" [vid]="v"></app-video-display>
+            <div *ngFor="let v of videos, let i = index">
+                <app-video-display *ngIf="i < (lastKey)" [vid]="v"></app-video-display>
+            </div>
+        </div>
+        <div class="footer">
+
         </div>
     </div>
 </div>

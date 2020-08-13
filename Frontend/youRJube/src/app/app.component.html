@@ -31,7 +31,8 @@
           <i class="fa fa-bell" aria-hidden="true"></i>
         </a>
 
-        <div class="dropdown-content" id="notif-dropdown">
+        <div class="dropdown-content" id="notif-dropdown" [style.opacity]="showNotif ? '1' : ' 0'"
+        [style.visibility]="showNotif ? 'visible' : ' hidden'">
           <a>Notif 1</a>
           <a>Notif 2</a>
           <a>Notif 3</a>
@@ -43,14 +44,15 @@
           <i class="fa fa-cog" aria-hidden="true"></i>
         </a>
   
-        <div class="dropdown-content" id="settings-dropdown">
+        <div class="dropdown-content" id="settings-dropdown" [style.opacity]="showSettings ? '1' : ' 0'"
+        [style.visibility]="showSettings ? 'visible' : ' hidden'">
             <a (click)="toggleRestrictedMode()"><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>Restricted Mode : {{restrictModeOutput}}</a>
             <a (click)="openLocationModal()"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>Change Location</a>
             <a (click)="showKeyboardShortcut()"><i class="fa fa-keyboard-o fa-fw" aria-hidden="true"></i>Keyboard Shortcut</a>
         </div>
       </div>
      
-      <div *ngIf="!isUserSignedIn()" class="signin-button-container" (click)="signInWithGoogle()">
+      <div *ngIf="!isUserSignedIn()" class="signin-button-container" (click)="showLoginModal = !showLoginModal">
   
         <a>
           <i class="fa fa-user-circle" aria-hidden="true"></i>
@@ -63,7 +65,8 @@
       <div *ngIf="isUserSignedIn()" class="user-profile" >
         <img src="{{ user.photoUrl }}" width="40px" class="user-profile-picture" (click)="userProfileClick()">
 
-        <div class="dropdown-content" id="user-dropdown">
+        <div class="dropdown-content" id="user-dropdown" [style.opacity]="showUserProf ? '1' : ' 0'" 
+        [style.visibility]="showUserProf ? 'visible' : ' hidden'">
           <div class="user-information">
             <img src="{{ user.photoUrl }}" width="50px">
             <h4>{{ user.name }}</h4>
@@ -112,10 +115,40 @@
           <span class="title">Membership</span>
         </a>
       </li>
-      <li *ngFor="let p of userPlaylist">
-        <a routerLink="playlist/{{p.id}}" *ngIf="isUserSignedIn() && playlistLoaded" class="" id="playlistButton-{{p.id}}" (click)="changeActive($event)">
+      <li *ngFor="let p of userPlaylist, let i = index">
+        <a routerLink="playlist/{{p.id}}" *ngIf="isUserSignedIn() && playlistLoaded && i < currPlaylistCount" class="" id="playlistButton-{{p.id}}" (click)="changeActive($event)">
           <span class="icon"><i class="fa fa-list-ul" aria-hidden="true"></i></span>
           <span class="title">{{p.title}}</span>
+        </a>
+      </li>
+      <li [style.display]="showAllPlaylist ? 'none' : 'block'" *ngIf="playlistLoaded && userPlaylist.length > 5">
+        <a (click)="toggleShowPlaylist()">
+          <span class="icon"><i class="fa fa-arrow-down" aria-hidden="true"></i></span>
+          <span class="title">Show More</span>
+        </a>
+      </li>
+      <li [style.display]="showAllPlaylist ? 'block' : 'none'" *ngIf="playlistLoaded && userPlaylist.length > 5">
+        <a (click)="toggleShowPlaylist()">
+          <span class="icon"><i class="fa fa-arrow-up" aria-hidden="true"></i></span>
+          <span class="title">Show Less</span>
+        </a>
+      </li>
+      <li *ngFor="let c of channels, let i = index">
+        <a routerLink="channel/{{c.id}}" *ngIf="isUserSignedIn() && channelLoaded && i < currChannelCount" class="" id="channelButton-{{c.id}}" (click)="changeActive($event)">
+          <span class="icon"><img src="{{c.icon}}" alt="" width="24px" style="border-radius: 50%; margin-top: 1vh;"></span>
+          <span class="title">{{c.name}}</span>
+        </a>
+      </li>
+      <li [style.display]="showAllChannel ? 'none' : 'block'" *ngIf="channelLoaded && channels.length > 10">
+        <a (click)="toggleShowChannel()">
+          <span class="icon"><i class="fa fa-arrow-down" aria-hidden="true"></i></span>
+          <span class="title">Show More</span>
+        </a>
+      </li>
+      <li [style.display]="showAllChannel ? 'block' : 'none'" *ngIf="channelLoaded && channels.length > 10">
+        <a (click)="toggleShowChannel()">
+          <span class="icon"><i class="fa fa-arrow-up" aria-hidden="true"></i></span>
+          <span class="title">Show Less</span>
         </a>
       </li>
     </ul>
@@ -133,7 +166,7 @@
 
   </div>
 
-  <div class="content-container" id="content-container">
+  <div class="content-container" id="content-container" *ngIf="contentLoaded">
     <router-outlet></router-outlet>
   </div>
 </div>
@@ -221,5 +254,30 @@
     <div class="bottom">
 
     </div>
+  </div>
+</div>
+
+<div class="signin-modal" [style.visibility]="showLoginModal ? 'visible' : 'hidden'">
+  <div class="modal-content">
+
+    <div class="logo">
+      <img src="../assets/google-logo.png" alt="" width="100px">
+    </div>
+
+    <div class="title">
+      <div class="top">
+        Sign in
+      </div>
+      <div class="bottom">
+        to continue to youRJube
+      </div>
+    </div>
+
+    <div class="button-container">
+      <div class="button" (click)="signInWithGoogle()">
+        Sign in with google
+      </div>
+    </div>
+
   </div>
 </div>

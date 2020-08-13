@@ -1,3 +1,4 @@
+import { DataService } from './../data.service';
 import { Apollo } from 'apollo-angular';
 import { Component, OnInit } from '@angular/core';
 import gql from 'graphql-tag';
@@ -10,14 +11,51 @@ import gql from 'graphql-tag';
 export class TrendingComponent implements OnInit {
 
   videos: any
+  channel: any
+  doneLoading: boolean = false
 
-  constructor(private apollo: Apollo) { }
+  billingHistory: any
+  userHavePremium: boolean = false
+  userDB: any
+
+  constructor(private apollo: Apollo, private data: DataService) { }
 
   ngOnInit(): void {
+    this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
+
     this.apollo.watchQuery<any>({
+      query: gql`
+        query getPremiumSubscriptionByUserId($user_id: ID!){
+          getPremiumSubscriptionByUserId(user_id: $user_id){
+            id,
+            user_id,
+            start_day,
+            start_month,
+            start_year,
+            end_day,
+            end_month,
+            end_year,
+            plan,
+          }
+        }
+      `,
+      variables:{
+        user_id: this.userDB.id
+      }
+    }).valueChanges.subscribe(result => {
+      
+      this.billingHistory = result.data.getPremiumSubscriptionByUserId
+      this.getCurrentPlan()
+
+    })
+
+  }
+
+  loadVideo():void{
+    this.apollo.query<any>({
       query: gql `
-        query getTrendingVideo{
-          getTrendingVideo{
+        query getTrendingVideo($is_premium: String!){
+          getTrendingVideo(is_premium: $is_premium){
             id,
             channel_id,
             title,
@@ -38,29 +76,43 @@ export class TrendingComponent implements OnInit {
             duration
           }
         }
-      `
-    }).valueChanges.subscribe(result =>{
+      `,
+      variables:{
+        is_premium: this.userHavePremium.toString()
+      }
+    }).subscribe(result =>{
       this.videos = result.data.getTrendingVideo
-      this.filterVideo()
+      this.videos.filter(a => this.getDayDiff(a) < 7)
+      console.log(this.videos);
+      this.doneLoading = true
     })
   }
 
-  filterVideo():void{
-    var currDate = new Date()
+  getCurrentPlan():void{
+    var date = new Date()
 
-    for(let i = 0; i < this.videos.length; i++){
-      var v = this.videos[i]
+    this.billingHistory.forEach(e => {
 
-      var date = new Date(parseInt(v.upload_year), parseInt(v.upload_month) - 1, parseInt(v.upload_day))
-
-      var diff = Math.floor((Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
-        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24))
-
-      if(diff > 7){
-        this.videos.splice(i, 1)
-      }
+      var from = new Date(parseInt(e.start_year), parseInt(e.start_month) - 1, parseInt(e.start_day))
+      var to = new Date(parseInt(e.end_year), parseInt(e.end_month) - 1, parseInt(e.end_day))
       
-    }
+      if(date > from && date < to){
+        this.userHavePremium = true
+      }
+    });  
+
+    this.loadVideo()
+    
+  }
+  
+  getDayDiff(v):number{
+    var currDate = new Date()
+    var date = new Date(parseInt(v.upload_year), parseInt(v.upload_month) - 1, parseInt(v.upload_day))
+
+    var diff = Math.floor((Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24))
+
+    return diff
   }
 
 }

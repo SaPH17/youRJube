@@ -3,7 +3,7 @@
 
         <div class="video-player">
 
-            <mat-video [autoplay]="false" [preload]="true" [fullscreen]="true" [download]="false" 
+            <mat-video [autoplay]="false" [preload]="true" [fullscreen]="true" [download]="true" 
             color="accent" spinner="spin" src="{{video.video_url}}" [keyboard]="!isInput"
             [quality]="true" showFrameByFrame="true" id="video-player">
             </mat-video>
@@ -118,9 +118,9 @@
             </div>
         </div>
 
-        <div class="video-comment" *ngIf="commentsLoaded">
+        <div class="video-comment">
             <div class="comment-statistic">
-                <div class="comment-count">
+                <div class="comment-count" *ngIf="commentsLoaded">
                     {{commentCountOutput}}
                 </div>
                 <a>
@@ -173,14 +173,35 @@
             </div>
 
             <div class="all-comment">
-                <app-video-comment *ngFor="let c of comments" [comm]="c"></app-video-comment>
+
+                <div class="comment-container" *ngIf="commentsLoaded">
+                    <div *ngFor="let c of comments, let i = index">
+                        <app-video-comment [comm]="c" *ngIf="i < (lastKey)"></app-video-comment>
+                    </div>
+                </div>
+
+                <div class="comment-footer">
+
+                </div>
             </div>
         </div>  
 
     </div>
     
     <div class="related-video" *ngIf="relatedVideoLoaded">
-        <app-video-related *ngFor="let v of relatedVideos" [vid]="v"></app-video-related>
+        <div class="top">
+            <div class="title">
+                Up next
+            </div>
+            <div class="autoplay">
+                <label for="123123">Autoplay</label>
+                <input type="checkbox" name="" id="123123" [checked]="autoplay" (change)="autoplay = $event.target.checked">
+            </div>
+        </div>
+
+        <div class="bottom">
+            <app-video-related *ngFor="let v of relatedVideos" [vid]="v"></app-video-related>
+        </div>
     </div>
 </div>
 
@@ -252,10 +273,18 @@
             <div class="copy-button" (click)="copyURLToClipboard()">
                 COPY
             </div>
+
+            
         </div>
 
+        <!-- <div class="center2">
+            <div class="bottom">
+                <button ceiboShare  [facebook]="{u: videoURL}">Facebook</button>
+            </div>
+        </div> -->
+
         <div class="bottom">
-            <input type="checkbox" name="" id="current-time">
+            <input type="checkbox" name="" id="current-time" (change)="toggleCurrentTime($event.target.checked)">
             <label for="current-time">Copy at current time ({{currentTime}})</label>
         </div>
     </div>

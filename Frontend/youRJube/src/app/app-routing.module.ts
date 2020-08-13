@@ -1,3 +1,4 @@
+import { ChannelEditVideosComponent } from './channel-edit-videos/channel-edit-videos.component';
 import { VideoSearchComponent } from './video-search/video-search.component';
 import { CategorySportComponent } from './category/category-sport/category-sport.component';
 import { CategoryMusicComponent } from './category/category-music/category-music.component';
@@ -46,6 +47,8 @@ const routes: Routes = [
   {path:"playlist/:id", component: PlaylistComponent},
   {path:"premium-membership", component: PremiumMembershipComponent},
   {path:"watch/:id", component: VideoWatchComponent},
+  {path:"watch/:id/:time", component: VideoWatchComponent},
+  {path:"watch/playlist/:id/index", component: VideoWatchComponent},
   {path:"upload", component: VideoUploadComponent},
   {path:"about-us", component: AboutUsComponent},
   {path:"terms", component: TermsComponent},
@@ -61,6 +64,7 @@ const routes: Routes = [
       {path:"playlist", component: ChannelPlaylistComponent},
       {path:"about", component: ChannelAboutComponent},
       {path:"edit", component: ChannelEditComponent},
+      {path:"edit-videos", component: ChannelEditVideosComponent},
     ]
   },
 ];

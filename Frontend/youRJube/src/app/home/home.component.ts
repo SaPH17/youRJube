@@ -78,18 +78,23 @@ export class HomeComponent implements OnInit {
     var restrict: String
 
     if(this.userDB){
-      loc = this.userDB.Location
+      loc = this.userDB.location
       restrict = this.userDB.restrict_mode
     }
     else{
+      console.log("Ga ada user");
+      
       loc = this.currLocation
       restrict = "false"
     }
 
+    console.log(loc);
+    console.log(restrict);
+
     this.apollo.watchQuery<any>({
       query: gql `
-        query getHomeVideo($location: String!, $is_restrict: String!){
-          getHomeVideo(location: $location, is_restrict: $is_restrict){
+        query getHomeVideo($is_restrict: String!){
+          getHomeVideo(is_restrict: $is_restrict){
             id,
             channel_id,
             title,
@@ -109,12 +114,14 @@ export class HomeComponent implements OnInit {
           }
         }
       `,variables:{
-        location: loc,
         is_restrict: restrict
       }     
     }).valueChanges.subscribe(result => {
       this.videos = result.data.getHomeVideo
       this.shuffle(this.videos)
+      console.log(loc);
+      
+      this.videos.sort(a => a.location == loc ? -1 : 1)
     });
   }
 

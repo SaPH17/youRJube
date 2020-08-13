@@ -85,6 +85,9 @@ type CommunityPost{
   image: String
   like: Int!
   dislike: Int!
+  day: Int!
+  month: Int!
+  year: Int!
 }
 
 input newCommunityPost{
@@ -246,10 +249,10 @@ type Query{
   getVideoByTitle(title: String!, is_restrict: String!): [Video!]!
   getVideoByChannelId(channel_id: ID!): [Video!]!
 
-  getTrendingVideo: [Video!]!
+  getTrendingVideo(is_premium: String!): [Video!]!
   getCategoryVideo(category: String!): [Video!]!
-  getHomeVideo(location: String!, is_restrict: String!): [Video!]!
-  getRelatedVideo(video_id: ID!, category: String!, location: String!, is_restrict: String!): [Video!]!
+  getHomeVideo(is_restrict: String!): [Video!]!
+  getRelatedVideo(video_id: ID!, category: String!, is_restrict: String!): [Video!]!
   getVideo: [Video!]!
 
   getPlaylistByChannelId(channel_id: ID!): [Playlist!]!

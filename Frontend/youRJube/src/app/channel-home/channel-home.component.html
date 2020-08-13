@@ -1,7 +1,12 @@
 <div class="container">
     <div class="section1">
         <div class="title">
-            Recently Uploaded
+            <p class="t">
+                Recently Uploaded
+            </p>
+            <a class="see-all" href="http://localhost:4200/channel/{{channelId}}/videos">
+                See all >
+            </a>
         </div>
         <div class="videos">
             <div *ngFor="let v of videos, let i = index">
@@ -12,7 +17,12 @@
 
     <div class="section2">
         <div class="title">
-            Random Videos
+            <p class="t">
+                Random Videos
+            </p>
+            <a class="see-all" href="http://localhost:4200/channel/{{channelId}}/videos">
+                See all >
+            </a>
         </div>
         <div class="videos">
             <div *ngFor="let v of randomVideos, let i = index">
@@ -23,7 +33,12 @@
 
     <div class="section3">
         <div class="title">
-            Random Playlists
+            <p class="t">
+                Random Playlists
+            </p>
+            <a class="see-all" href="http://localhost:4200/channel/{{channelId}}/playlist">
+                See all >
+            </a>
         </div>
 
         <div class="playlists">

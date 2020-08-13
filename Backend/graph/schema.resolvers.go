@@ -7,10 +7,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 	"youRJube/graph/generated"
 	"youRJube/graph/model"
-	"strings"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
@@ -282,12 +282,17 @@ func (r *mutationResolver) CreateCommunityPost(ctx context.Context, input *model
 		return nil, errors.New("Channel doesn't exists")
 	}
 
+	year, month, day := time.Now().Date()
+
 	post := model.CommunityPost{
 		ChannelID: input.ChannelID,
 		Content:   input.Content,
 		Image:     input.Image,
 		Like:      input.Like,
 		Dislike:   input.Dislike,
+		Day:     day,
+		Month:   int(month),
+		Year:    year,
 	}
 
 	_, err2 := r.DB.Model(&post).Insert()
@@ -402,7 +407,21 @@ func (r *mutationResolver) UpdateVideo(ctx context.Context, id string, input *mo
 }
 
 func (r *mutationResolver) DeleteVideo(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	var video model.Video
+
+	err := r.DB.Model(&video).Where("id = ?", id).First()
+
+	if err != nil {
+		return false, errors.New("Video not found")
+	}
+
+	_, err2 := r.DB.Model(&video).Where("id = ?", id).Delete()
+
+	if err2 != nil {
+		return false, errors.New("Delete failed")
+	}
+
+	return true, nil
 }
 
 func (r *mutationResolver) CreatePlaylist(ctx context.Context, input *model.NewPlaylist) (*model.Playlist, error) {
@@ -729,10 +748,17 @@ func (r *queryResolver) GetVideoByChannelID(ctx context.Context, channelID strin
 	return videos, nil
 }
 
-func (r *queryResolver) GetTrendingVideo(ctx context.Context) ([]*model.Video, error) {
+func (r *queryResolver) GetTrendingVideo(ctx context.Context, isPremium string) ([]*model.Video, error) {
 	var videos []*model.Video
+	var a = "false"
 
-	err := r.DB.Model(&videos).Order("view desc").Select()
+	var err error
+
+	if isPremium == "true" {
+		err = r.DB.Model(&videos).Order("view desc").Select()
+	} else {
+		err = r.DB.Model(&videos).Where("is_premium = ?", a).Order("view desc").Select()
+	}
 
 	if err != nil {
 		return nil, errors.New("Failed to query video")
@@ -753,15 +779,15 @@ func (r *queryResolver) GetCategoryVideo(ctx context.Context, category string) (
 	return video, nil
 }
 
-func (r *queryResolver) GetHomeVideo(ctx context.Context, location string, isRestrict string) ([]*model.Video, error) {
+func (r *queryResolver) GetHomeVideo(ctx context.Context, isRestrict string) ([]*model.Video, error) {
 	var videos []*model.Video
 	var a string = "false"
 	var err error
 
 	if isRestrict == "false" {
-		err = r.DB.Model(&videos).Where("location = ?", location).Order("id").Select()
+		err = r.DB.Model(&videos).Order("id").Select()
 	} else {
-		err = r.DB.Model(&videos).Where("location = ? AND age_restricted = ?", location, a).Order("id").Select()
+		err = r.DB.Model(&videos).Where("age_restricted = ?", a).Order("id").Select()
 	}
 
 	if err != nil {
@@ -771,15 +797,15 @@ func (r *queryResolver) GetHomeVideo(ctx context.Context, location string, isRes
 	return videos, nil
 }
 
-func (r *queryResolver) GetRelatedVideo(ctx context.Context, videoID string, category string, location string, isRestrict string) ([]*model.Video, error) {
+func (r *queryResolver) GetRelatedVideo(ctx context.Context, videoID string, category string, isRestrict string) ([]*model.Video, error) {
 	var videos []*model.Video
 	var a string = "false"
 	var err error
 
 	if isRestrict == "false" {
-		err = r.DB.Model(&videos).Where("id != ? AND location = ? AND category = ?", videoID, location, category).Order("id").Select()
+		err = r.DB.Model(&videos).Where("id != ? AND category = ?", videoID, category).Order("id").Select()
 	} else {
-		err = r.DB.Model(&videos).Where("id != ? AND location = ? AND category = ? AND age_restricted = ?", videoID, location, category, a).Order("id").Select()
+		err = r.DB.Model(&videos).Where("id != ? AND category = ? AND age_restricted = ?", videoID, category, a).Order("id").Select()
 	}
 
 	if err != nil {

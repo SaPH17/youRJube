@@ -1,4 +1,4 @@
-import { DataService } from './../data.service';
+import { DataService } from './../../data.service';
 import { Apollo } from 'apollo-angular';
 import { Component, OnInit, Input } from '@angular/core';
 import gql from 'graphql-tag';
@@ -16,7 +16,10 @@ export class ChannelCommunityDisplayComponent implements OnInit {
     content,
     image,
     like,
-    dislike
+    dislike,
+    day,
+    month,
+    year
   }
 
   channel: any
@@ -29,10 +32,14 @@ export class ChannelCommunityDisplayComponent implements OnInit {
   isLiked: boolean = false
   isDisliked: boolean = false;
 
+  dateOutput: string
+
   constructor(private apollo: Apollo, private data: DataService) { }
 
   ngOnInit(): void {
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
+    this.dateOutput = this.convertMonthToText(this.communityPost.month) + " " + this.communityPost.day + ", " + this.communityPost.year
+
     this.loadChannelInformation()
     this.checkUserLikeOrNot()
 
@@ -65,6 +72,45 @@ export class ChannelCommunityDisplayComponent implements OnInit {
       this.channel = result.data.getChannelById[0]
       this.channelLoaded = true
     })
+  }
+
+  convertMonthToText(month){
+    if(month == 1){
+      return "Jan"
+    }
+    else if(month == 2){
+      return "Feb"
+    }
+    else if(month == 3){
+      return "Mar"
+    }
+    else if(month == 4){
+      return "Apr"
+    }
+    else if(month == 5){
+      return "May"
+    }
+    else if(month == 6){
+      return "Jun"
+    }
+    else if(month == 7){
+      return "Jul"
+    }
+    else if(month == 8){
+      return "Aug"
+    }
+    else if(month == 9){
+      return "Sep"
+    }
+    else if(month == 10){
+      return "Oct"
+    }
+    else if(month == 11){
+      return "Nov"
+    }
+    else{
+      return "Dec"
+    }
   }
 
   likePost():void{

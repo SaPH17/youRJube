@@ -1,7 +1,7 @@
 import { DataService } from './../data.service';
 import { Apollo } from 'apollo-angular';
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import gql from 'graphql-tag';
 
@@ -50,7 +50,6 @@ const getUserSubsQuery = gql`
     }
   }
 `
-
 const getVideoQuery = gql `
   query getVideoById($id : ID!){
     getVideoById(id : $id){
@@ -92,13 +91,11 @@ const getChannelQuery = gql `
   }
 `
 
-
 @Component({
   selector: 'app-video-watch',
   templateUrl: './video-watch.component.html',
-  styleUrls: ['./video-watch.component.scss']
+  styleUrls: ['./video-watch.component.scss'],
 })
-
 
 export class VideoWatchComponent implements OnInit {
 
@@ -139,6 +136,16 @@ export class VideoWatchComponent implements OnInit {
   userSubCondition: number = 0
 
   isInput:boolean = false
+
+  videoTime: any
+
+  lastKey: number
+  commentObserver: any
+
+  currLocation: any
+  restrictedMode:any
+
+  autoplay:boolean = false
 
   videos=[{
     id: 1,
@@ -183,129 +190,141 @@ export class VideoWatchComponent implements OnInit {
     private location: Location,
     private apollo: Apollo,
     private data: DataService,
-    private elRef: ElementRef) { }
+    private elRef: ElementRef,
+    private router: Router) { }
 
   ngOnInit(): void {
 
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
+    this.data.locationObject.subscribe(locationObject => this.currLocation = locationObject)
+    this.data.restrictedModeObject.subscribe(restrictedModeObject => this.restrictedMode = restrictedModeObject)
 
-    const videoId = this.route.snapshot.paramMap.get('id');    
+    this.route.paramMap.subscribe(params => {
 
-    this.apollo.watchQuery<any>({
-      query: gql `
-        query getVideoById($id : ID!){
-          getVideoById(id : $id){
-            id,
-            channel_id,
-            title,
-            description,
-            video_url,
-            thumbnail,
-            upload_day,
-            upload_month,
-            upload_year
-            category,
-            location,
-            view,
-            privacy,
-            is_premium,
-            age_restricted,
-            like,
-            dislike,
-            duration
+      const videoId = params.get('id');    
+      this.videoTime = params.get('time')
+
+      this.lastKey = 5
+
+      this.apollo.watchQuery<any>({
+        query: gql `
+          query getVideoById($id : ID!){
+            getVideoById(id : $id){
+              id,
+              channel_id,
+              title,
+              description,
+              video_url,
+              thumbnail,
+              upload_day,
+              upload_month,
+              upload_year
+              category,
+              location,
+              view,
+              privacy,
+              is_premium,
+              age_restricted,
+              like,
+              dislike,
+              duration
+            }
+          }
+        `,
+        variables:{
+          id: videoId
+        }
+      }).valueChanges.subscribe(result => {
+        this.video = result.data.getVideoById[0]      
+        
+        this.viewOutput = this.convertView(this.video.view - 1)
+        this.dateOutput = this.convertMonthToText(this.video.upload_month) + " " + this.video.upload_day + ", " + this.video.upload_year
+        this.likeOutput = this.convertLikeToText(this.video.like)
+        this.dislikeOutput = this.convertLikeToText(this.video.dislike)
+        this.likeCount = this.video.like - 1
+        this.dislikeCount = this.video.dislike -1
+        this.totalLikeAndDislike = this.video.like - 1 + this.video.dislike - 1
+        this.videoURL = "http://localhost:4200/watch/" + this.video.id
+        
+
+        this.loadChannelInformation()
+        if(this.firstTime){
+          this.updateVideoView(this.video.view + 1)
+        }
+        this.loadRelatedVideo()
+        
+        this.doneLoading = true
+
+      })
+
+      document.onkeydown = (e) => {
+
+        var video = (document.getElementsByTagName('mat-video')[0] as HTMLVideoElement).querySelector('video')
+
+        if(e.keyCode ==  74){
+          e.preventDefault();
+          video.currentTime -= 10
+        }
+        else if(e.keyCode == 75){
+          e.preventDefault();
+          if(video.paused){
+            video.play()
+          }
+          else{
+            video.pause()
           }
         }
-      `,
-      variables:{
-        id: videoId
-      }
-    }).valueChanges.subscribe(result => {
-      this.video = result.data.getVideoById[0]      
-      
-      this.viewOutput = this.convertView(this.video.view - 1)
-      this.dateOutput = this.convertMonthToText(this.video.upload_month) + " " + this.video.upload_day + ", " + this.video.upload_year
-      this.likeOutput = this.convertLikeToText(this.video.like)
-      this.dislikeOutput = this.convertLikeToText(this.video.dislike)
-      this.likeCount = this.video.like - 1
-      this.dislikeCount = this.video.dislike -1
-      this.totalLikeAndDislike = this.video.like - 1 + this.video.dislike - 1
-      this.videoURL = "http://localhost:4200/watch/" + this.video.id
-
-      this.loadChannelInformation()
-      if(this.firstTime){
-        this.updateVideoView(this.video.view + 1)
-      }
-      this.loadRelatedVideo()
-      
-      this.doneLoading = true
-    })
-
-    document.onkeydown = (e) => {
-
-      var video = (document.getElementsByTagName('mat-video')[0] as HTMLVideoElement).querySelector('video')
-
-      if(e.keyCode ==  74){
-        e.preventDefault();
-        video.currentTime -= 10
-      }
-      else if(e.keyCode == 75){
-        e.preventDefault();
-        if(video.paused){
-          video.play()
+        else if(e.keyCode == 76){
+          e.preventDefault();
+          video.currentTime += 10
         }
-        else{
-          video.pause()
+        else if(e.keyCode == 38){
+
+          e.preventDefault();
+          var currVolume = video.volume
+          if(currVolume != 1){
+            try {
+              var x = currVolume + 0.02;
+              video.volume = x;
+              var a = (((video.closest("mat-video").querySelector("mat-volume-control")
+              .querySelector("mat-slider").querySelector(".mat-slider-thumb-container"))) as HTMLElement);
+              var min = (1-x)*100;
+              var c = "translate(-" + min +"%)";
+              a.style.transform = c;
+
+              a.querySelector(".mat-slider-thumb-label-text").innerHTML = x.toString();
+              
+            } catch (err) {
+              video.volume = 1
+            }
+          }
+
         }
-      }
-      else if(e.keyCode == 76){
-        e.preventDefault();
-        video.currentTime += 10
-      }
-      else if(e.keyCode == 38){
+        else if(e.keyCode == 40){
+          e.preventDefault();
+          var currVolume = video.volume
+          if (currVolume!=0) {
+            try {
+              var x = currVolume - 0.02;
+              video.volume = x;
+              var a = (((video.closest("mat-video").querySelector("mat-volume-control")
+              .querySelector("mat-slider").querySelector(".mat-slider-thumb-container"))) as HTMLElement);
+              var min = (1-x)*100;
+              var c = "translate(-" + min +"%)";
+              a.style.transform = c;
 
-        e.preventDefault();
-        var currVolume = video.volume
-        if(currVolume != 1){
-          try {
-            var x = currVolume + 0.02;
-            video.volume = x;
-            var a = (((video.closest("mat-video").querySelector("mat-volume-control")
-            .querySelector("mat-slider").querySelector(".mat-slider-thumb-container"))) as HTMLElement);
-            var min = (1-x)*100;
-            var c = "translate(-" + min +"%)";
-            a.style.transform = c;
-
-            a.querySelector(".mat-slider-thumb-label-text").innerHTML = x.toString();
+              a.querySelector(".mat-slider-thumb-label-text").innerHTML = x.toString();
+            }
+            catch(err) {
+                video.volume = 0;
+            }
             
-          } catch (err) {
-            video.volume = 1
           }
         }
-
       }
-      else if(e.keyCode == 40){
-        e.preventDefault();
-        var currVolume = video.volume
-        if (currVolume!=0) {
-          try {
-            var x = currVolume - 0.02;
-            video.volume = x;
-            var a = (((video.closest("mat-video").querySelector("mat-volume-control")
-            .querySelector("mat-slider").querySelector(".mat-slider-thumb-container"))) as HTMLElement);
-            var min = (1-x)*100;
-            var c = "translate(-" + min +"%)";
-            a.style.transform = c;
 
-            a.querySelector(".mat-slider-thumb-label-text").innerHTML = x.toString();
-          }
-          catch(err) {
-              video.volume = 0;
-          }
-          
-        }
-      }
-    }
+    })
 
   }
 
@@ -315,6 +334,22 @@ export class VideoWatchComponent implements OnInit {
 
   inputTextBlur():void{
     this.isInput = false    
+  }
+
+  changeVideoTimestamp():void{
+    var tag = this.elRef.nativeElement.getElementsByTagName('video')[0]
+    
+    tag.onended = () => {
+      if(this.autoplay){        
+        var url = './watch/' + this.relatedVideos[0].id        
+        this.router.navigate([url]);
+      }
+    }
+
+    if(this.videoTime){      
+      var video = (document.getElementsByTagName('mat-video')[0] as HTMLVideoElement).querySelector('video')
+      video.currentTime = parseInt(this.videoTime)
+    }
   }
 
   isTheSameChannel():boolean{
@@ -422,6 +457,8 @@ export class VideoWatchComponent implements OnInit {
         this.checkUserLikeOrNot()
         this.userHasSubscribed()
       }
+      this.changeVideoTimestamp()
+      
       this.loadVideoComments()
     })
   }
@@ -450,12 +487,34 @@ export class VideoWatchComponent implements OnInit {
       this.comments = result.data.getCommentByVideoId            
       this.commentCountOutput = this.comments.length + " Comments"      
       this.commentsLoaded = true
+
     })
+
+    this.commentObserver = new IntersectionObserver((entry)=>{
+      if(entry[0].isIntersecting){
+        
+        let card = document.querySelector(".comment-container")        
+        for(let i = 0; i < 5; i++){
+          
+          if(this.lastKey < this.comments.length){
+            let div = document.createElement("div")
+            let comment = document.createElement("app-video-comment")
+            comment.setAttribute("comm",  "this.comments[this.lastKey]")
+            div.appendChild(comment)
+            card.appendChild(div)
+            this.lastKey++
+          }
+        }
+      }
+    })
+
+    this.commentObserver.observe(document.querySelector(".comment-footer"))
+
   }
 
   convertLikeToText(count): String{
-    if(count > 1000){
-      return ((parseInt(count) - 1) / 1000).toFixed(1) + "K"
+    if(count - 1 > 1000){      
+      return Math.floor(((count - 1)/1000) * 10)/ 10 + "K"
     }
     else{
       return (count - 1).toString()
@@ -689,9 +748,18 @@ export class VideoWatchComponent implements OnInit {
   }
 
   changeCurrentTime(e){
-    this.currentTime = e.target.currentTime
-    console.log(this.currentTime);
-    
+    this.currentTime = e.target.currentTime    
+  }
+
+  toggleCurrentTime(v):void{
+
+    if(v){
+      var video = (document.getElementsByTagName('mat-video')[0] as HTMLVideoElement).querySelector('video')
+      this.videoURL += "/" + Math.floor(video.currentTime)
+    }
+    else{
+      this.videoURL = "http://localhost:4200/watch/" + this.video.id
+    }
   }
 
   showShareModal():void{
@@ -753,6 +821,11 @@ export class VideoWatchComponent implements OnInit {
         query getUserSubscriptionByUserIdAndChannelId($user_id: ID!, $channel_id: ID!){
           getUserSubscriptionByUserIdAndChannelId(user_id: $user_id, channel_id: $channel_id){
             id,
+            user_id,
+            channel_id,
+            subscribe_day,
+            subscribe_month,
+            subscribe_year,
             should_notify
           }
         }
@@ -1454,15 +1527,15 @@ export class VideoWatchComponent implements OnInit {
       restrict = this.userDB.restrict_mode
     }
     else{
-      loc = "Indonesia"
-      restrict = "false"
+      loc = this.currLocation
+      restrict = this.restrictedMode
     }
     
     
     this.apollo.watchQuery<any>({
       query: gql `
-        query getRelatedVideo($video_id : ID!, $category: String!, $location: String!, $is_restrict: String!){
-          getRelatedVideo(video_id: $video_id, category: $category, location: $location, is_restrict: $is_restrict){
+        query getRelatedVideo($video_id : ID!, $category: String!, $is_restrict: String!){
+          getRelatedVideo(video_id: $video_id, category: $category, is_restrict: $is_restrict){
             id,
             channel_id,
             title,
@@ -1487,13 +1560,13 @@ export class VideoWatchComponent implements OnInit {
       variables:{
         video_id: this.video.id,
         category: this.video.category,
-        location: loc,
         is_restrict: restrict
       }
     }).valueChanges.subscribe(result => {
       this.relatedVideos = result.data.getRelatedVideo
+      this.relatedVideos.sort(a => a.location == loc ? -1 : 1)
+
       this.relatedVideoLoaded = true
-      console.log(this.relatedVideos);
     })
   }
 
@@ -1511,6 +1584,6 @@ export class VideoWatchComponent implements OnInit {
   }
 
   sortCommentByNewest():void{
-    this.comments.sort((a,b)=> (a.id > b.id) ? -1 : 1)
+    this.comments.sort((a,b)=> (parseInt(a.id) > parseInt(b.id)) ? -1 : 1)
   }
 }

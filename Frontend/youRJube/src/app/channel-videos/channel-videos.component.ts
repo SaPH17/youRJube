@@ -17,12 +17,35 @@ export class ChannelVideosComponent implements OnInit {
   doneLoading: boolean = false
   channelId: number
 
+  lastKey:number
+  observer: any
+
   ngOnInit(): void {
 
     var url = this.router.url
 
     var arr = url.split('/')
     this.channelId = parseInt(arr[2])
+    this.lastKey = 8
+
+    this.observer = new IntersectionObserver((entry)=>{
+      if(entry[0].isIntersecting){
+        let card = document.querySelector(".videos")        
+        for(let i = 0; i < 4; i++){
+          
+          if(this.lastKey < this.videos.length){
+            let div = document.createElement("div")
+            let video = document.createElement("app-video-display")
+            video.setAttribute("vid",  "this.videos[this.lastKey]")
+            div.appendChild(video)
+            card.appendChild(div)
+            this.lastKey++
+          }
+        }
+      }
+    })
+
+    this.observer.observe(document.querySelector(".footer"))
 
     this.apollo.query<any>({
       query: gql `

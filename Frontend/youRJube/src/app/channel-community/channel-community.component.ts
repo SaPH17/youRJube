@@ -17,6 +17,9 @@ const getcommunityPostQuery = gql `
       image,
       like,
       dislike,
+      day,
+      month,
+      year
     }
   }
 `
@@ -69,7 +72,7 @@ export class ChannelCommunityComponent implements OnInit {
       }
     }).subscribe(result => {
       this.communityPosts = result.data.getCommunityPostByChannelId
-      console.log(typeof this.communityPosts);
+      console.log(this.communityPosts);
       
     })
   }

@@ -11,11 +11,17 @@
         </div>
 
         <div class="bottom">
-            <div class="title">
-                Links
-            </div>
 
-            <div class="content">
+            <div class="links-container">
+                <div class="title">
+                    Links : 
+                </div>
+
+                <div class="all-links" *ngIf="linkLoaded">
+                    <ul>
+                        <li *ngFor="let l of links"><a href="{{l.link}}">{{l.social_media}}</a></li>
+                    </ul>
+                </div>
 
             </div>
         </div>

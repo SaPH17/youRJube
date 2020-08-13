@@ -1,7 +1,14 @@
 <div class="container" *ngIf="doneLoading">
     <div class="left">
-        <div class="top">
+        <div class="top" *ngIf="playlistVideos.length > 0">
             <img src="{{playlistVideos[0].thumbnail}}" alt="" width="350px" height="200px">
+            <div class="overlay unselectable">
+                <i class="fa fa-play" aria-hidden="true"></i>
+                PLAY ALL
+            </div>
+        </div>
+        <div class="top" *ngIf="playlistVideos.length == 0">
+            <img src="../../assets/default_thumbnail.png" alt="" width="350px" height="200px">
             <div class="overlay unselectable">
                 <i class="fa fa-play" aria-hidden="true"></i>
                 PLAY ALL
@@ -37,7 +44,7 @@
             </div>
 
             <div class="privacy">
-                <select name="" id="">
+                <select name="" id="" (change)="updatePlaylistPrivacy($event.target.value)" [value]="playlist.privacy">
                     <option value="Public">Public</option>
                     <option value="Private">Private</option>
                 </select>
@@ -53,7 +60,7 @@
                 </div>
 
                 <div class="remove-all">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <i class="fa fa-trash" aria-hidden="true" (click)="updatePlaylist(',')"></i>
                 </div>
             </div>
 
@@ -79,9 +86,38 @@
                 </div>
             </div>
         </div>
-        <div class="bottom">
-            <img src="{{channel.icon}}" alt="" width="60px">
-            {{channel.name}}
+        <div class="bottom" *ngIf="channel">
+            <div class="channel-info">
+                <a href="/channel/{{channel.id}}">
+                    <img src="{{channel.icon}}" alt="" width="60px">
+                </a>
+    
+                <a href="/channel/{{channel.id}}">
+                    {{channel.name}}
+                </a>  
+            </div>         
+
+            <div class="subs-button" *ngIf="showSubscribeButton()">
+                <a>
+                    <div class="subscribe-button" (click)="subscribeToChannel()" *ngIf="userSubCondition == 0">
+                        SUBSCRIBE
+                    </div>
+                </a>
+    
+                <a>
+                    <div class="subscribe-button2" (click)="unsubscribeToChannel()" *ngIf="userSubCondition != 0">
+                        SUBSCRIBE
+                    </div>
+                </a>
+    
+                <div class="bell-button" *ngIf="userSubCondition == 2" (click)="changeUserSubsNotif('false')">
+                    <i class="fa fa-bell" aria-hidden="true"></i>
+                </div>
+    
+                <div class="bell-button" *ngIf="userSubCondition == 1" (click)="changeUserSubsNotif('true')">
+                    <i class="fa fa-bell-o" aria-hidden="true"></i>
+                </div>
+            </div>
         </div>
     </div>
     <div class="right">
@@ -102,11 +138,17 @@
             </div>
         </div>
 
-        <div class="center">
-            <div *ngFor="let v of playlistVideos">
-                <app-second-video-display [vid]="v"></app-second-video-display>
+        <div cdkDropList class="center-video" *ngIf="playlistVideos"  (cdkDropListDropped)="drop($event)">
+            <div *ngFor="let v of playlistVideos, let i = index" cdkDrag class="videos">
+                <i class="fa fa-bars" aria-hidden="true " cdkDragHandle></i>
+
+                <app-playlist-display [vid]="v"></app-playlist-display>
             </div>
         </div>
+
+        <!-- <div class="footer" *ngIf="allLoaded">
+
+        </div> -->
     </div>
 </div>
 

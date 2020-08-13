@@ -31,10 +31,7 @@ export class VideoSearchComponent implements OnInit {
   }
 
   loadVideo():void{
-    console.log(typeof this.searchQuery);
-    console.log(this.searchQuery);
-    console.log(this.restrictedMode);
-    
+
     
     this.apollo.watchQuery<any>({
       query: gql `
@@ -61,7 +58,7 @@ export class VideoSearchComponent implements OnInit {
       `,
       variables:{
         title: this.searchQuery,
-        is_restrict: this.restrictedMode
+        is_restrict: this.restrictedMode.toString()
       }     
     }).valueChanges.subscribe(result => {
       console.log(result);

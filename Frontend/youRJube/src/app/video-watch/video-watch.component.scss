@@ -185,12 +185,13 @@ $width: 55vw;
             }
 
             .center{
-                font-size: 14px;
-                padding-left: 4vw;
                 padding-right: 8vw;
-                margin-top: 2vh;
+                padding-left: 4vw;
                 padding-bottom: 2vh;
+                margin-top: 2vh;
                 border-bottom: 1px lightgray solid;
+                font-size: 14px;
+
             }
 
             .bottom{
@@ -304,12 +305,49 @@ $width: 55vw;
             .all-comment{
                 display: flex;
                 flex-direction: column;
+
+                .comment-footer{
+                    height: 50px;
+                }
             }
         }
     }
 
     .related-video{
         flex: 3;
+        display: flex;
+        flex-direction: column;
+
+        .top{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title{
+                font-weight: 500;
+                display: flex;
+                margin-left: 2vw;
+            }
+
+            .autoplay{
+                
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin: 3vh 0;
+                margin-left: 2vw;
+
+                input{
+                    margin-left: 1vw;
+                    transform: scale(1.5);
+                }
+            }
+        }
+
+        .bottom{
+            display: flex;
+            flex-direction: column;
+        }
     }
 }
 

@@ -44,8 +44,8 @@ export class VideoDisplayComponent implements OnInit{
     location: string,
     view: number,
     privacy: string,
-    is_premium: boolean,
-    age_restricted: boolean,
+    is_premium: string,
+    age_restricted: string,
     duration: number
   }
 
@@ -53,6 +53,7 @@ export class VideoDisplayComponent implements OnInit{
   channel: any
   doneLoading: boolean = false
   user: SocialUser
+  userDB: any
   userChannel: any
   dateOutput: String
 
@@ -66,14 +67,19 @@ export class VideoDisplayComponent implements OnInit{
 
   settingsOpen:boolean = false;
 
+  billingHistory: any
+  userHavePremium: boolean = false
+  premiumValidation:boolean = false
+
   constructor(private data: DataService, private apollo: Apollo) { }
 
   ngOnInit() {
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
+    this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
     this.data.currentChannelObject.subscribe(channelObject => this.userChannel = channelObject)
     this.viewOutput = this.convertView(this.video.view - 1)
     this.titleOutput = this.convertTitle(this.video.title)
-     this.getDuration(this.video.duration)
+    this.getDuration(this.video.duration)
 
     this.apollo.query<any>({
       query: gql `
@@ -100,6 +106,60 @@ export class VideoDisplayComponent implements OnInit{
       this.dateOutput = this.convertDate(this.video.upload_day, this.video.upload_month - 1, this.video.upload_year)
       this.doneLoading = true;
     })
+
+    this.apollo.watchQuery<any>({
+      query: gql`
+        query getPremiumSubscriptionByUserId($user_id: ID!){
+          getPremiumSubscriptionByUserId(user_id: $user_id){
+            id,
+            user_id,
+            start_day,
+            start_month,
+            start_year,
+            end_day,
+            end_month,
+            end_year,
+            plan,
+          }
+        }
+      `,
+      variables:{
+        user_id: this.userDB.id
+      }
+    }).valueChanges.subscribe(result => {
+      
+      this.billingHistory = result.data.getPremiumSubscriptionByUserId
+      this.getCurrentPlan()
+
+    })
+  }
+
+  validatePremium():void{
+    if(this.video.is_premium == "true" && this.userHavePremium){
+      this.premiumValidation = true
+    }
+    else if(this.video.is_premium == "false"){
+      this.premiumValidation = true
+    }
+    else{
+      this.premiumValidation = false
+    }
+  }
+
+  getCurrentPlan():void{
+    var date = new Date()
+
+    this.billingHistory.forEach(e => {
+
+      var from = new Date(parseInt(e.start_year), parseInt(e.start_month) - 1, parseInt(e.start_day))
+      var to = new Date(parseInt(e.end_year), parseInt(e.end_month) - 1, parseInt(e.end_day))
+      
+      if(date > from && date < to){
+        this.userHavePremium = true
+      }
+    });  
+    
+    this.validatePremium()
   }
 
   convertTitle(title):String{

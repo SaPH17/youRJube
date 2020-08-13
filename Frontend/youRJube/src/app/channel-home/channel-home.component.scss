@@ -4,10 +4,24 @@
         padding-left: 2vw;
 
         .title{
-            font-size: 20px;
-            font-weight: 500;
+
             padding-top: 4vh;
             padding-left: 3vw;
+            display: flex;
+            align-items: center;
+
+            .t{
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+            .see-all{
+                font-size: 16px;
+                color: gray;
+                margin-left: 2vw;
+                text-decoration: none;
+            }
+
         }
 
         .videos{
@@ -19,12 +33,23 @@
     .section2{
         padding-left: 2vw;
 
-
         .title{
-            font-size: 20px;
-            font-weight: 500;
             padding-top: 4vh;
             padding-left: 3vw;
+            display: flex;
+            align-items: center;
+            
+            .t{
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+            .see-all{
+                font-size: 16px;
+                color: gray;
+                margin-left: 2vw;
+                text-decoration: none;
+            }
         }
 
         .videos{
@@ -37,12 +62,23 @@
     .section3{
         padding-left: 2vw;
 
-
         .title{
-            font-size: 20px;
-            font-weight: 500;
             padding-top: 4vh;
             padding-left: 3vw;
+            display: flex;
+            align-items: center;
+            
+            .t{
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+            .see-all{
+                font-size: 16px;
+                color: gray;
+                margin-left: 2vw;
+                text-decoration: none;
+            }
         }
 
         .playlists{

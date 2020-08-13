@@ -25,12 +25,9 @@ export class SubscriptionComponent implements OnInit {
   ngOnInit(): void {
     this.data.currentUserObject.subscribe(userObject => this.user = userObject)
     this.data.currentUserDBObject.subscribe(userDBObject => this.userDB = userDBObject)
-    console.log("BB");
     console.log(this.userDB);
     
-    if(this.userDB != undefined){
-      console.log("AA");
-      
+    if(this.userDB != undefined){      
       this.loadUserSubscribedChannel()
     }
   }
@@ -102,7 +99,8 @@ export class SubscriptionComponent implements OnInit {
         
         this.filterTodayVideo()    
         this.filterThisWeekVideo()
-        this.filterThisMonthVideo()        
+        this.filterThisMonthVideo()   
+        
         this.doneLoading = true;
       })
     }

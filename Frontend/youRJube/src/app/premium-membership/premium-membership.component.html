@@ -38,7 +38,7 @@
             </ul>
         </div>
 
-        <div class="next">
+        <div class="next" *ngIf="currentPlan">
             Current membership expiration date : {{currentPlan.end_day}} - {{currentPlan.end_month}} - {{currentPlan.end_year}}
         </div>
     </div>

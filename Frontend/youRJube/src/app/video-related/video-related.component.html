@@ -23,8 +23,10 @@
             </div>
         </div>
 
-        <div class="center">
-            {{channel.name}}
+        <div class="center" *ngIf="channel">
+            <a href="channel/{{channel.id}}">
+                {{channel.name}}
+            </a>
         </div>
 
         <div class="bottom">

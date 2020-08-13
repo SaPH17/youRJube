@@ -18,6 +18,9 @@ export class ChannelAboutComponent implements OnInit {
   viewCount: number = 0
   viewCountOutput: String
 
+  links: any
+  linkLoaded:boolean = false
+
   constructor(private router: Router, private apollo: Apollo) { }
 
   ngOnInit(): void {
@@ -52,6 +55,7 @@ export class ChannelAboutComponent implements OnInit {
       this.dateOutput = this.convertMonthToText(this.channel.join_month) + " " + this.channel.join_day + ", " + this.channel.join_year
     
       this.countVideoView()
+      this.loadChannelLinks()
     })
   }
 
@@ -89,7 +93,7 @@ export class ChannelAboutComponent implements OnInit {
         this.viewCount += this.videos[i].view
       }
 
-      if(this.viewCount == 1){
+      if(this.viewCount <= 1){
         this.viewCountOutput = this.convertViewToCommaString(this.viewCount) + " view"
       }
       else{
@@ -103,6 +107,27 @@ export class ChannelAboutComponent implements OnInit {
     var num_parts = num.toString().split(".");
     num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return num_parts.join(".");
+  }
+
+  loadChannelLinks():void{
+    this.apollo.watchQuery<any>({
+      query: gql `
+      query getChannelSocialMediaByChannelId($channel_id: ID!){
+        getChannelSocialMediaByChannelId(channel_id: $channel_id){
+          id,
+          channel_id,
+          social_media,
+          link,
+        }
+      }
+    `,
+      variables:{
+        channel_id: this.channelId
+      }
+    }).valueChanges.subscribe(result => {
+      this.links = result.data.getChannelSocialMediaByChannelId
+      this.linkLoaded = true
+    })
   }
 
 
