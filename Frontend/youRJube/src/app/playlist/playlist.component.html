@@ -1,11 +1,13 @@
-<div class="container" *ngIf="doneLoading">
+<div class="container" *ngIf="doneLoading && validatePlaylist()">
     <div class="left">
         <div class="top" *ngIf="playlistVideos.length > 0">
-            <img src="{{playlistVideos[0].thumbnail}}" alt="" width="350px" height="200px">
-            <div class="overlay unselectable">
-                <i class="fa fa-play" aria-hidden="true"></i>
-                PLAY ALL
-            </div>
+            <a routerLink="/watch/playlist/{{playlist.id}}/1">
+                <img src="{{playlistVideos[0].thumbnail}}" alt="" width="350px" height="200px">
+                <div class="overlay unselectable">
+                    <i class="fa fa-play" aria-hidden="true"></i>
+                    PLAY ALL
+                </div>
+            </a>
         </div>
         <div class="top" *ngIf="playlistVideos.length == 0">
             <img src="../../assets/default_thumbnail.png" alt="" width="350px" height="200px">
@@ -72,7 +74,7 @@
 
                 <div class="input" [style.display] = "isInputDesc ? 'flex' : 'none'">
                     <div class="top">
-                        <input type="text" name="" id="" [value]="playlist.description" (input)="inputDesc = $event.target.value">
+                        <input type="text" name="" [value]="playlist.description" (input)="inputDesc = $event.target.value">
                     </div>
                     <div class="bottom">
                         <div class="b1" (click)="toggleInputDesc()">

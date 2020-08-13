@@ -190,10 +190,6 @@ export class PlaylistWatchComponent implements OnInit {
 
       const playlistId = params.get('id');    
       this.index = params.get('index')
-      
-
-      console.log(playlistId);
-      
 
       this.lastKey = 5
 

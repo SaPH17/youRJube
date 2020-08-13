@@ -87,6 +87,14 @@ export class PlaylistComponent implements OnInit {
     })
   }
 
+  validatePlaylist():boolean{
+    if(this.playlist.privacy == "Private" && this.playlist.channel_id != this.userChannel.id){
+      return false
+    }
+
+    return true;
+  }
+
   toggleInputTitle():void{
     this.isInputTitle = !this.isInputTitle
   }
@@ -326,6 +334,10 @@ export class PlaylistComponent implements OnInit {
   }
 
   updatePlaylistDescription():void{
+    if(this.inputDesc == ""){
+      this.inputDesc = "No description given"
+    }
+
     this.apollo.mutate({
       mutation: gql`
         mutation updatePlaylist($id: ID!, $channel_id: ID!, $description: String!, $title: String!, $privacy: String!, $thumbnail: String!
