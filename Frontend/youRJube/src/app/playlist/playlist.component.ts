@@ -164,10 +164,7 @@ export class PlaylistComponent implements OnInit {
       this.doneLoading = true
 
       return
-    }
-
-    console.log(curr);
-    
+    }    
 
     this.apollo.query<any>({
       query: gql `
@@ -197,9 +194,7 @@ export class PlaylistComponent implements OnInit {
       variables:{
         id: ids[curr]
       }
-    }).subscribe(result => {
-      console.log(result);
-      
+    }).subscribe(result => {      
       if(!loadedVideo.includes(result.data.getVideoById[0].id)){
         this.playlistVideos.push(result.data.getVideoById[0])     
         loadedVideo.push(result.data.getVideoById[0].id)
@@ -210,9 +205,6 @@ export class PlaylistComponent implements OnInit {
   
   loadPLaylistVideo():void{
     var res = this.playlist.video_id.split(',')
-    console.log(res);
-    console.log(res.length);
-    
     this.loadPlaylistVideos(res, res.length - 1, 1, [])
   }
 

@@ -169,6 +169,8 @@ export class PlaylistWatchComponent implements OnInit {
   playlistVideos = []
   index:string
 
+  alreadyLoadedVideoIds = []
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
@@ -343,7 +345,8 @@ export class PlaylistWatchComponent implements OnInit {
       if(this.autoplay){
         var res = this.currPlaylist.video_id.split(',')
         var nextIndex = parseInt(this.index ) + 1
-        if(nextIndex == res.length){
+        
+        if(nextIndex == res.length - 1){
           nextIndex = 1
         }
 
@@ -434,7 +437,7 @@ export class PlaylistWatchComponent implements OnInit {
     })
   }
 
-  loadPlaylistVideos(ids, length, curr, loadedVideo):void{
+  loadPlaylistVideos(ids, length, curr):void{
     if(curr == length){
       return
     }
@@ -468,17 +471,17 @@ export class PlaylistWatchComponent implements OnInit {
         id: ids[curr]
       }
     }).valueChanges.subscribe(result => {
-        if(!loadedVideo.includes(result.data.getVideoById[0].id)){
+        if(!this.alreadyLoadedVideoIds.includes(result.data.getVideoById[0].id)){
           this.playlistVideos.push(result.data.getVideoById[0])     
-          loadedVideo.push(result.data.getVideoById[0].id)
+          this.alreadyLoadedVideoIds.push(result.data.getVideoById[0].id)
         }
-        this.loadPlaylistVideos(ids, length, curr + 1, loadedVideo)
+        this.loadPlaylistVideos(ids, length, curr + 1)
     })
   }
   
   loadPLaylistVideo():void{
     var res = this.currPlaylist.video_id.split(',')        
-    this.loadPlaylistVideos(res, res.length - 1, 1, [])
+    this.loadPlaylistVideos(res, res.length - 1, 1)
   }
 
   loadChannelInformation():void{
