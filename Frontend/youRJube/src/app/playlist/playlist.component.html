@@ -141,7 +141,6 @@
         <div cdkDropList class="center-video" *ngIf="playlistVideos"  (cdkDropListDropped)="drop($event)">
             <div *ngFor="let v of playlistVideos, let i = index" cdkDrag class="videos">
                 <i class="fa fa-bars" aria-hidden="true " cdkDragHandle></i>
-
                 <app-playlist-display [vid]="v"></app-playlist-display>
             </div>
         </div>

@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="left">
+        <a href="watch/playlist/{{playlistId}}/{{index}}">
+            <img src="{{video.thumbnail}}" alt="" height="70px" width="125px">
+        </a>
+    </div>
+
+    <div class="right">
+        <div class="top">
+            <a href="watch/playlist/{{playlistId}}/{{index}}">
+                {{video.title}}
+            </a>
+        </div>
+
+        <div class="center" *ngIf="channel">
+            <a href="channel/{{channel.id}}">
+                {{channel.name}}
+            </a>
+        </div>
+    </div>
+</div>

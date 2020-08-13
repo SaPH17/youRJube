@@ -1,3 +1,4 @@
+import { PlaylistWatchComponent } from './playlist-watch/playlist-watch.component';
 import { ChannelEditVideosComponent } from './channel-edit-videos/channel-edit-videos.component';
 import { VideoSearchComponent } from './video-search/video-search.component';
 import { CategorySportComponent } from './category/category-sport/category-sport.component';
@@ -46,9 +47,9 @@ const routes: Routes = [
   ]},
   {path:"playlist/:id", component: PlaylistComponent},
   {path:"premium-membership", component: PremiumMembershipComponent},
+  {path:"watch/playlist/:id/:index", component: PlaylistWatchComponent},
   {path:"watch/:id", component: VideoWatchComponent},
   {path:"watch/:id/:time", component: VideoWatchComponent},
-  {path:"watch/playlist/:id/index", component: VideoWatchComponent},
   {path:"upload", component: VideoUploadComponent},
   {path:"about-us", component: AboutUsComponent},
   {path:"terms", component: TermsComponent},

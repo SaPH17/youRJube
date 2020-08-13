@@ -1,1 +1,303 @@
-<p>playlist-watch works!</p>
+<div class="container" *ngIf="doneLoading">
+    <div class="video-section">
+
+        <div class="video-player">
+
+            <mat-video [autoplay]="false" [preload]="true" [fullscreen]="true" [download]="true" 
+            color="accent" spinner="spin" src="{{video.video_url}}" [keyboard]="!isInput"
+            [quality]="true" showFrameByFrame="true" id="video-player">
+            </mat-video>
+        </div>
+
+        <div class="video-title">
+            {{video.title}}
+        </div> 
+
+        <div class="video-additional">
+
+            <div class="view-and-date">
+                {{viewOutput}} • {{dateOutput}}
+            </div>
+
+            <div class="video-button">
+                <div class="like-and-dislike">
+                    <div class="the-buttons">
+                        <a>
+                            <div class="like-button"  id="thumbs-up-logo" (click)="likeVideo()">
+                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                {{likeOutput}}
+                            </div>
+                        </a>
+                        <a>
+                            <div class="dislike-button" id="thumbs-down-logo" (click)="dislikeVideo()">
+                            <i class="fa fa-thumbs-down"  aria-hidden="true"></i>
+                                {{dislikeOutput}}
+                            </div>
+                        </a>
+
+                        <div id="numbers">
+                            {{likeCount}}/{{dislikeCount}}
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <progress class="like-dislike-ratio" [value]="likeCount" [max]="totalLikeAndDislike"></progress>
+                    </div>
+                </div>
+                <a>
+                    <div class="share-button"  (click)="showShareModal()">
+                    <i class="fa fa-share" aria-hidden="true" style="margin-right: 0.5vw;"></i>
+                    SHARE
+                    </div>
+                </a>
+                <a>
+                    <div class="add-to-playlist" (click)="showPlaylistModal()">
+                    <i class="fa fa-list-ol" aria-hidden="true" style="margin-right: 0.5vw;"></i>
+                    SAVE
+                    </div>
+                </a>
+                
+            </div>
+
+        </div>
+
+        <div class="video-description"  *ngIf="descriptionLoaded">
+            <div class="top">
+                <div class="channel-info">
+                    <div class="channel-left">
+                        <a href="channel/{{channel.id}}">
+                            <img src="{{channel.icon}}" alt="" style="border-radius: 50%;">
+                        </a>
+                    </div>
+                    <div class="channel-right">
+                        <div class="channel-name">
+                            <a href="channel/{{channel.id}}">
+                                {{channel.name}}
+                            </a>
+                        </div>
+                        <div class="subs-count">
+                            {{subscriberCountOutput}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subscribe-container" *ngIf="userChannel && channel.id != userChannel.id">
+                    <a>
+                        <div class="subscribe-button" (click)="subscribeToChannel()" *ngIf="userSubCondition == 0">
+                            SUBSCRIBE
+                        </div>
+                    </a>
+
+                    <a>
+                        <div class="subscribe-button2" (click)="unsubscribeToChannel()" *ngIf="userSubCondition != 0">
+                            SUBSCRIBE
+                        </div>
+                    </a>
+
+                    <div class="bell-button" *ngIf="userSubCondition == 2" (click)="changeUserSubsNotif('false')">
+                        <i class="fa fa-bell" aria-hidden="true"></i>
+                    </div>
+
+                    <div class="bell-button" *ngIf="userSubCondition == 1" (click)="changeUserSubsNotif('true')">
+                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                    </div>
+
+                </div>
+
+                <div class="sign-in-to-subs" *ngIf="!userChannel">
+                    SIGN IN TO SUBSCRIBE
+                </div>
+            </div>
+
+            <p class="center">
+                {{video.description}}
+            </p>
+
+            <div class="bottom">
+                Category : {{video.category}}
+            </div>
+        </div>
+
+        <div class="video-comment">
+            <div class="comment-statistic">
+                <div class="comment-count" *ngIf="commentsLoaded">
+                    {{commentCountOutput}}
+                </div>
+                <a>
+                    <div class="sort-options">
+                        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+                        <span (click)="toggleSortBy()">                        
+                            SORT BY
+                        </span>
+
+                        <div class="dropdown-content" id="sortby-options">
+                            <ul>
+                                <li (click)="sortCommentByLike()">
+                                    Top Liked
+                                </li>
+                                <li (click)="sortCommentByNewest()">
+                                    Newest
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        
+            <div class="input-comment">
+
+                <div class="profile-picture" *ngIf="userChannel">
+                    <img src="{{userChannel.icon}}" alt="profilePic" width="50px" style="border-radius: 50%;">
+                </div>
+
+                <div class="profile-picture" *ngIf="!userChannel">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/yourjube-b27a9.appspot.com/o/channel-icon%2Fdefault_channelicon.png?alt=media&token=099b695d-0f8b-4056-910b-12bbf31585e9" 
+                    alt="" width="30px">
+                </div>
+
+                <div class="signin-alert" *ngIf="!userChannel">
+                    SIGN IN TO ADD A COMMENT
+                </div>
+
+                <div class="input-text" *ngIf="userChannel">
+                    <input type="text" name="" id="comment-input-text" placeholder="Add a public comment..." 
+                    (input)="detectReplyInput($event.target.value)" (focus)="inputTextFocus()" (blur)="inputTextBlur()">
+                </div>
+
+                <a *ngIf="userChannel">
+                    <div class="comment-button" id="comment-button" (click)="insertComment()">
+                        COMMENT
+                    </div>
+                </a>
+                
+            </div>
+
+            <div class="all-comment">
+
+                <div class="comment-container" *ngIf="commentsLoaded">
+                    <div *ngFor="let c of comments, let i = index">
+                        <app-video-comment [comm]="c" *ngIf="i < (lastKey)"></app-video-comment>
+                    </div>
+                </div>
+
+                <div class="comment-footer">
+
+                </div>
+            </div>
+        </div>  
+
+    </div>
+    
+    <div class="related-video" *ngIf="relatedVideoLoaded">
+        <div class="info-container">
+            <div class="top">
+                <div class="name">
+                    {{currPlaylist.title}}
+                </div>
+            </div>
+
+            <div class="center">
+                <app-playlist-watch-display *ngFor="let v of playlistVideos" [vid]="v"></app-playlist-watch-display>
+            </div>
+        </div>
+
+        <div class="top">
+            <div class="title">
+                Up next
+            </div>
+            <div class="autoplay">
+                <label for="123123">Autoplay</label>
+                <input type="checkbox" name="" id="123123" [checked]="autoplay" (change)="autoplay = $event.target.checked">
+            </div>
+        </div>
+
+        <div class="bottom">
+            <app-video-related *ngFor="let v of relatedVideos" [vid]="v"></app-video-related>
+        </div>
+    </div>
+</div>
+
+<div class="playlist-modal" id="playlist-modal2">
+    <div class="modal-content">
+
+        <div class="top">
+            <div class="left">
+                Save to..
+            </div>
+
+            <div class="right" (click)="hidePlaylistModal()">
+                &times;
+            </div>
+        </div>
+
+        <div class="center" *ngIf="showModal">
+            <ul>
+                <li *ngFor="let p of userPlaylist">
+                    <input type="checkbox" name="" id="user-playlist2-{{p.id}}" (change)="addToPlaylist($event, p)"  [checked]="checkChecked(p)">
+                    <label for="user-playlist2-{{p.id}}" class="unselectable">{{p.title}}</label>
+                </li>
+            </ul>
+        </div>
+
+        <div class="bottom" *ngIf="doneLoading">
+            <div class="create-new-playlist-button" id="create-new-playlist-button2-{{video.id}}" (click)="toggleCreatePlaylist()">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Create new playlist
+            </div>
+
+            <div class="title" id="ntitle2-{{video.id}}">
+                <label for="nplaylist-title2-{{video.id}}">Name</label>
+                <input type="text" name="" id="nplaylist-title2-{{video.id}}" placeholder="Enter a playlist name..." (change)="playlist_title = $event.target.value"
+               >
+            </div>
+
+            <div class="privacy" id="nprivacy2-{{video.id}}">
+                <label for="nplaylist-privacy2-{{video.id}}">Privacy</label>
+                <select name="" id="nplaylist-privacy2-{{video.id}}" (change)="changePrivacyValue($event)">
+                    <option value="None">Select one</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+            </div>
+
+            <div class="create-button" id="nbutton2-{{video.id}}" (click)="createNewPlaylist()">
+                CREATE
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="share-modal" id="share-modal">
+    <div class="modal-content">
+        <div class="top">
+            <div class="left">
+                Share
+            </div>
+
+            <div class="right" (click)="hideShareModal()">
+                &times;
+            </div>
+
+        </div>
+
+        <div class="center">
+            <input type="text" name="" id="url" [value]="videoURL" readonly>
+            <div class="copy-button" (click)="copyURLToClipboard()">
+                COPY
+            </div>
+
+            
+        </div>
+
+        <!-- <div class="center2">
+            <div class="bottom">
+                <button ceiboShare  [facebook]="{u: videoURL}">Facebook</button>
+            </div>
+        </div> -->
+
+        <div class="bottom">
+            <input type="checkbox" name="" id="current-time" (change)="toggleCurrentTime($event.target.checked)">
+            <label for="current-time">Copy at current time ({{currentTime}})</label>
+        </div>
+    </div>
+</div>

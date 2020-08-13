@@ -1,6 +1,6 @@
 <div class="container" *ngIf="premiumValidation">
     <div class="left">
-        <a href="watch/{{video.id}}">
+        <a href="watch/playlist/{{playlistId}}/{{index}}">
             <div class="thumbnail">
                 <img src="{{video.thumbnail}}" alt="" width="250px" height="140px">
                 <span class="video-duration">{{duration}}</span>
@@ -10,7 +10,7 @@
 
     <div class="right">
         <div class="top">
-            <a href="watch/{{video.id}}">
+            <a href="watch/playlist/{{playlistId}}/{{index}}">
                 {{video.title}}
             </a>
 
@@ -51,7 +51,7 @@
         </div>
 
         <div class="bottom">
-            <a href="watch/{{video.id}}">
+            <a href="watch/playlist/{{playlistId}}/{{index}}">
                 {{descOutput}}
             </a>
         </div>

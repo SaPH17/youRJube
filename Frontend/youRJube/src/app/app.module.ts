@@ -1,4 +1,3 @@
-import { CeiboShare } from 'ng2-social-share';
 import { environment } from './../environments/environment.prod';
 import { DataService } from './data.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -56,6 +55,7 @@ import { ChannelEditVideosDisplayComponent } from './channel-edit-videos/channel
 import { PlaylistDisplayComponent } from './playlist/playlist-display/playlist-display.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PlaylistWatchComponent } from './playlist-watch/playlist-watch.component';
+import { PlaylistWatchDisplayComponent } from './playlist-watch-display/playlist-watch-display.component';
 
 
 @NgModule({
@@ -99,6 +99,7 @@ import { PlaylistWatchComponent } from './playlist-watch/playlist-watch.componen
     ChannelEditVideosDisplayComponent,
     PlaylistDisplayComponent,
     PlaylistWatchComponent,
+    PlaylistWatchDisplayComponent,
   ],
   imports: [
     BrowserModule,

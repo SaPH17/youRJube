@@ -1,0 +1,50 @@
+
+.container{
+    margin-left: 1vw;
+    margin-bottom: 1vh;
+    display: flex;
+    flex-direction: row;
+    max-width: 25vw;
+
+    .right{
+        margin-left: 0.5vw;
+        margin-top: 0.5vh;
+        width: 100%;
+
+        .top{
+            
+            a{
+                font-weight: bolder;
+                font-size: 16px;
+                color: black;
+                position: relative;
+                width: 100%;
+                text-decoration: none;
+            }
+        }
+
+        .center{
+            
+            a{
+                text-decoration: none;
+                margin-top: 1vh;
+                color: gray;
+                font-size: 12px;
+            }
+        }
+
+    }
+}
+
+.container:hover{
+    .right{
+        .top{
+            .settings-button{
+                .settings-button-icon{
+                    opacity: 1;
+                    transition-duration: 0.3s;
+                }
+            }
+        }
+    }
+}

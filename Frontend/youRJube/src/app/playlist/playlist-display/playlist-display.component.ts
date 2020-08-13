@@ -52,6 +52,7 @@ export class PlaylistDisplayComponent implements OnInit {
   playlist:any
 
   showDropdown:boolean = false
+  index:number
 
   constructor(private data: DataService, private apollo: Apollo, private route: ActivatedRoute) { }
 
@@ -118,6 +119,9 @@ export class PlaylistDisplayComponent implements OnInit {
         }
       }).valueChanges.subscribe(result =>{
         this.playlist = result.data.getPlaylistById[0]
+        var str = this.playlist.video_id
+        var res = str.split(',')
+        this.index = res.findIndex(e => e == this.video.id)
       })
     })
   }

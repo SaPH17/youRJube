@@ -147,80 +147,73 @@ export class PlaylistComponent implements OnInit {
     }
   }
 
-  loadPLaylistVideo():void{
+  loadPlaylistVideos(ids, length, curr, loadedVideo):void{
 
-    var res = this.playlist.video_id.split(',')
+    if(curr == length){
 
-    for(let i = 1; i < res.length - 1; i++){
-      this.apollo.watchQuery<any>({
-        query: gql `
-          query getVideoById($id : ID!){
-            getVideoById(id : $id){
-              id,
-              channel_id,
-              title,
-              description,
-              video_url,
-              thumbnail,
-              upload_day,
-              upload_month,
-              upload_year
-              category,
-              location,
-              view,
-              privacy,
-              is_premium,
-              age_restricted,
-              like,
-              dislike,
-              duration
-            }
-          }
-        `,
-        variables:{
-          id: res[i]
-        }
-      }).valueChanges.subscribe(result => {
-        if(!this.playlistVideos.includes(result.data.getVideoById[0])){
-          this.playlistVideos.push(result.data.getVideoById[0])     
-        }
-
-        if( this.playlistVideos.length <= 1){
-          this.playlistCountOutput = this.playlistVideos.length + " video"
-        }
-        else{
-          this.playlistCountOutput = this.playlistVideos.length + " videos"
-        }
-
-        // if(i == res.length - 2){
-
-        //   this.observer = new IntersectionObserver((entry)=>{
-        //     if(entry[0].isIntersecting){
-        //       let card = document.querySelector(".center-video")    
-        //       console.log("intersecting");
+      console.log("SELESAI");
       
-        //       for(let i = 0; i < 4; i++){
-                
-        //         if(this.lastKey < this.playlistVideos.length){
-                  
-        //           let div = document.createElement("div")
-        //           let video = document.createElement("app-second-video-display")
-        //           video.setAttribute("vid",  "this.playlistVideos[this.lastKey]")
-        //           div.appendChild(video)
-        //           card.appendChild(div)
-        //           this.lastKey++
-        //         }
-        //       }
-        //     }
-        //   })
 
-        //   console.log(document.querySelector(".footer"));
-        //   this.observer.observe(document.querySelector(".footer"))
-        // }
+      if( this.playlistVideos.length <= 1){
+        this.playlistCountOutput = this.playlistVideos.length + " video"
+      }
+      else{
+        this.playlistCountOutput = this.playlistVideos.length + " videos"
+      }
 
-      })
+      this.doneLoading = true
+
+      return
     }
-    this.doneLoading = true
+
+    console.log(curr);
+    
+
+    this.apollo.query<any>({
+      query: gql `
+        query getVideoById($id : ID!){
+          getVideoById(id : $id){
+            id,
+            channel_id,
+            title,
+            description,
+            video_url,
+            thumbnail,
+            upload_day,
+            upload_month,
+            upload_year
+            category,
+            location,
+            view,
+            privacy,
+            is_premium,
+            age_restricted,
+            like,
+            dislike,
+            duration
+          }
+        }
+      `,
+      variables:{
+        id: ids[curr]
+      }
+    }).subscribe(result => {
+      console.log(result);
+      
+      if(!loadedVideo.includes(result.data.getVideoById[0].id)){
+        this.playlistVideos.push(result.data.getVideoById[0])     
+        loadedVideo.push(result.data.getVideoById[0].id)
+      }
+      this.loadPlaylistVideos(ids, length, curr + 1, loadedVideo)
+    })
+  }
+  
+  loadPLaylistVideo():void{
+    var res = this.playlist.video_id.split(',')
+    console.log(res);
+    console.log(res.length);
+    
+    this.loadPlaylistVideos(res, res.length - 1, 1, [])
   }
 
   loadChannelInformation():void{
